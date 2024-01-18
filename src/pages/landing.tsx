@@ -7,14 +7,7 @@ import Earth from "../components/earth";
 import logo from "../assets/Untitled-1.png";
 
 const Landing = () => {
-  const token = localStorage.getItem('token');
-
-  useEffect(() => {
-    if (token) {
-      window.location.href = '/mode';
-    }
-  }, []);
-
+  
   return (
     <>
       <div className="relative w-[100vw] h-[100vh] bg-black">
