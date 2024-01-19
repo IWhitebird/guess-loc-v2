@@ -1,9 +1,11 @@
-import { EmailSignUpNewUser, EmailLogin, OAuthLogin, CheckUser } from "../../supabase/Auth"
-import { useState, useEffect, useContext } from "react"
+import { EmailSignUpNewUser, EmailLogin, OAuthLogin } from "../../supabase/Auth"
+import { useState, useEffect } from "react"
 import { toast } from "react-hot-toast"
 import { ImSpinner2 } from "react-icons/im";
+import { useNavigate } from "react-router-dom";
 
 function Auth() {
+    const location = useNavigate()
     const [form, setForm] = useState({
         email: "",
         password: "",
@@ -11,12 +13,13 @@ function Auth() {
     })
     const [formState, setFormState] = useState("login")
     const [loading, setLoading] = useState(true)
-    const isLogged = localStorage.getItem("isLogged")
+    const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
 
     useEffect(() => {
-        if (isLogged === "true") {
-            window.location.href = "/mode"
-        } else {
+        if (loggedIN.user.role) {
+            location('/mode')
+            setLoading(false)
+        }else {
             setLoading(false)
         }
     }, [])

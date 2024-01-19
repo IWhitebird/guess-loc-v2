@@ -48,19 +48,6 @@ export async function EmailLogout() {
     }
 }
 
-export async function OAuthLogout() {
-    try {
-        const { error } = await supabase.auth.signOut();
-        if (error) {
-            console.error(error);
-            throw error;
-        }
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
-}
-
 export async function EmailSignUpNewUser(email: string, password: string, name: string) {
     try {
         const { data: existingUsers, error: getUsersError } = await supabase
