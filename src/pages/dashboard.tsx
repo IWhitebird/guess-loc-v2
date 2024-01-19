@@ -1,40 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { EmailLogout } from '../supabase/Auth';
 
-const Dashboard = ({ rounds }) => {
-  const [userInfo, setUserInfo] = useState({
-    user_name: "",
-    user_maxscore: 0
-  });
+const Dashboard = () => {
+  const location = useNavigate()
   const [dropdown, setDropdown] = useState(false);
-
-  const checkAuthenticated = async () => {
-    try {
-      const res = await fetch(env.BASE_URL + "/dashboard/userinfo", {
-        method: "GET",
-        headers: { token: localStorage.token }
-      });
-
-      const parseRes = await res.json();
-
-      setUserInfo(parseRes);
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
-
-  useEffect(() => {
-    checkAuthenticated();
-  }, [rounds == 5]);
-
-  const logoutHandle = (e) => {
-    e.preventDefault();
-    localStorage.removeItem("token");
-    window.location = "/";
-  };
+  const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
 
   const dropdownHandle = () => {
     setDropdown(!dropdown);
+  }
+
+  const handelLogout = () => {
+    EmailLogout();
+    location('/')
   }
 
   return (
@@ -45,7 +24,7 @@ const Dashboard = ({ rounds }) => {
           <input type='checkbox' onClick={dropdownHandle} className='absolute cursor-pointer rounded-full opacity-0 w-[100px] h-[100px]' />
           <img
             className='rounded-full'
-            src={`https://api.dicebear.com/6.x/personas/svg?seed=${userInfo.user_name}`}
+            src={loggedIN?.user?.user_metadata?.avatar_url ? loggedIN?.user?.user_metadata?.avatar_url : `https://api.dicebear.com/6.x/personas/svg?seed=${loggedIN?.user?.user_metadata?.full_name}`}
             alt="profile"
             width="100"
             height="100"
@@ -54,15 +33,14 @@ const Dashboard = ({ rounds }) => {
 
         <div
           className={`${dropdown ? 'block' : 'hidden'
-            } absolute p-4 right-0 mt-2 w-[300px] rounded-md shadow-lg bg-white`}
-        >
+            } absolute p-4 right-0 mt-2 w-[300px] rounded-md shadow-lg bg-white`} >
           <div className='p-4'>
             <div className='flex justify-between items-center'>
-              <p className='text-4xl font-bold'>{userInfo.user_name}</p>
+              <p className='text-4xl font-bold'>{loggedIN.user.user_metadata.full_name}</p>
               <p className="text-4xl cursor-pointer transition-all ease-in-out hover:scale-125 mb-2" onClick={dropdownHandle}>X</p>
             </div>
             <hr className='my-2' />
-            <p className='text-4xl mt-10 mb-10'>Max: {userInfo.user_maxscore}</p>
+            <p className='text-4xl mt-10 mb-10'>Max: </p>
             <Link to='/mode'>
               <p className='text-4xl mb-10'>Select Mode</p>
             </Link>
@@ -71,7 +49,7 @@ const Dashboard = ({ rounds }) => {
             <hr className='my-2' />
             <p
               className='text-4xl px-1 cursor-pointer text-red-400'
-              onClick={logoutHandle}
+              onClick={handelLogout}
             >
               Logout
             </p>
@@ -80,7 +58,6 @@ const Dashboard = ({ rounds }) => {
 
       </div>
     </div>
-
   );
 };
 
