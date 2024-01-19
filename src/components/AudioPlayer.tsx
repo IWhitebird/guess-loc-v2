@@ -22,7 +22,7 @@ const AudioPlayer = ({visible,setVisible}:props) => {
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'volume') {
-        setVolume(parseFloat(event.newValue || '1'));
+        setVolume(parseFloat(event.newValue || '0.4'));
         setForceRender((prev) => !prev); // Force re-render
       }
     };
