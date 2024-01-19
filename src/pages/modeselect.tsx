@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import logo from '../assets/Untitled-1.png';
-import Dashboard from './dashboard';
+import Dashboard from '../components/profileBar.tsx';
 import data from '../assets/data.ts';
 import { Link, useNavigate } from 'react-router-dom';
 import { ImSpinner2 } from 'react-icons/im';
@@ -44,26 +44,24 @@ function ModeSelect() {
                 </div>
             ) : (
                 <>
-                    <div className="flex justify-between px-20">
-                        <div className="absolute">
-                            <img className="invert w-[200px] h-[200px]" src={logo} alt="Logo" />
-                        </div>
-                        <div>
-                            <Dashboard />
-                        </div>
+                    <div className="flex justify-between absolute w-full px-20 ">
+                        <img className="invert w-[200px] h-[200px]" src={logo} alt="Logo" />
+                        <Dashboard />
                     </div>
 
                     <div className="flex justify-start items-center px-24 h-[100vh] w-[100%] bg-gradient-to-r from-gray-950 to-transparent">
                         <div className="flex justify-between items-center">
                             <ul className="text-white uppercase tracking-wider ">
-                                <Link to="/home">
+                                <Link to="/spGame">
                                     <li className="mb-8 text-5xl cursor-pointer transition-all ease-in-out duration-250 hover:tracking-wider hover:text-purple-300 italic">
                                         Singleplayer
                                     </li>
                                 </Link>
-                                <li className="mb-8 text-5xl cursor-not-allowed transition-all ease-in-out duration-250 text-gray-500 italic">
-                                    Multiplayer (Coming Soon)
-                                </li>
+                                <Link to="/mpGame">
+                                    <li className="mb-8 text-5xl cursor-not-allowed transition-all ease-in-out duration-250 text-gray-500 italic">
+                                        Multiplayer
+                                    </li>
+                                </Link>
                                 <li className="text-5xl cursor-pointer transition-all ease-in-out duration-250 hover:tracking-wider hover:text-purple-300 italic">
                                     Settings
                                 </li>
