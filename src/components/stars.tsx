@@ -10,7 +10,7 @@ const StarsComp = () => {
 
   useFrame(({ clock }) => {
     const elapsedTime = clock.getElapsedTime();
-    starRef.current.rotation.y = elapsedTime / 50;
+    starRef.current.rotation.y = elapsedTime / 40;
 
   });
 
@@ -19,9 +19,9 @@ const StarsComp = () => {
     <>
       <Stars
         radius={300}
-        depth={100}
-        count={10000}
-        factor={7}
+        depth={150}
+        count={20000}
+        factor={13}
         saturation={0}
         fade={true}
         ref={starRef}

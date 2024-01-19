@@ -35,6 +35,7 @@ const Earth = () => {
       <pointLight color="#f6f3ea" position={[1, 0, 5]} intensity={20.5} />
 
       <StarsComp />
+      
       <mesh ref={cloudsRef} position={[0, 0, 3]}>
         <sphereGeometry args={[1.009, 32, 32]} />
         <meshPhongMaterial

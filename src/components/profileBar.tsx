@@ -6,7 +6,10 @@ import { IoMdArrowDropdown } from "react-icons/io";
 const Dashboard = () => {
   const location = useNavigate()
   const [dropdown, setDropdown] = useState(false);
+  
   const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
+  const [profileURL] = useState<string>(loggedIN?.user?.user_metadata?.avatar_url ? loggedIN?.user?.user_metadata?.avatar_url : `https://api.dicebear.com/6.x/personas/svg?seed=${loggedIN?.user?.user_metadata?.full_name}`);
+
 
   const dropdownHandle = () => {
     setDropdown(!dropdown);
@@ -22,7 +25,7 @@ const Dashboard = () => {
       <div className='flex gap-3 bg-[#ffffffa3] p-1 px-2 h-1/2 rounded-2xl z-50 cursor-pointer' onClick={dropdownHandle}>
         <img
           className='rounded-full'
-          src={loggedIN?.user?.user_metadata?.avatar_url ? loggedIN?.user?.user_metadata?.avatar_url : `https://api.dicebear.com/6.x/personas/svg?seed=${loggedIN?.user?.user_metadata?.full_name}`}
+          src={profileURL}
           alt="profile"
         />
         <div className='flex items-center justify-center'>

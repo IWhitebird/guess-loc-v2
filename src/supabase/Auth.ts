@@ -1,4 +1,4 @@
-import { Provider } from '@supabase/supabase-js';
+import { AuthError, Provider } from '@supabase/supabase-js';
 import supabase from './init'
 
 export async function CheckUser() {
@@ -25,9 +25,10 @@ export async function EmailLogin(email: string, password: string) {
         }
 
         if (error) {
-            console.error(error);
             return false;
         }
+
+
 
     } catch (error) {
         console.error(error);

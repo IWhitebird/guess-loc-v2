@@ -64,8 +64,8 @@ function ModeSelect() {
                                         Singleplayer
                                     </li>
                                 </Link>
-                                <Link to="/mpGame">
-                                    <li className="mb-8 text-5xl italic text-gray-500 transition-all ease-in-out cursor-not-allowed duration-250">
+                                <Link to="/customroom">
+                                    <li className="mb-8 text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300">
                                         Multiplayer
                                     </li>
                                 </Link>
