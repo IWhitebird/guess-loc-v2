@@ -6,6 +6,7 @@ import ModeSelect from './pages/modeselect'
 import Auth from './pages/Authentication/login'
 import Verify from './pages/verify'
 
+
 const App = () => {
 
   return (
