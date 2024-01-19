@@ -18,7 +18,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className='pt-5 transition-all duration-300 ease-in-out relative'>
+    <div className='relative pt-5 transition-all duration-300 ease-in-out'>
       <div className='flex gap-3 bg-[#ffffffa3] p-1 px-2 h-1/2 rounded-2xl z-50 cursor-pointer' onClick={dropdownHandle}>
         <img
           className='rounded-full'
@@ -34,7 +34,7 @@ const Dashboard = () => {
       </div>
       <div className={`transition-all ease-in-out duration-300 z-0 ${dropdown ? 'top-32 z-50' : 'top-9 invisible opacity-0'}
      absolute p-4 right-0 w-full rounded-lg shadow-lg bg-[rgba(255,255,255,0.8)] backdrop-blur-lg`} >
-        <div className='p-2 flex flex-col gap-5'>
+        <div className='flex flex-col gap-5 p-2'>
           <p className='text-2xl'>Max: </p>
           <Link to='/mode'>
             <p className='text-2xl'>Select Mode</p>
@@ -43,7 +43,7 @@ const Dashboard = () => {
           <p className='text-2xl'>Settings</p>
           <hr className='my-2 border-gray-500' />
           <p
-            className='text-2xl px-1 cursor-pointer text-red-400'
+            className='px-1 text-2xl text-red-400 cursor-pointer'
             onClick={handelLogout}
           >
             Logout

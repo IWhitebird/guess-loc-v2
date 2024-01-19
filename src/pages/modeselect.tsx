@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import logo from '../assets/Untitled-1.png';
 import Dashboard from '../components/profileBar.tsx';
 import data from '../assets/data.ts';
+import Volume from '../components/volume.tsx';
 import { Link, useNavigate } from 'react-router-dom';
 import { ImSpinner2 } from 'react-icons/im';
+
+
 
 function ModeSelect() {
     const location = useNavigate()
@@ -69,6 +72,8 @@ function ModeSelect() {
                                 <li className="text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300" onClick={handlevolume}>
                                     Settings
                                 </li>
+                                {visible && <Volume handlevolume={handlevolume}/>}
+
                             </ul>
                             <div className="w-[50%]">
                                 <div key={data[currentIndex].id} className="flex flex-col items-center justify-center p-2">
