@@ -9,6 +9,7 @@ import EarthSpecularMap from "../assets/textures/8k_earth_specular_map.jpg";
 import EarthCloudsMap from "../assets/textures/8k_earth_clouds.jpg";
 
 import { TextureLoader } from "three";
+import StarsComp from "./stars";
 
 const Earth = () => {
 
@@ -20,29 +21,20 @@ const Earth = () => {
 
   const earthRef = useRef<any>();
   const cloudsRef = useRef<any>();
-  const starRef = useRef<any>();
 
   useFrame(({ clock }) => {
     const elapsedTime = clock.getElapsedTime();
 
     earthRef.current.rotation.y = elapsedTime / 12;
     cloudsRef.current.rotation.y = elapsedTime / 10;
-    starRef.current.rotation.y = elapsedTime / 50;
 
   });
 
   return (
     <>
-      <pointLight color="#f6f3ea" position={[1, 0, 5]} intensity={2.5} />
-      <Stars
-        radius={300}
-        depth={100}
-        count={10000}
-        factor={7}
-        saturation={0}
-        fade={true}
-        ref={starRef}
-      />
+      <pointLight color="#f6f3ea" position={[1, 0, 5]} intensity={20.5} />
+
+      <StarsComp />
       <mesh ref={cloudsRef} position={[0, 0, 3]}>
         <sphereGeometry args={[1.009, 32, 32]} />
         <meshPhongMaterial
