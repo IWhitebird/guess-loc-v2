@@ -8,6 +8,7 @@ import Verify from './pages/verify'
 import OnePlayer from './pages/Modes/1Player'
 import Vnum from './components/vnum'
 
+
 const App = () => {
 
   return (
