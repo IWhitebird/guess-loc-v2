@@ -5,18 +5,25 @@ import Landing from './pages/landing'
 import ModeSelect from './pages/modeselect'
 import Auth from './pages/Authentication/login'
 import Verify from './pages/verify'
+import OnePlayer from './pages/Modes/1Player'
+import Vnum from './components/vnum'
 
 const App = () => {
 
   return (
-      // <UserProvider>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/mode" element={<ModeSelect />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/verify" element={<Verify />} />
-        </Routes>
-      // </UserProvider>
+    // <UserProvider>
+    <>
+      <Vnum />
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/mode" element={<ModeSelect />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/verify" element={<Verify />} />
+        <Route path="/spGame" element={<OnePlayer />} />
+        <Route path="*" element={<Landing />} />
+      </Routes>
+    </>
+    // </UserProvider>
   )
 }
 
