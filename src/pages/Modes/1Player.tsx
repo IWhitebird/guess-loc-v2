@@ -270,6 +270,10 @@ export default function OnePlayer() {
                     score={points}
                     rounds={rounds}
                     points={points}
+                    setScore={setPoints}
+                    setRounds={setRounds}
+                    setTimeRemaining={setTimeRemaining}
+                    generateRandomPoint={generateRandomPoint}
                 />
             )}
         </div>

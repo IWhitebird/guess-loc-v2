@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import FinalResult from './FinalResultWindow';
 
 interface SubmitWindowProps {
     lat1: number;
@@ -9,6 +10,10 @@ interface SubmitWindowProps {
     distance: number;
     rounds: number;
     points: number;
+    setScore: any;
+    setRounds: any;
+    setTimeRemaining: any;
+    generateRandomPoint: any;
 }
 
 const SubmitWindow = ({
@@ -18,8 +23,16 @@ const SubmitWindow = ({
     guessLng,
     distance,
     points,
+    rounds,
+    score,
+    setScore,
+    setRounds,
+    setTimeRemaining,
+    generateRandomPoint,
 }: SubmitWindowProps) => {
     const submitMapContainerRef = useRef(null);
+    const infoWindowRef1 = useRef(new window.google.maps.InfoWindow());
+    const infoWindowRef2 = useRef(new window.google.maps.InfoWindow());
 
     const [midLat, setMidLat] = useState(0);
     const [midLng, setMidLng] = useState(0);
@@ -55,6 +68,25 @@ const SubmitWindow = ({
 
             let map = new window.google.maps.Map(submitMapContainerRef.current, mapOptions);
 
+            let marker1 = new window.google.maps.Marker({
+                position: { lat: lat1, lng: lng1 },
+                map: map,
+                title: 'Actual Location',
+            });
+
+            let marker2 = new window.google.maps.Marker({
+                position: { lat: guessLat, lng: guessLng },
+                map: map,
+                title: 'Guessed Location',
+                icon: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+            });
+
+            infoWindowRef1.current.setContent('Actual Location');
+            infoWindowRef2.current.setContent('Guessed Location');
+
+            infoWindowRef1.current.open(map, marker1);
+            infoWindowRef2.current.open(map, marker2);
+
             const lineCoordinates = [
                 { lat: lat1, lng: lng1 },
                 { lat: guessLat, lng: guessLng },
@@ -89,12 +121,12 @@ const SubmitWindow = ({
         };
     }, [lat1, lng1, guessLat, guessLng, midLat, midLng]);
 
-    // function onReset() {
-    //     setScore(0);
-    //     setRounds(5);
-    //     generateRandomPoint();
-    //     setTimeRemaining('120');
-    // }
+    function onReset() {
+        setScore(0);
+        setRounds(5);
+        generateRandomPoint();
+        setTimeRemaining('120');
+    }
 
     return (
         <div className="w-[100%] h-full absolute top-0 flex justify-center  items-center z-50">
@@ -114,6 +146,18 @@ const SubmitWindow = ({
                     </div>
                 </div>
             </div>
+            {
+                rounds === 0 ? (<FinalResult score={score} onReset={onReset} rounds={rounds} />) :
+                    (<div className='z-50'>
+                        <button className='shadow-lg' id="generateButton" onClick={generateRandomPoint}>Next</button>
+                        <div className='flex'>
+                            <button id="btn_reset" onClick={onReset}>Reset</button>
+                            <button className='absolute shadow-lg transition-all ease-in-out duration-300 bottom-[5rem] left-[27rem] rounded-full bg-red-500 px-10 py-3 hover:bg-red-700 hover:scale-105'
+                                onClick={() => window.location.href = "/mode"}>Back to menu</button>
+                        </div>
+                    </div>)
+
+            }
         </div>
     );
 };
