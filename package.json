@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mui/icons-material": "^5.15.5",
     "@react-three/drei": "^9.96.0",
     "@react-three/fiber": "^8.15.14",
     "@supabase/supabase-js": "^2.39.3",
