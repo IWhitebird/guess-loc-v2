@@ -58,13 +58,12 @@ const Dashboard = () => {
               <div className='cursor-pointer'>
                 {location2.pathname === "/spGame" ? <p onClick={() => setModal(true)}>Main Menu</p> : <p onClick={() => location('/mode')}>Main Menu</p>}
               </div>
-              <p className=''>Profile</p>
+              <p className='cursor-pointer' onClick={() => location('/profile')}>Profile</p>
               <p className=''>Settings</p>
               <hr className=' border-gray-200' />
               <p
                 className=' text-red-400 cursor-pointer'
-                onClick={handelLogout}
-              >
+                onClick={handelLogout}>
                 Logout
               </p>
             </div>
