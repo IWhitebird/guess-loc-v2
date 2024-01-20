@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import supabase from "../../supabase/init"
 import { createRoom } from "../../supabase/SupaScoket"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import logo from '../../assets/Untitled-1.png';
-import toast from "react-hot-toast";  
+import toast from "react-hot-toast";
 
 
 interface IRoom {
@@ -22,6 +22,7 @@ interface IJoinRoom {
 
 const CustomGame = () => {
 
+  const location = useNavigate()
   const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
   let channel: any;
 
@@ -77,7 +78,7 @@ const CustomGame = () => {
   async function joinRoomHandle() {
     const loader = toast.loading("Joining room...")
     try {
-      const findRoom : any = await supabase
+      const findRoom: any = await supabase
         .from('custom_room')
         .select()
         .eq('room_id', joinRoomDetails.room_id)
@@ -87,22 +88,24 @@ const CustomGame = () => {
         toast.error("Room doesnt exist")
         return;
       }
-      
-      const updateRoom = await supabase
-                    .from('custom_room')
-                    .update({ 'room_participants': [...findRoom.data[0].room_participants , userId] } )
-                    .eq('room_id', joinRoomDetails.room_id)
-                    .eq('room_pw', joinRoomDetails.room_password)
-                    .select()
-      
+
+      const updateRoom: any = await supabase
+        .from('custom_room')
+        .update({ 'room_participants': [...findRoom.data[0].room_participants, userId] })
+        .eq('room_id', joinRoomDetails.room_id)
+        .eq('room_pw', joinRoomDetails.room_password)
+        .select()
+
       if (updateRoom.error) {
         toast.error("Error joining room")
         return;
       }
 
       toast.success("Room joined")
-      console.log("Join Room handle data " ,updateRoom)
+      // console.log(updateRoom.data[0]?.room_id)
+      // console.log("Join Room handle data ", updateRoom)
       localStorage.setItem('custom_game_details', updateRoom.data[0])
+      location(`/customroom/Room/${updateRoom.data[0]?.room_id}`)
     }
     catch (error) {
       console.log(error)
@@ -114,12 +117,20 @@ const CustomGame = () => {
   }
 
   async function createRoomHandle() {
+    if (roomDetails.name === "") {
+      toast.error("Room name is required")
+      return;
+    }
+    if (roomDetails.room_password === "") {
+      toast.error("Room password is required")
+      return;
+    }
     const loader = toast.loading("Creating room...")
     try {
       const { data, error } = await supabase
         .from('custom_room')
         .insert(
-          { 
+          {
             room_name: roomDetails.name,
             room_pw: roomDetails.room_password,
             room_owner: userId,
@@ -143,7 +154,7 @@ const CustomGame = () => {
       toast.success("Room created")
       console.log(data)
       localStorage.setItem('custom_game_details', data[0])
-    } 
+    }
     catch (error) {
       console.log(error)
     }
@@ -152,26 +163,24 @@ const CustomGame = () => {
       setCreateRoomModal(false)
     }
   }
-  
-  function changeCrateModel(e : any) {
+
+  function changeCrateModel(e: any) {
     e.preventDefault();
-    console.log(e)
-    setRoomDetails({ ...roomDetails , [e.target.name] : e.target.value})
+    setRoomDetails({ ...roomDetails, [e.target.name]: e.target.value })
   }
-  
-  function changeJoinModel(e : any) {
+
+  function changeJoinModel(e: any) {
     e.preventDefault();
-    console.log(e)
-    setJoinRoomDetails({ ...joinRoomDetails , [e.target.name] : e.target.value})
+    setJoinRoomDetails({ ...joinRoomDetails, [e.target.name]: e.target.value })
   }
-  
-  
+
+
   // console.log(roomDetails, "roomDetails")
   // console.log(channel, "channel")
   // console.log(roomId, "roomID")
   // console.log(msg, "meesage");
-  
-  
+
+
   return (
     <div className="bg-purple-950 w-full h-[100vh] ">
       {/* <div className="flex justify-start items-center px-24 h-[100vh] w-[100%] bg-gradient-to-r from-gray-950 to-transparent">
@@ -206,14 +215,14 @@ const CustomGame = () => {
       <div className="flex justify-start items-center px-24 h-[100vh] w-[100%] bg-gradient-to-r from-gray-950 to-transparent">
         <div className="flex items-center justify-between">
           <ul className="tracking-wider text-white uppercase ">
-            <li onClick={() => setCreateRoomModal(true)} className="mb-8 text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300">
+            <li onClick={() => setCreateRoomModal(true)} className="mb-8 text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-400">
               Create Room
             </li>
-            <li onClick={() => setJoinRoomModal(true)} className="mb-8 text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300">
+            <li onClick={() => setJoinRoomModal(true)} className="mb-8 text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-400">
               Join Room
             </li>
             <Link to="/mode">
-              <li className="text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300">
+              <li className="text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-400">
                 Go Back
               </li>
             </Link>
@@ -221,153 +230,115 @@ const CustomGame = () => {
         </div>
       </div>
 
-      {createRoomModal && (
+      {/* Create Modal */}
+      <div className={`absolute duration-200 top-0 left-0 ${createRoomModal ? 'opacity-100' : 'opacity-0 invisible'} z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-lg '}`}>
+        <div className={`relative w-[400px] border duration-300 text-white border-purple-900 rounded-lg flex flex-col p-10 ${createRoomModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
+          <div className="flex flex-col">
+            <label className="mx-auto w-full mb-1">Room Name</label>
+            <input
+              type="text"
+              placeholder="Enter room name"
+              value={roomDetails.name}
+              name="name"
+              onChange={changeCrateModel}
+              className="mx-auto w-full rounded-lg border border-purple-800 duration-300 bg-transparent p-2 mb-4 focus:outline-none focus:border-purple-400"
+            />
 
-        <div className={`absolute duration-300 top-0 left-0 z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-md '}`}>
-          <div className="w-[500px] h-[500px] relative bg-white rounded-lg flex flex-col p-5">
-            {/* Close button */}
-            <button
-              onClick={() => setCreateRoomModal(false)}
-              className="absolute top-4 right-4 p-2 text-gray-600 hover:text-gray-800 cursor-pointer"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="h-6 w-6"
+            <label className="mx-auto w-full  mb-1">Room Password</label>
+            <input
+              type="number"
+              placeholder="Enter round duration"
+              value={roomDetails.room_password}
+              name="room_password"
+              onChange={changeCrateModel}
+              className=" mx-auto rounded-lg border border-purple-800 bg-transparent duration-300 w-full p-2 mb-4 focus:outline-none focus:border-purple-400"
+            />
+
+            <label className="mx-auto w-full   mb-1">Number of Rounds</label>
+            <input
+              type="number"
+              placeholder="Enter number of rounds"
+              value={roomDetails.game_rounds}
+              name="game_rounds"
+              onChange={changeCrateModel}
+              className="mx-auto w-full rounded-lg border border-purple-800 bg-transparent duration-300 p-2 mb-4 focus:outline-none focus:border-purple-400"
+            />
+
+            <label className="mx-auto w-full  mb-1">Round Duration (in seconds)</label>
+            <input
+              type="number"
+              placeholder="Enter round duration"
+              value={roomDetails.round_duraion}
+              name="round_duraion"
+              onChange={changeCrateModel}
+              className=" mx-auto rounded-lg border border-purple-800 bg-transparent duration-300 w-full p-2 mb-4 focus:outline-none focus:border-purple-400"
+            />
+
+            <div className="flex justify-center flex-row-reverse gap-3 mt-5">
+              <button
+                onClick={createRoomHandle}
+                id='fn_button'
+                style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-
-            {/* Input boxes with labels */}
-            <div className="flex flex-col">
-              <label className="mx-auto w-[60%]  text-gray-600 mb-1">Room Name</label>
-              <input
-                type="text"
-                placeholder="Enter room name"
-                value={roomDetails.name}
-                name="name"
-                onChange={changeCrateModel}
-                className="mx-auto w-[60%] rounded-lg border border-black p-2 mb-4 focus:outline-none focus:ring focus:border-purple-300"
-              />
-
-              <label className="mx-auto w-[60%] text-gray-600 mb-1">Room Password</label>
-              <input
-                type="number"
-                placeholder="Enter round duration"
-                value={roomDetails.room_password}
-                name="room_password" 
-                onChange={changeCrateModel}
-                className=" mx-auto rounded-lg border border-black w-[60%] p-2 mb-4 focus:outline-none focus:ring focus:border-purple-300"
-              />
-
-              <label className="mx-auto w-[60%]  text-gray-600 mb-1">Number of Rounds</label>
-              <input
-                type="number"
-                placeholder="Enter number of rounds"
-                value={roomDetails.game_rounds}
-                name="game_rounds"
-                onChange={changeCrateModel}
-                className="mx-auto w-[60%] rounded-lg border border-black p-2 mb-4 focus:outline-none focus:ring focus:border-purple-300"
-              />
-
-              <label className="mx-auto w-[60%] text-gray-600 mb-1">Round Duration (in seconds)</label>
-              <input
-                type="number"
-                placeholder="Enter round duration"
-                value={roomDetails.round_duraion}
-                name="round_duraion" 
-                onChange={changeCrateModel}
-                className=" mx-auto rounded-lg border border-black w-[60%] p-2 mb-4 focus:outline-none focus:ring focus:border-purple-300"
-              />
-
-              <div className=" mx-auto flex justify-evenly mt-8 gap-6">
-                <button
-                  onClick={createRoomHandle}
-                  className="transition-all duration-200 ease-in-out border
-                  border-black text-black py-2 px-4 rounded w-[120px] hover:text-white
-                   hover:bg-black focus:outline-none focus:ring focus:border-purple-300"
-                >
-                  Create
-                </button>
-              </div>
-
+                Create<span id='fnButtonSpan'></span>
+              </button>
+              <button
+                onClick={() => setCreateRoomModal(false)}
+                id='fn_button'
+                style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
+              >
+                Close<span id='fnButtonSpan'></span>
+              </button>
             </div>
           </div>
         </div>
+      </div>
 
-      )}
-      {
-        joinRoomModal &&
-        <div className={`absolute duration-300 top-0 left-0 z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-md '}`}>
-          <div className="w-[500px] h-[300px] relative bg-white rounded-lg flex flex-col p-5">
-            {/* Close button */}
-            <button
-              onClick={() => setJoinRoomModal(false)}
-              className="absolute top-4 right-4 p-2 text-gray-600 hover:text-gray-800 cursor-pointer"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="h-6 w-6"
+      {/* Join Modal */}
+      <div className={`absolute duration-200 top-0 left-0 ${joinRoomModal ? 'opacity-100' : 'opacity-0 invisible'} z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-lg '}`}>
+        <div className={`relative w-[400px] duration-300 border text-white border-purple-900 rounded-lg flex flex-col p-10 ${joinRoomModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
+
+          <div className="flex flex-col">
+            <label className="mx-auto w-full   mb-1">Room Id</label>
+            <input
+              type="text"
+              placeholder="Enter room name"
+              value={joinRoomDetails.room_id}
+              name="room_id"
+              onChange={changeJoinModel}
+              className="mx-auto w-full rounded-lg border border-purple-800 duration-300 bg-transparent p-2 mb-4 focus:outline-none focus:border-purple-400"
+            />
+
+            <label className="mx-auto w-full   mb-1">Room Password</label>
+            <input
+              type="text"
+              placeholder="Enter number of rounds"
+              value={joinRoomDetails.room_password}
+              name="room_password"
+              onChange={changeJoinModel}
+              className="mx-auto w-full rounded-lg border border-purple-800 duration-300 bg-transparent p-2 mb-4 focus:outline-none focus:border-purple-400"
+            />
+
+            <div className="flex justify-center flex-row-reverse gap-3 mt-5">
+              <button
+                onClick={joinRoomHandle}
+                id='fn_button'
+                style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-
-            {/* Input boxes with labels */}
-            <div className="flex flex-col">
-              <label className="mx-auto w-[60%]  text-gray-600 mb-1">Room Id</label>
-              <input
-                type="text"
-                placeholder="Enter room name"
-                value={joinRoomDetails.room_id}
-                name="room_id"
-                onChange={changeJoinModel}
-                className="mx-auto w-[60%] rounded-lg border border-black p-2 mb-4 focus:outline-none focus:ring focus:border-purple-300"
-              />
-
-              <label className="mx-auto w-[60%]  text-gray-600 mb-1">Room Password</label>
-              <input
-                type="text"
-                placeholder="Enter number of rounds"
-                value={joinRoomDetails.room_password}
-                name="room_password"
-                onChange={changeJoinModel}
-                className="mx-auto w-[60%] rounded-lg border border-black p-2 mb-4 focus:outline-none focus:ring focus:border-purple-300"
-              />
-
-              <div className=" mx-auto flex justify-evenly mt-8 gap-6">
-                <button
-                  onClick={joinRoomHandle}
-                  className="transition-all duration-200 ease-in-out border
-                            border-black text-black py-2 px-4 rounded w-[120px] hover:text-white
-                              hover:bg-black focus:outline-none focus:ring focus:border-purple-300"
-                >
-                  Join
-                </button>
-              </div>
-
+                Join<span id='fnButtonSpan'></span>
+              </button>
+              <button
+                onClick={() => setJoinRoomModal(false)}
+                id='fn_button'
+                style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
+              >
+                Close<span id='fnButtonSpan'></span>
+              </button>
             </div>
+
           </div>
         </div>
-
-      }
-
+      </div>
 
     </div>
   )

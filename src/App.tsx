@@ -10,6 +10,7 @@ import Vnum from './components/vnum'
 import CustomGame from './pages/Menus/customGame'
 import Dashboard from './components/profileBar'
 import Room from './pages/Menus/room'
+import Profile from './pages/profile'
 import { useEffect } from 'react'
 
 const App = () => {
