@@ -23,7 +23,6 @@ function Auth() {
             location('/mode')
             setLoading(false)
         }else {
-            console.log("Here")
             setLoading(false)
         }
     }, [])

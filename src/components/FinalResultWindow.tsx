@@ -66,7 +66,7 @@ const FinalResult = ({ score, onReset, rounds }: FinalResultProps) => {
                         )
                     )}
                     <div className='absolute bottom-20 flex justify-center w-full z-40'>
-                        <button className='text-white text-xl duration-300 hover:bg-green-500 px-4 py-2 rounded-full border-2 border-green-500' onClick={onReset}>Head to menu</button>
+                        <button id='fn_button' onClick={onReset}>Head to menu<span id='fnButtonSpan'></span></button>
                     </div>
                 </div>
             </div>

@@ -61,7 +61,7 @@ const AudioPlayer = ({ visible, setVisible }: props) => {
           onChange={handleVolumeChange}
         />
         <span>{(volume * 100).toFixed(0)}%</span>
-        <button onClick={() => setVisible(!visible)} className="absolute px-4 py-2 border-2 rounded-full bottom-20 hover:border-gray-500 hover:text-gray-400 duration-200">
+        <button onClick={() => setVisible(false)} className="absolute px-4 py-2 border-2 rounded-full bottom-20 hover:border-gray-500 hover:text-gray-400 duration-200">
           Close
         </button>
       </div>
