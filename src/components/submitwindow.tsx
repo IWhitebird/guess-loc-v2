@@ -148,7 +148,7 @@ const SubmitWindow = ({
     }
 
     return (
-        <div className="w-full h-full overflow-hidden absolute top-0 flex justify-center items-center z-40">
+        <div className="w-full h-full overflow-hidden absolute top-0 flex justify-center items-center z-40 bg-[rgba(0,0,0,0.5)] backdrop-blur-sm">
             <div className={`absolute duration-300 ${location2.pathname === '/spGame' && modal ? 'opacity-100' : 'opacity-0 invisible'} z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-md '}`}>
                 <div className={`bg-[rgba(30,30,30,0.5)] text-2xl duration-300 text-white border border-gray-700 p-5 rounded-xl ${modal ? 'scale-100 opacity-100' : 'scale-50 opacity-0 invisible'}`}>
                     Are you sure you want to return to main menu?<br />
@@ -159,8 +159,8 @@ const SubmitWindow = ({
                     </div>
                 </div>
             </div>
-            <div className='h-[600px] z-40 w-full opacity-100' ref={submitMapContainerRef}>asdasda</div>
-            <div className='absolute top-0 flex justify-start w-full left-10 items-center h-full '>
+            <div className='h-[600px] z-40 w-full opacity-95' ref={submitMapContainerRef}>asdasda</div>
+            <div className='absolute top-50 z-40 flex justify-start left-10 items-center'>
                 <div className='bg-[rgba(0,0,0,0.5)] backdrop-blur-2xl shadow-2xl rounded-xl flex items-center flex-col p-5'>
                     <div className=' text-white text-3xl'>
                         <div>

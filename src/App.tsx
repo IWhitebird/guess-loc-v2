@@ -13,9 +13,9 @@ import Room from './pages/Menus/room'
 import { useEffect } from 'react'
 
 const App = () => {
-  const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}')
+  const loggedIN = localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token')
   const sendDashboard = () => {
-    if (loggedIN.access_token !== null || loggedIN.access_token !== undefined) {
+    if (loggedIN !== null && (JSON.parse(loggedIN).access_token !== undefined || JSON.parse(loggedIN).access_token !== null)) {
       return <Dashboard />
     }
   }
@@ -41,6 +41,8 @@ const App = () => {
         <Route path="/customroom/Room/:id" element={<Room />} />
         {/* <Route path="/mpGame" element={<MultiPlayer />} /> */}
 
+        <Route path="/spGame" element={<OnePlayer />} />
+        <Route path="/profile" element={<Profile/>} />
         <Route path="*" element={<Landing />} />
       </Routes>
     </>

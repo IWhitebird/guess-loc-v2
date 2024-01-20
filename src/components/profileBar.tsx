@@ -23,8 +23,6 @@ const Dashboard = () => {
     location('/')
   }
 
-  console.log(location2.pathname)
-
   const style = 'flex gap-3 relative bg-[rgba(168,85,247,0.3)] hover:bg-[rgba(168,85,247,0.4)] duration-300 border-2 border-purple-500 text-white p-1 px-2 rounded-2xl z-50'
 
   return (
@@ -57,15 +55,14 @@ const Dashboard = () => {
      absolute p-2 right-0 w-full rounded-lg shadow-lg text-white`} >
             <div className='flex flex-col gap-3 p-2 text-xl'>
               <div className='cursor-pointer'>
-                {location2.pathname === "/spGame" ? <p onClick={() => setModal(true)}>Select Mode</p> : <p className='text-gray-400 cursor-not-allowed'>Select Mode</p>}
+                {location2.pathname === "/spGame" ? <p onClick={() => setModal(true)}>Main Menu</p> : <p onClick={() => location('/mode')}>Main Menu</p>}
               </div>
-              <p className=''>Profile</p>
+              <p className='cursor-pointer' onClick={() => location('/profile')}>Profile</p>
               <p className=''>Settings</p>
               <hr className=' border-gray-200' />
               <p
                 className=' text-red-400 cursor-pointer'
-                onClick={handelLogout}
-              >
+                onClick={handelLogout}>
                 Logout
               </p>
             </div>

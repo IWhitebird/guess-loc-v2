@@ -2,103 +2,165 @@
     display: none;
 }
 */
-  
-  .App {
-    text-align: center;
-  }
-  
+@import url('https://fonts.googleapis.com/css?family=Open%20Sans:800');
+
+:root {
+  --font: 2rem;
+}
+
+* {
+  font-family: 'Open Sans';
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    height: 40vmin;
-    pointer-events: none;
+    animation: App-logo-spin infinite 20s linear;
   }
-  
-  @media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-      animation: App-logo-spin infinite 20s linear;
-    }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
   }
-  
-  .App-header {
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+
+  to {
+    transform: rotate(360deg);
   }
-  
-  .App-link {
-    color: #61dafb;
+}
+
+#fn_button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border: 1px white solid;
+  font-size: var(--font);
+  border-radius: calc(var(--font) * 0.6);
+  padding: 1.2rem 1.5rem;
+  margin: 0;
+  line-height: 1;
+  position: relative;
+
+  background-color: transparent;
+  color: white;
+  box-shadow: inset 0 0 0 0 rgb(248, 249, 255, 0.5), inset 0 0 0 0 rgb(248, 249, 255, 0.3), 0 0 0 rgb(248, 249, 255, 0.2);
+  transition: all ease 0.2s;
+}
+
+#fn_button:hover {
+  box-shadow: inset 0 0 0 calc(var(--font) * 0.2) rgb(248, 249, 255, 0.5), inset 0 0 calc(var(--font) * 0.2) calc(var(--font) * 0.5) rgb(248, 249, 255, 0.3), 0 0 calc(var(--font) * 0.2) rgb(248, 249, 255, 0.2);
+}
+
+#fn_button::before {
+  content: '';
+  height: 110%;
+  width: 105%;
+  position: absolute;
+  border-radius: calc(var(--font) * 0.8);
+  background-color: transparent;
+}
+
+@keyframes borders {
+
+  0%,
+  100% {
+    border-width: calc(var(--font) * 0.2) calc(var(--font) * 0.1) calc(var(--font) * 0.02) calc(var(--font) * 0.02);
   }
-  
-  @keyframes App-logo-spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+
+  25% {
+    border-width: calc(var(--font) * 0.1) calc(var(--font) * 0.02) calc(var(--font) * 0.02) calc(var(--font) * 0.2);
   }
-  
-  .loader-black-app{
-    position: absolute;
-    z-index: 100;
-    width: 100%;
-    height: 100%;
-    background: #000000;  
+
+  50% {
+    border-width: calc(var(--font) * 0.02) calc(var(--font) * 0.02) calc(var(--font) * 0.2) calc(var(--font) * 0.1);
   }
-  
-  .loader-main-main{
-    position: absolute;
-    z-index: 100;
-    width: 100%;
-    height: 100%;
-    background: #000000ce;
+
+  75% {
+    border-width: calc(var(--font) * 0.02) calc(var(--font) * 0.2) calc(var(--font) * 0.1) calc(var(--font) * 0.02);
   }
-  
-  .loader-main{
-    position: absolute;
-    z-index: 2000;
-    left: 49%;
-    top: 49%;
+}
+
+
+#fn_button:hover::before {
+  border: solid rgb(210, 255, 227, 0.8);
+  padding: calc(var(--font) * 0.08);
+  box-shadow: inset 0 0 calc(var(--font) * 0.2) calc(var(--font) * 0.2) rgb(186, 201, 255, 0.3);
+  filter: blur(calc(var(--font) * 0.06));
+  animation: borders infinite 2s linear;
+  opacity: 0.5;
+}
+
+#fnButtonSpan {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  overflow: hidden;
+  display: flex;
+  border-radius: calc(var(--font) * 0.6);
+  z-index: -1;
+}
+
+#fnButtonSpan::after {
+  content: '';
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background: linear-gradient(90deg, rgb(248, 249, 255, 0), rgb(206, 216, 255, 0.6), rgb(248, 249, 255, 0));
+  opacity: 0;
+  transform: translateX(-100%);
+
+}
+
+#fn_button:hover>#fnButtonSpan::after {
+  opacity: 1;
+  transform: translateX(100%);
+  transition: all ease 1s;
+}
+
+#style-3::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 1000px rgb(31,6,52);
+  background-color: rgb(31,6,52);;
+}
+
+#style-3::-webkit-scrollbar {
+  width: 6px;
+  background-color: #F5F5F5;
+}
+
+#style-3::-webkit-scrollbar-thumb {
+  background-color: rgb(31,6,52);
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
   }
-  
-  .loader {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: inline-block;
-    border-top: 4px solid #FFF;
-    border-right: 4px solid transparent;
-    box-sizing: border-box;
-    animation: rotation 1s linear infinite;
-    z-index: 100;
+
+  100% {
+    transform: rotate(360deg);
   }
-  .loader::after {
-    content: '';  
-    box-sizing: border-box;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border-left: 4px solid #FF3D00;
-    border-bottom: 4px solid transparent;
-    animation: rotation 0.5s linear infinite reverse;
-  }
-  @keyframes rotation {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  } 
-  
-  
-  
-  
-  
+}

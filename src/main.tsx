@@ -6,7 +6,6 @@ import { BrowserRouter } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-      
       <Toaster/>
       <BrowserRouter>
       <App />
