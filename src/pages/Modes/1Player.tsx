@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import randomStreetView from "../../scripts/index";
 import SubmitWindow from "../../components/submitwindow";
 import Dashboard from "../../components/profileBar"
+import { ImSpinner2 } from 'react-icons/im'
 
 declare global {
     interface Window {
@@ -26,6 +27,7 @@ export default function OnePlayer() {
     let marker: any = null;
     const [guessLat, setGuessLat] = useState(0);
     const [guessLng, setGuessLng] = useState(0);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setPauseTimer(false);
@@ -172,6 +174,7 @@ export default function OnePlayer() {
     }
 
     async function generateRandomPoint() {
+        setLoading(true)
         try {
             const locations = await randomStreetView.getRandomLocations(1);
             setLat(locations[0][0]);
@@ -179,7 +182,9 @@ export default function OnePlayer() {
             setMiniWindow(false);
             setPauseTimer(false);
             setTimeRemaining('00:00');
+            setLoading(false)
         } catch (error) {
+            setLoading(false)
             console.error("Error while generating random point:", error);
         }
     }
@@ -221,13 +226,17 @@ export default function OnePlayer() {
 
     return (
         <div className="bg-black w-full h-screen">
-        
+            {
+                loading && <div className="flex bg-[rgba(0,0,0,0.5)] backdrop-blur-md absolute w-full top-0 bottom-0 z-50 justify-center items-center h-full">
+                    <ImSpinner2 className="animate-spin text-white text-6xl" />
+                </div>
+            }
             <div className="w-full h-screen" ref={streetViewContainerRef}></div>
             {miniWindow === true ? (<>
             </>) : (
                 <>
-                    <div className="absolute h-[200px] w-[300px] hover:w-[400px] hover:h-[300px] hover:opacity-100 border z-50 right-10 bottom-20  transition-all duration-200 ease-in-out opacity-50 cursor-crosshair" ref={mapContainerRef}></div>
-                    {rounds <= 0 ? <></> : <button className="absolute bottom-5 right-28 text-2xl hover:bg-green-700 text-white bg-green-500 px-5 py-2 rounded-2xl z-50" onClick={submitHandle}>
+                    <div className="absolute h-[200px] w-[300px] hover:w-[400px] hover:h-[300px] hover:opacity-100 border z-40 right-10 bottom-20  transition-all duration-200 ease-in-out opacity-50 cursor-crosshair" ref={mapContainerRef}></div>
+                    {rounds <= 0 ? <></> : <button className="absolute bottom-5 right-28 text-2xl hover:bg-green-700 text-white bg-green-500 px-5 py-2 rounded-2xl z-40" onClick={submitHandle}>
                         Guess
                     </button>
                     }

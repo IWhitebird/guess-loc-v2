@@ -159,7 +159,7 @@ const SubmitWindow = ({
                     </div>
                 </div>
             </div>
-            <div className='h-[600px] w-full opacity-100' ref={submitMapContainerRef}>asdasda</div>
+            <div className='h-[600px] z-40 w-full opacity-100' ref={submitMapContainerRef}>asdasda</div>
             <div className='absolute top-0 flex justify-start w-full left-10 items-center h-full '>
                 <div className='bg-[rgba(0,0,0,0.5)] backdrop-blur-2xl shadow-2xl rounded-xl flex items-center flex-col p-5'>
                     <div className=' text-white text-3xl'>
