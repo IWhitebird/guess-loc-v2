@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import logo from '../assets/Untitled-1.png';
 import Dashboard from '../components/profileBar.tsx';
 import data from '../assets/data.ts';
-import AudioPlayer from '../components/AudioPlayer'
+import AudioPlayer from '../components/AudioPlayer.tsx'
 import { Link, useNavigate } from 'react-router-dom';
 import { ImSpinner2 } from 'react-icons/im';
+import FriendsList from './FriendsList.tsx';
 
 
 
-function ModeSelect() {
+function MainMenu() {
     const location = useNavigate()
     const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
 
@@ -18,6 +19,7 @@ function ModeSelect() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [visible, setVisible] = useState(false);
+    const [friendModal, setFriendModal] = useState(false);
     const handlevolume = () => {
         setVisible(!visible);
     }
@@ -43,7 +45,7 @@ function ModeSelect() {
     }, [currentIndex]);
 
     return (
-        <div className="bg-purple-950 w-full h-[100vh]">
+        <div className="bg-purple-950 w-full h-[100vh] overflow-hidden">
 
             {loading ? (
                 <div className="flex items-center justify-center h-full">
@@ -68,10 +70,12 @@ function ModeSelect() {
                                         Multiplayer
                                     </li>
                                 </Link>
+                                <li className="text-5xl mb-8 italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300" onClick={() => setFriendModal(true)}>
+                                    Friends
+                                </li>
                                 <li className="text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300" onClick={handlevolume}>
                                     Settings
                                 </li>
-                                <AudioPlayer visible={visible} setVisible={setVisible} />
                             </ul>
                             <div className="w-[50%]">
                                 <div key={data[currentIndex].id} className="flex flex-col items-center justify-center p-2">
@@ -89,8 +93,10 @@ function ModeSelect() {
                     </div>
                 </>
             )}
+            <FriendsList visible={friendModal} setVisible={setFriendModal} />
+            <AudioPlayer visible={visible} setVisible={setVisible} />
         </div>
     );
 }
 
-export default ModeSelect;
+export default MainMenu;
