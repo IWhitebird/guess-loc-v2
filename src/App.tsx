@@ -9,6 +9,7 @@ import OnePlayer from './pages/Modes/1Player'
 import Vnum from './components/vnum'
 import CustomGame from './pages/Modes/customGame'
 import Dashboard from './components/profileBar'
+import Profile from './pages/profile'
 import { useEffect } from 'react'
 
 const App = () => {
@@ -37,6 +38,7 @@ const App = () => {
         <Route path="/verify" element={<Verify />} />
         {/* <Route path="/mpGame" element={<MultiPlayer />} /> */}
         <Route path="/spGame" element={<OnePlayer />} />
+        <Route path="/profile" element={<Profile/>} />
         <Route path="*" element={<Landing />} />
       </Routes>
     </>
