@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import logo from '../assets/Untitled-1.png';
-import Dashboard from '../components/profileBar.tsx';
-import data from '../assets/data.ts';
-import AudioPlayer from '../components/AudioPlayer'
+import logo from '../../assets/Untitled-1.png';
+import Dashboard from '../../components/profileBar.tsx';
+import data from '../../assets/data.ts';
+import AudioPlayer from '../../components/AudioPlayer.tsx'
 import { Link, useNavigate } from 'react-router-dom';
 import { ImSpinner2 } from 'react-icons/im';
 

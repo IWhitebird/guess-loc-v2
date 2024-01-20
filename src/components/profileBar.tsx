@@ -39,7 +39,6 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-
       <div className='absolute right-0 flex justify-end p-5 transition-all z-50 duration-300 ease-in-out'>
         <div className={style} onClick={dropdownHandle}>
           <img
