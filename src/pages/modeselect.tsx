@@ -18,7 +18,7 @@ function ModeSelect() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [visible, setVisible] = useState(false);
-    const handlevolume=()=>{
+    const handlevolume = () => {
         setVisible(!visible);
     }
 
@@ -53,7 +53,6 @@ function ModeSelect() {
                 <>
                     <div className="absolute flex justify-between w-full px-20 ">
                         <img className="invert w-[200px] h-[200px]" src={logo} alt="Logo" />
-                        <Dashboard />
                     </div>
 
                     <div className="flex justify-start items-center px-24 h-[100vh] w-[100%] bg-gradient-to-r from-gray-950 to-transparent">
@@ -72,7 +71,7 @@ function ModeSelect() {
                                 <li className="text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300" onClick={handlevolume}>
                                     Settings
                                 </li>
-                                <AudioPlayer visible={visible} setVisible={setVisible}/>
+                                <AudioPlayer visible={visible} setVisible={setVisible} />
                             </ul>
                             <div className="w-[50%]">
                                 <div key={data[currentIndex].id} className="flex flex-col items-center justify-center p-2">

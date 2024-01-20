@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import randomStreetView from "../../scripts/index";
 import SubmitWindow from "../../components/submitwindow";
+import Dashboard from "../../components/profileBar"
 
 declare global {
     interface Window {
@@ -12,7 +13,8 @@ declare global {
 export default function OnePlayer() {
     const [lat, setLat] = useState(0);
     const [lng, setLng] = useState(0);
-    const [points, setPoints] = useState(0);
+    const [totalPoints, setTotalPoints] = useState(0);
+    const [roundPoints, setRoundPoints] = useState(0);
     const [miniWindow, setMiniWindow] = useState(false);
     const [distance, setDistance] = useState(0);
     const [rounds, setRounds] = useState(5);
@@ -202,11 +204,12 @@ export default function OnePlayer() {
         try {
             const distance = CalcDistance(lat, guessLat, lng, guessLng);
             if (distance === 0) {
-                setPoints(0);
+                setRoundPoints(0);
             } else {
                 let newPoints = Math.max(0, 5000 - distance);
                 newPoints = Math.round(newPoints);
-                setPoints(newPoints);
+                setRoundPoints(newPoints);
+                setTotalPoints((prevTotalPoints) => prevTotalPoints + newPoints);
             }
             setRounds(rounds - 1);
             setMiniWindow(true);
@@ -218,47 +221,43 @@ export default function OnePlayer() {
 
     return (
         <div className="bg-black w-full h-screen">
+        
             <div className="w-full h-screen" ref={streetViewContainerRef}></div>
             {miniWindow === true ? (<>
             </>) : (
                 <>
-                    <div className="absolute h-[300px] w-[400px] hover:scale-125 hover:right-20 hover:bottom-52 z-50 right-10 bottom-36  transition-all duration-200 ease-in-out opacity-50 cursor-crosshair" ref={mapContainerRef}></div>
-                    {rounds <= 0 ? <></> : <button className="absolute bottom-20 right-20 text-2xl hover:bg-green-700 text-white bg-green-500 px-5 py-2 rounded-2xl z-50" onClick={submitHandle}>
+                    <div className="absolute h-[200px] w-[300px] hover:w-[400px] hover:h-[300px] hover:opacity-100 border z-50 right-10 bottom-20  transition-all duration-200 ease-in-out opacity-50 cursor-crosshair" ref={mapContainerRef}></div>
+                    {rounds <= 0 ? <></> : <button className="absolute bottom-5 right-28 text-2xl hover:bg-green-700 text-white bg-green-500 px-5 py-2 rounded-2xl z-50" onClick={submitHandle}>
                         Guess
                     </button>
                     }
                 </>
             )}
-            <div className=" text-white p-10 absolute top-0">
+            <div className=" text-white p-5 absolute top-0">
                 {rounds === 0 ? (
                     <>
                     </>
                 ) : (
                     <>
-                        <div className="flex justify-center items-start flex-col w-52">
-
-                            <div className="z-30 w-full text-2xl">
-                                <div className="absolute z-40 p-4">
-                                    Rounds:
-                                    <br />
-                                    {rounds} / 5
-                                </div>
-                                <div className="z-30  rounded-br-[2rem] rounded-lg opacity-50 bg-green-700 p-12 px-14 w-20 ">
-                                </div>
-                            </div>
-                            <div className="mt-4 text-2xl w-36">
-                                Score : {points}
+                        <div className="flex justify-center items-start flex-col">
+                            <div className="z-30 w-full text-2xl bg-purple-900 px-4 pr-5 py-2 opacity-90 rounded-br-[3rem] rounded-lg">
+                                <h3 className="flex flex-col text-center">Points: <span>{totalPoints}</span></h3>
+                                <h3 className="flex flex-col text-center">Round: <span>{rounds}/5</span></h3>
                             </div>
                         </div>
                     </>
                 )}
             </div>
-            <div className="absolute z-10 w-full top-10">
+            <div className="absolute z-10 w-full top-0">
                 <div className="flex justify-center items-center mt-5">
-                    <div className="rounded-full gap-10 text-xl text-white bg-purple-700 border border-purple-950 px-5 py-2">
+                    <div
+                        className={`rounded-full gap-10 text-xl text-white px-5 py-2 ${timeRemaining <= '00:10' ? 'bg-red-500 border border-red-500 animate-pulse' : 'bg-purple-900 border border-purple-500'
+                            }`}
+                    >
                         {timeRemaining}
                     </div>
                 </div>
+
             </div>
             {miniWindow && (
                 <SubmitWindow
@@ -267,13 +266,11 @@ export default function OnePlayer() {
                     distance={distance}
                     guessLat={guessLat}
                     guessLng={guessLng}
-                    score={points}
+                    points={roundPoints}
                     rounds={rounds}
-                    points={points}
-                    setScore={setPoints}
-                    setRounds={setRounds}
-                    setTimeRemaining={setTimeRemaining}
                     generateRandomPoint={generateRandomPoint}
+                    setRounds={setRounds}
+                    setPoints={setTotalPoints}
                 />
             )}
         </div>
