@@ -46,7 +46,7 @@ const Dashboard = ({ setFriendModal, visible }: Props) => {
           Are you sure you want to return to main menu?<br />
           Your progress will be lost.
           <div className='flex justify-end gap-3'>
-            <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => window.location.href = "/mode"}>Yes</button>
+            <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => location('/mode')}>Yes</button>
             <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => setModal(!modal)}>No</button>
           </div>
         </div>
