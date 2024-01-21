@@ -4,7 +4,12 @@ import { EmailLogout } from '../supabase/Auth';
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useLocation } from 'react-router-dom';
 
-const Dashboard = () => {
+interface Props {
+  setFriendModal: (visible: boolean) => void;
+  visible: boolean;
+}
+
+const Dashboard = ({ setFriendModal, visible }: Props) => {
   const location = useNavigate()
   const location2 = useLocation()
   const [dropdown, setDropdown] = useState(false);
@@ -13,14 +18,13 @@ const Dashboard = () => {
   const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
   const [profileURL] = useState<string>(loggedIN?.user?.user_metadata?.avatar_url ? loggedIN?.user?.user_metadata?.avatar_url : `https://api.dicebear.com/6.x/personas/svg?seed=${loggedIN?.user?.user_metadata?.full_name}`);
 
-
   const dropdownHandle = () => {
     setDropdown(!dropdown);
   }
 
   const handelLogout = async () => {
     const logout = await EmailLogout();
-    if(logout) {
+    if (logout) {
       localStorage.removeItem('sb-stglscmcmjtwkvviwzcc-auth-token');
       window.location.href = "/";
     }
@@ -30,7 +34,7 @@ const Dashboard = () => {
 
   return (
     <div className=''>
-      
+
       <div className={`absolute duration-300 ${location2.pathname === '/spGame' && modal ? 'opacity-100' : 'opacity-0 invisible'} z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-md '}`}>
         <div className={`bg-[rgba(30,30,30,0.5)] text-2xl duration-300 text-white border border-gray-700 p-5 rounded-xl ${modal ? 'scale-100 opacity-100' : 'scale-50 opacity-0 invisible'}`}>
           Are you sure you want to return to main menu?<br />
@@ -63,6 +67,7 @@ const Dashboard = () => {
                 {location2.pathname === "/spGame" ? <p onClick={() => setModal(true)}>Main Menu</p> : <p onClick={() => location('/mode')}>Main Menu</p>}
               </div>
               <p className='cursor-pointer' onClick={() => location('/profile')}>Profile</p>
+              <p className='cursor-pointer' onClick={() => setFriendModal(!visible)}>Friends</p>
               <p className=''>Settings</p>
               <hr className=' border-gray-200' />
               <p

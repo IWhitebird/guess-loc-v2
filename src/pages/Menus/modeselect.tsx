@@ -4,9 +4,12 @@ import data from '../../assets/data.ts';
 import AudioPlayer from '../../components/AudioPlayer.tsx'
 import { Link, useNavigate } from 'react-router-dom';
 import { ImSpinner2 } from 'react-icons/im';
-import FriendsList from '../../components/Friends/FriendsList.tsx'
 
-function MainMenu() {
+interface Props {
+    setFriendModal: (visible: boolean) => void;
+}
+
+function MainMenu({ setFriendModal }: Props) {
     const location = useNavigate()
     const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
 
@@ -16,7 +19,6 @@ function MainMenu() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [visible, setVisible] = useState(false);
-    const [friendModal, setFriendModal] = useState(false);
     const handlevolume = () => {
         setVisible(!visible);
     }
@@ -90,7 +92,6 @@ function MainMenu() {
                     </div>
                 </>
             )}
-            <FriendsList visible={friendModal} setVisible={setFriendModal} />
             <AudioPlayer visible={visible} setVisible={setVisible} />
         </div>
     );
