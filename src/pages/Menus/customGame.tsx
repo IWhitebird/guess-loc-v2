@@ -57,9 +57,14 @@ const CustomGame = () => {
         return;
       }
 
+
+
       const updateRoom: any = await supabase
         .from('custom_room')
-        .update({ 'room_participants': [...findRoom.data[0].room_participants, {
+        .update({ 'room_participants': 
+        findRoom.data[0].room_participants.filter((participant : any) => participant.room_user_id === user_id).length > 0 ?
+          findRoom.data[0].room_participants :
+        [...findRoom.data[0].room_participants, {
                     room_user_id: user_id,
                     room_user_name: user_name,
                     room_user_image: user_profile_pic
@@ -74,6 +79,23 @@ const CustomGame = () => {
         .eq('room_id', joinRoomDetails.room_id)
         .eq('room_pw', joinRoomDetails.room_password)
         .select()
+
+        let tempChanel = supabase.channel(`${joinRoomDetails.room_id}_chat`)
+        
+        tempChanel.subscribe((status) => {
+          if (status !== 'SUBSCRIBED') { return } 
+          tempChanel.send({
+              type: 'broadcast',
+              event: 'room_chatting',
+              payload : {
+                  chatter_id: user_id,
+                  chatter_name: user_name,
+                  chatter_image: user_profile_pic,
+                  chatter_message: `${user_name} has joined the room`,
+                  chatter_time: new Date().toLocaleTimeString()
+              }
+            })
+        })
 
       if (updateRoom.error) {
         toast.error("Error joining room")
