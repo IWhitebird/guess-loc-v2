@@ -33,7 +33,7 @@ export default function FriendsList({ visible, setVisible }: Props) {
 
     useEffect(() => {
         fetchFriends();
-        acceptFriendRequest('39f06137-1918-4034-8319-1b6d50688b32','96513eb2-1bda-4256-a0fe-02e8df76ca15')
+        // acceptFriendRequest('39f06137-1918-4034-8319-1b6d50688b32','96513eb2-1bda-4256-a0fe-02e8df76ca15')
     }, [])
 
     useEffect(() => {

@@ -240,4 +240,3 @@ export const removeFriend = async (id: any, friend_id: any) => {
 
     if (updateFriendError) throw updateFriendError;
 }
-
