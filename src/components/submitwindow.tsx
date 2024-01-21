@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import FinalResult from './FinalResultWindow';
 import supabase from '../supabase/init'
-import { useNavigate,useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { findUser, updateScore } from '../supabase/Routes';
 
 interface SubmitWindowProps {
     lat1: number;
@@ -124,18 +125,10 @@ const SubmitWindow = ({
     }, [lat1, lng1, guessLat, guessLng, midLat, midLng]);
 
     const storeScore = async () => {
-        const { data, error } = await supabase.from('users').select('user_maxscore').eq('id', loggedIN.user.id)
-        if (error) {
-            console.log(error)
-            return
-        }
+        const data = await findUser(loggedIN.user.id)
         if (data) {
-            if (points > data[0].user_maxscore) {
-                const { data, error } = await supabase.from('users').update({ user_maxscore: points }).eq('id', loggedIN.user.id)
-                if (error) {
-                    console.log(error)
-                    return
-                }
+            if (points > data.user_maxscore) {
+                const storeScore = await updateScore(loggedIN.user.id, points)
             }
         }
     }
@@ -146,6 +139,12 @@ const SubmitWindow = ({
         setRounds(5);
         navigate('/mode')
     }
+
+    useEffect(() => {
+        if (rounds === 0) {
+            storeScore()
+        }
+    }, [rounds])
 
     return (
         <div className="w-full h-full overflow-hidden absolute top-0 flex justify-center items-center z-40 bg-[rgba(0,0,0,0.5)] backdrop-blur-sm">

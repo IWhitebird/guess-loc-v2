@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import supabase from '../supabase/init'
 import { ImSpinner2 } from 'react-icons/im'
+import { findUser } from '../supabase/Routes'
 
 const Profile = () => {
     const prof = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '')
@@ -9,15 +10,10 @@ const Profile = () => {
 
     const getScore = async () => {
         setLoading(true)
-        const { data, error } = await supabase.from('users').select().eq('id', prof.user.id)
-        if (error) {
-            setLoading(false)
-            console.log(error)
-            return error
-        }
+        const data = await findUser(prof.user.id)
         if (data) {
             setLoading(false)
-            setmaxScore(data[0].user_maxscore)
+            setmaxScore(data.user_maxscore)
         }
     }
 

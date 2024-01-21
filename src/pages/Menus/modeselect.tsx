@@ -4,7 +4,7 @@ import data from '../../assets/data.ts';
 import AudioPlayer from '../../components/AudioPlayer.tsx'
 import { Link, useNavigate } from 'react-router-dom';
 import { ImSpinner2 } from 'react-icons/im';
-import FriendsList from '../FriendsList.tsx'
+import FriendsList from '../../components/Friends/FriendsList.tsx'
 
 function MainMenu() {
     const location = useNavigate()
