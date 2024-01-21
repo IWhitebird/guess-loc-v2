@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { IoSearchOutline } from "react-icons/io5";
 import { FaChevronCircleRight } from "react-icons/fa";
-import { searchFriends } from '../../supabase/Routes/FriendRoutes';
+import { searchFriends,sendFriendRequest} from '../../supabase/Routes/FriendRoutes';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store/store';
 
 interface FriendSearchProps {
     visible: boolean
@@ -11,8 +13,15 @@ interface FriendSearchProps {
 function FriendSearch({ visible, setVisible }: FriendSearchProps) {
     const[friends, setFriends] = useState<any[]>([]);
     const [search, setSearch] = useState('')
+    const { user_id } = useSelector((state: RootState) => state.user)
     async function handlesearch () {
         const data = await searchFriends(search);
+        setFriends(data);
+        console.log('data',data);
+    }
+
+    const sendfr=async (id:any)=>{
+        const data = await sendFriendRequest(user_id,id);
         console.log('data',data);
     }
     
@@ -33,93 +42,22 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
                         ><p><FaChevronCircleRight/></p><span id='fnButtonSpan'></span></button>
                 </div>
                 <ul className='flex flex-col h-screen gap-3 pb-24 mt-3 overflow-y-auto text-xl' id='style-3'>
-                    <li className='flex items-center gap-3'>
-                        <img src="https://i.pravatar.cc/150?img=3" alt="" className='w-[50px] h-[50px] rounded-full' />
+                    {friends.map((friend,index) => (
+                        <>
+                        <li className='flex items-center gap-3' key={index}>
+                        <img src={friend.user_pfp} alt="" className='w-[50px] h-[50px] rounded-full' />
                         <div className='flex flex-col'>
-                            <p className='text-lg font-semibold'>John Doe</p>
+                            <p className='text-lg font-semibold'>{friend.user_name}</p>
                             <p className='text-sm text-gray-400'>View Profile</p>
                         </div>
+                        <button onClick={sendfr(friend.id)}>
+                            Add
+                        </button>
                     </li>
                     <hr className='w-full border-white' />
-                    <li className='flex items-center gap-3'>
-                        <img src="https://i.pravatar.cc/150?img=3" alt="" className='w-[50px] h-[50px] rounded-full' />
-                        <div className='flex flex-col'>
-                            <p className='text-lg font-semibold'>John Doe</p>
-                            <p className='text-sm text-gray-400'>View Profile</p>
-                        </div>
-                    </li>
-                    <hr className='w-full border-white' />
-                    <li className='flex items-center gap-3'>
-                        <img src="https://i.pravatar.cc/150?img=3" alt="" className='w-[50px] h-[50px] rounded-full' />
-                        <div className='flex flex-col'>
-                            <p className='text-lg font-semibold'>John Doe</p>
-                            <p className='text-sm text-gray-400'>View Profile</p>
-                        </div>
-                    </li>
-                    <hr className='w-full border-white' />
-                    <li className='flex items-center gap-3'>
-                        <img src="https://i.pravatar.cc/150?img=3" alt="" className='w-[50px] h-[50px] rounded-full' />
-                        <div className='flex flex-col'>
-                            <p className='text-lg font-semibold'>John Doe</p>
-                            <p className='text-sm text-gray-400'>View Profile</p>
-                        </div>
-                    </li>
-                    <hr className='w-full border-white' />
-                    <li className='flex items-center gap-3'>
-                        <img src="https://i.pravatar.cc/150?img=3" alt="" className='w-[50px] h-[50px] rounded-full' />
-                        <div className='flex flex-col'>
-                            <p className='text-lg font-semibold'>John Doe</p>
-                            <p className='text-sm text-gray-400'>View Profile</p>
-                        </div>
-                    </li>
-                    <hr className='w-full border-white' />
-                    <li className='flex items-center gap-3'>
-                        <img src="https://i.pravatar.cc/150?img=3" alt="" className='w-[50px] h-[50px] rounded-full' />
-                        <div className='flex flex-col'>
-                            <p className='text-lg font-semibold'>John Doe</p>
-                            <p className='text-sm text-gray-400'>View Profile</p>
-                        </div>
-                    </li>
-                    <hr className='w-full border-white' /> <li className='flex items-center gap-3'>
-                        <img src="https://i.pravatar.cc/150?img=3" alt="" className='w-[50px] h-[50px] rounded-full' />
-                        <div className='flex flex-col'>
-                            <p className='text-lg font-semibold'>John Doe</p>
-                            <p className='text-sm text-gray-400'>View Profile</p>
-                        </div>
-                    </li>
-                    <hr className='w-full border-white' />
-                    <li className='flex items-center gap-3'>
-                        <img src="https://i.pravatar.cc/150?img=3" alt="" className='w-[50px] h-[50px] rounded-full' />
-                        <div className='flex flex-col'>
-                            <p className='text-lg font-semibold'>John Doe</p>
-                            <p className='text-sm text-gray-400'>View Profile</p>
-                        </div>
-                    </li>
-                    <hr className='w-full border-white' />
-                    <li className='flex items-center gap-3'>
-                        <img src="https://i.pravatar.cc/150?img=3" alt="" className='w-[50px] h-[50px] rounded-full' />
-                        <div className='flex flex-col'>
-                            <p className='text-lg font-semibold'>John Doe</p>
-                            <p className='text-sm text-gray-400'>View Profile</p>
-                        </div>
-                    </li>
-                    <hr className='w-full border-white' />
-                    <li className='flex items-center gap-3'>
-                        <img src="https://i.pravatar.cc/150?img=3" alt="" className='w-[50px] h-[50px] rounded-full' />
-                        <div className='flex flex-col'>
-                            <p className='text-lg font-semibold'>John Doe</p>
-                            <p className='text-sm text-gray-400'>View Profile</p>
-                        </div>
-                    </li>
-                    <hr className='w-full border-white' />
-                    <li className='flex items-center gap-3'>
-                        <img src="https://i.pravatar.cc/150?img=3" alt="" className='w-[50px] h-[50px] rounded-full' />
-                        <div className='flex flex-col'>
-                            <p className='text-lg font-semibold'>Johnoikadiosahud</p>
-                            <p className='text-sm text-gray-400'>View Profile</p>
-                        </div>
-                    </li>
-                    <hr className='w-full border-white' />
+                    </> 
+                    ))}
+                    
                 </ul>
             </div>
         </div>
