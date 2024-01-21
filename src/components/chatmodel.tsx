@@ -10,45 +10,51 @@ const ChatModel: React.FC = () => {
     const roomDetails = useSelector((state: RootState) => state.room)
     const containerRef = useRef<HTMLDivElement>(null);
     const [newMessage, setNewMessage] = useState<string>('');
+    const channel = supabase.channel(`${roomDetails.room_id}_chat`)
+    const [curChat , setCurChat] = useState<any[]>(roomDetails.room_chat)
 
 
-    async function SendMessage() {
-        // const channel = supabase.channel(`${roomDetails.room_id}`);
-        // channel.send({
-        //   type: 'broadcast',
-        //   event: 'player-chat',
-        //   payload: { 
-        //     chatter_id: user_id,
-        //     chatter_name: user_name,
-        //     chatter_image: user_profile_pic,
-        //     chatter_message: newMessage,
-        //     chatter_time: new Date().toLocaleTimeString()
-        //    },
-        // });
+    async function SendMessage(myMsg : string) {
+        setNewMessage('')
+      
         if (!newMessage.trim()) {
             return;
         }
 
-        const d = await supabase.from('custom_room').update({
+        setCurChat([...curChat, {
+            chatter_id: user_id,
+            chatter_name: user_name,
+            chatter_image: user_profile_pic,
+            chatter_message: myMsg,
+            chatter_time: new Date().toLocaleTimeString()
+        }])
+        
+        channel.subscribe((status) => {
+            if (status !== 'SUBSCRIBED') { return } 
+            channel.send({
+                type: 'broadcast',
+                event: 'room_chatting',
+                payload : {
+                    chatter_id: user_id,
+                    chatter_name: user_name,
+                    chatter_image: user_profile_pic,
+                    chatter_message: myMsg,
+                    chatter_time: new Date().toLocaleTimeString()
+                }
+              })
+          })
+
+        await supabase.from('custom_room').update({
             room_chat: [...roomDetails.room_chat, {
                 chatter_id: user_id,
                 chatter_name: user_name,
                 chatter_image: user_profile_pic,
-                chatter_message: newMessage,
+                chatter_message: myMsg,
                 chatter_time: new Date().toLocaleTimeString()
             }]
-        }).match({ room_id: roomDetails.room_id }).select()
-        if (d) {
-            setNewMessage('')
-            scrollToBottom();
-        }
-        console.log(d)
-    }
+        }).match({ room_id: roomDetails.room_id })
 
-    const handleEnterPress = (e: any) => {
-        if (e.key === 'Enter') {
-            SendMessage()
-        }
+        scrollToBottom();
     }
 
     const scrollToBottom = () => {
@@ -57,21 +63,28 @@ const ChatModel: React.FC = () => {
         }
     };
 
+
+    channel.on(
+        'broadcast',
+        { event: 'room_chatting' },
+        ({payload}) => {
+            console.log("paylod" , payload)
+            setCurChat([...curChat, payload])
+        }
+    )
+
     useEffect(() => {
         scrollToBottom()
-        document.addEventListener('keydown', handleEnterPress)
-        return () => {
-            document.removeEventListener('keydown', handleEnterPress)
-        }
-    }, [newMessage, roomDetails.room_chat]);
+    }, [curChat]);
 
     console.log("ROOM DETAILS", roomDetails)
+    console.log("Broad" , curChat)
 
     return (
         <div className='w-full h-full border bg-[#ffffff2c] border-black backdrop-blur-md rounded-xl flex justify-start flex-col '>
             <div className="flex flex-col items-start h-full gap-5 overflow-y-auto " id="style-3"  ref={containerRef}>
 
-                {roomDetails.room_chat.map((chat, index) => (
+                {curChat.map((chat, index) => (
                     <div
                         key={index}
                         className={`flex items-start gap-5 m-3  ${chat.chatter_id === user_id ? 'self-end' : 'self-start'
@@ -96,7 +109,7 @@ const ChatModel: React.FC = () => {
                             <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">
                                 {chat.chatter_message}
                             </p>
-                            <span className="text-sm flex w-full justify-end font-normal text-gray-500 dark:text-gray-400">
+                            <span className="flex justify-end w-full text-sm font-normal text-gray-500 dark:text-gray-400">
                                     {chat.chatter_time.split(':')[0] + ':' + chat.chatter_time.split(':')[2]}
                                 </span>
                         </div>
@@ -113,8 +126,8 @@ const ChatModel: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-center p-4 border-t border-purple-700">
-                <textarea
-                    className="w-full p-2 overflow-hidden mr-5 duration-300 bg-transparent border border-purple-800 rounded-lg resize-y focus:outline-none focus:border-purple-400"
+                <input
+                    className="w-full p-2 mr-5 overflow-hidden duration-300 bg-transparent border border-purple-800 rounded-lg resize-y focus:outline-none focus:border-purple-400"
                     placeholder="Type your message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
@@ -123,7 +136,12 @@ const ChatModel: React.FC = () => {
                 <button
                     id='fn_button'
                     style={{ fontSize: '1.2rem', padding: '1rem 1rem 1rem 1.5rem' }}
-                    onClick={() => SendMessage()}
+                    onClick={() =>{ SendMessage(newMessage) }}
+                    onKeyDown={(e) => {
+                        if(e.key === 'Enter'){
+                            SendMessage(newMessage)
+                        }
+                    }}
                 >
                     Send <IoSend className='ml-3' />
                     <span id='fnButtonSpan'></span>

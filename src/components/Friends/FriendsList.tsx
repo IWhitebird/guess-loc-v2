@@ -6,6 +6,9 @@ import { getFriends,acceptFriendRequest,sendFriendRequest } from '../../supabase
 import { useLocation } from 'react-router-dom';
 import Loader from '../Loader';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store/store';
+
 interface Props {
     visible: boolean;
     setVisible: (visible: boolean) => void;
@@ -13,7 +16,9 @@ interface Props {
 
 export default function FriendsList({ visible, setVisible }: Props) {
     const location = useLocation();
-    const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
+
+    const { user_id } = useSelector((state: RootState) => state.user)
+    
     const [searchModal, setSearchModal] = useState<boolean>(false);
     const [menu, setMenu] = useState({ visible: false, id: '' });
     const [friends, setFriends] = useState<any[]>([]);
@@ -26,16 +31,16 @@ export default function FriendsList({ visible, setVisible }: Props) {
 
     const fetchFriends = async () => {
         setLoading(true);
-        const data = await getFriends(loggedIN.user.id);
+        const data = await getFriends(user_id);
         setFriends(data);
         setLoading(false);
     }
 
     useEffect(() => {
         fetchFriends();
-        // acceptFriendRequest('39f06137-1918-4034-8319-1b6d50688b32','96513eb2-1bda-4256-a0fe-02e8df76ca15')
     }, [])
-
+    
+   
     useEffect(() => {
         addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -62,15 +67,15 @@ export default function FriendsList({ visible, setVisible }: Props) {
                     </div>
                 </div>
 
-                <div className='flex flex-col p-6 pr-0 pb-0 h-full overflow-y-auto pt-24 w-full'>
+                <div className='flex flex-col w-full h-full p-6 pt-24 pb-0 pr-0 overflow-y-auto'>
                     {loading && <Loader />}
                     {friends.length > 0 ? friends.map((friend, index) => (
                         <ul className='flex flex-col gap-5 pb-5' id='style-3' key={index}>
-                            <li className='flex justify-between w-full items-center'>
-                                <div className='flex items-center relative gap-3'>
+                            <li className='flex items-center justify-between w-full'>
+                                <div className='relative flex items-center gap-3'>
                                     <img className='rounded-full' src={friend?.user_pfp ? friend?.user_pfp : `https://api.dicebear.com/6.x/personas/svg?seed=${friend.user_name}`} alt='avatar' width='60' height='60' />
-                                    <div className='bg-green-500 rounded-full w-5 h-5 absolute bottom-0 left-5 border-white border'></div> {/* online change left to left-10 */}
-                                    <div className='bg-gray-700 rounded-full w-5 h-5 absolute bottom-0 left-10 border-white border'></div> {/* offline indicator */}
+                                    <div className='absolute bottom-0 w-5 h-5 bg-green-500 border border-white rounded-full left-5'></div> {/* online change left to left-10 */}
+                                    <div className='absolute bottom-0 w-5 h-5 bg-gray-700 border border-white rounded-full left-10'></div> {/* offline indicator */}
                                     <div className='flex flex-col'>
                                         <p>{friend.user_name}</p>
                                         <p className='text-base text-gray-400'>Playing/Online/Offline</p>
@@ -94,9 +99,9 @@ export default function FriendsList({ visible, setVisible }: Props) {
                                 </div>
 
                             </li>
-                            <hr className='border mr-5' />
+                            <hr className='mr-5 border' />
                         </ul>
-                    )) : <p className='flex h-full w-full justify-center items-center text-gray-400'>{loading ? '' : 'No friends found'}</p>}
+                    )) : <p className='flex items-center justify-center w-full h-full text-gray-400'>{loading ? '' : 'No friends found'}</p>}
                 </div>
             </div>
         </>
