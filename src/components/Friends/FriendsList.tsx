@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import FriendSearch from './FriendSearch';
 import { IoSearchOutline } from "react-icons/io5";
-import { FaChevronCircleRight, FaChevronCircleDown, FaChevronCircleUp } from "react-icons/fa";
-import { getFriends } from '../../supabase/Routes';
+import { FaChevronCircleRight, FaChevronCircleDown } from "react-icons/fa";
+import { getFriends,acceptFriendRequest,sendFriendRequest } from '../../supabase/Routes/FriendRoutes'
 import { useLocation } from 'react-router-dom';
+import Loader from '../Loader';
 
 interface Props {
     visible: boolean;
@@ -16,6 +17,7 @@ export default function FriendsList({ visible, setVisible }: Props) {
     const [searchModal, setSearchModal] = useState<boolean>(false);
     const [menu, setMenu] = useState({ visible: false, id: '' });
     const [friends, setFriends] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const hanldeCloseModalBoth = () => {
         setVisible(false);
@@ -23,12 +25,15 @@ export default function FriendsList({ visible, setVisible }: Props) {
     }
 
     const fetchFriends = async () => {
+        setLoading(true);
         const data = await getFriends(loggedIN.user.id);
         setFriends(data);
+        setLoading(false);
     }
 
     useEffect(() => {
         fetchFriends();
+        acceptFriendRequest('39f06137-1918-4034-8319-1b6d50688b32','96513eb2-1bda-4256-a0fe-02e8df76ca15')
     }, [])
 
     useEffect(() => {
@@ -58,7 +63,8 @@ export default function FriendsList({ visible, setVisible }: Props) {
                 </div>
 
                 <div className='flex flex-col p-6 pr-0 pb-0 h-full overflow-y-auto pt-24 w-full'>
-                    {friends.map((friend, index) => (
+                    {loading && <Loader />}
+                    {friends.length > 0 ? friends.map((friend, index) => (
                         <ul className='flex flex-col gap-5 pb-5' id='style-3' key={index}>
                             <li className='flex justify-between w-full items-center'>
                                 <div className='flex items-center relative gap-3'>
@@ -90,7 +96,7 @@ export default function FriendsList({ visible, setVisible }: Props) {
                             </li>
                             <hr className='border mr-5' />
                         </ul>
-                    ))}
+                    )) : <p className='flex h-full w-full justify-center items-center text-gray-400'>{loading ? '' : 'No friends found'}</p>}
                 </div>
             </div>
         </>

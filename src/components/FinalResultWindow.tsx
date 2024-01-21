@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ImSpinner2 } from 'react-icons/im'
-import { findUser } from '../supabase/Routes'
+import { findUser } from '../supabase/Routes/MainRoutes'
 
 interface FinalResultProps {
     score: number;
