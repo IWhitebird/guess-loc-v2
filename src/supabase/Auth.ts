@@ -42,6 +42,8 @@ export async function EmailLogout() {
         if (error) {
             console.error(error);
             throw error;
+        }else{
+            return true;
         }
     } catch (error) {
         console.error(error);

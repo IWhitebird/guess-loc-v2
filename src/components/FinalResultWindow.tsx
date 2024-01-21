@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ImSpinner2 } from 'react-icons/im'
-import supabase from '../supabase/init'
+import { findUser } from '../supabase/Routes'
 
 interface FinalResultProps {
     score: number;
@@ -15,14 +15,10 @@ const FinalResult = ({ score, onReset, rounds }: FinalResultProps) => {
     const [maxScore, setmaxScore] = useState(0)
 
     const getScore = async () => {
-        const { data, error } = await supabase.from('users').select('user_maxscore').eq('id', loggedIN.user.id)
-        if (error) {
-            console.log(error)
-            return
-        }
+        const data = await findUser(loggedIN.user.id)
         if (data) {
-            if (score > data[0].user_maxscore) {
-                setmaxScore(data[0].user_maxscore)
+            if (score > data.user_maxscore) {
+                setmaxScore(data.user_maxscore)
                 setNewScore(true)
             }
         }
@@ -73,6 +69,5 @@ const FinalResult = ({ score, onReset, rounds }: FinalResultProps) => {
         </>
     )
 }
-
 
 export default FinalResult

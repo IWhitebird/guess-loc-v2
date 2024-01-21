@@ -39,7 +39,7 @@ const ChatModel: React.FC<ChatModelProps> = ({ chatData }) => {
                             />
                         }
 
-                        <div className={`flex flex-col w-full max-w-[420px] p-2 border-gray-200 bg-gray-100 rounded-lg dark:bg-gray-700`}>
+                        <div className={`flex flex-col w-full h-full overflow-y-auto p-2 border-gray-200 bg-gray-100 rounded-lg dark:bg-gray-700`}>
                             <div className="flex items-center space-x-2 rtl:space-x-reverse">
                                 <span className="text-sm font-semibold text-gray-900 dark:text-white">
                                     {chat.chatter_name}
