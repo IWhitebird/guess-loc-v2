@@ -20,11 +20,15 @@ const ChatModel: React.FC = () => {
             return;
         }
 
-        const channel = supabase.channel(`${roomDetails.room_id}_chat`, {
-            config: {
-              broadcast: { self: true },
-            },
-          })
+        setCurChat([...curChat, {
+            chatter_id: user_id,
+            chatter_name: user_name,
+            chatter_image: user_profile_pic,
+            chatter_message: newMessage,
+            chatter_time: new Date().toLocaleTimeString()
+        }])
+
+        const channel = supabase.channel(`${roomDetails.room_id}_chat`)
         
         channel.subscribe((status) => {
             if (status !== 'SUBSCRIBED') { return } 
