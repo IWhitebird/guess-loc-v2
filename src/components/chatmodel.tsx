@@ -4,6 +4,7 @@ import supabase from '../supabase/init';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
 import { IoSend } from "react-icons/io5";
+import { configureStore } from '@reduxjs/toolkit'
 
 
 
