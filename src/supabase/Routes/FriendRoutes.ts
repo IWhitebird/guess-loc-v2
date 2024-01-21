@@ -244,3 +244,8 @@ export const removeFriend = async (id: any, friend_id: any) => {
     if (updateFriendError) throw updateFriendError;
 }
 
+export const searchFriends = async (search: string) => {
+    const { data, error } = await supabase.from('users').select().textSearch('name_email', `${search}`)
+    if (error) throw error
+    return data
+}

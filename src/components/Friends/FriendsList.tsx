@@ -38,16 +38,9 @@ export default function FriendsList({ visible, setVisible }: Props) {
 
     useEffect(() => {
         fetchFriends();
-        aa();
     }, [])
     
-    function aa() {
-        console.log(user_id)
-        acceptFriendRequest( user_id, '39f06137-1918-4034-8319-1b6d50688b32')
-    }
-
-    
-
+   
     useEffect(() => {
         addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
