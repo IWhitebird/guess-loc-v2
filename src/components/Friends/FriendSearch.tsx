@@ -20,7 +20,8 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
         setFriends(data);
     }
 
-    const SendFr = async (friend_id: string) => {
+    async function SendFr(friend_id: string) {
+        if (!friend_id || friend_id === undefined) return
         await sendFriendRequest(user_id, friend_id);
     }
 
@@ -50,7 +51,7 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
                                         <p className='text-sm text-gray-400'>View Profile</p>
                                     </div>
                                 </div>
-                                <button className='w-[20px] h-[20px]' id='fn_button' onClick={SendFr(friend.user_id)}
+                                <button className='w-[20px] h-[20px]' id='fn_button' onClick={() => SendFr(friend.id)}
                                     style={{ fontSize: '1.1rem', padding: '1.2rem 2.3rem' }}
                                 ><p>Add</p><span id='fnButtonSpan'></span></button>
                             </li>

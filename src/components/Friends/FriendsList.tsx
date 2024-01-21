@@ -90,7 +90,7 @@ export default function FriendsList({ visible, setVisible }: Props) {
             {/* Search modal for searching friends */}
             <FriendSearch visible={searchModal} setVisible={setSearchModal} />
 
-            <div className={`fixed duration-300 text-white shadow-3xl ease-in-out top-0 right-0 flex text-2xl h-screen w-[500px] z-50 items-center backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] ${visible ? 'opacity-100' : 'opacity-0 invisible right-[-500px]'}`}>
+            <div className={`fixed duration-300 text-white shadow-3xl ease-in-out top-0 right-0 flex text-xl h-screen w-[500px] z-50 items-center backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] ${visible ? 'opacity-100' : 'opacity-0 invisible right-[-500px]'}`}>
                 <div className='flex absolute px-7 pb-4 pt-5 justify-between items-center w-full top-0 z-50 bg-[rgba(176,80,255,0.1)] backdrop-blur-3xl '>
                     <p className='text-3xl'>Friend list</p>
                     <div className='flex items-center gap-3'>
@@ -116,7 +116,7 @@ export default function FriendsList({ visible, setVisible }: Props) {
                                     <div className='absolute bottom-0 w-5 h-5 bg-gray-700 border border-white rounded-full left-10'></div> {/* offline indicator */}
                                     <div className='flex flex-col'>
                                         <p>{friend.user_name}</p>
-                                        <p className='text-base text-gray-400'>Playing/Online/Offline</p>
+                                        <p className='text-sm text-gray-400'>Playing/Online/Offline</p>
                                     </div>
                                 </div>
 
