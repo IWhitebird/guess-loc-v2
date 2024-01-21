@@ -69,15 +69,16 @@ const ChatModel: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        supabase.channel(`${roomDetails.room_id}_chat`).on(
-            'broadcast',
-            { event: 'room_chatting' },
-            ({payload}) => {
-                setCurChat([...curChat, payload])
-            }
-        )
-    }, []);
+
+    channel.on(
+        'broadcast',
+        { event: 'room_chatting' },
+        ({payload}) => {
+            console.log("paylod" , payload)
+            setCurChat([...curChat, payload])
+        }
+    )
+
 
     useEffect(() => {
         scrollToBottom()
