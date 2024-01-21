@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { IoSend } from "react-icons/io5";
 
 interface Chat {
     chatter_id: string;
@@ -21,12 +22,12 @@ const ChatModel: React.FC<ChatModelProps> = ({ chatData }) => {
     }
 
     return (
-        <div className='w-full h-full border bg-[#ffffff2c] border-black backdrop-blur-md rounded-xl '>
-            <div className="flex flex-col items-start gap-5 h-full overflow-y-auto">
+        <div className='w-full h-full border bg-[#ffffff2c] border-black backdrop-blur-md rounded-xl flex justify-start flex-col '>
+            <div className="flex flex-col items-start h-full gap-5 overflow-y-auto " id="style-3">
                 {chatData.map((chat) => (
                     <div
                         key={chat.chatter_id}
-                        className={`flex items-start gap-5 m-5 ${chat.chatter_id === userId ? 'self-end' : 'self-start'
+                        className={`flex items-start gap-5 m-3  ${chat.chatter_id === userId ? 'self-end' : 'self-start'
                             }`}
                     >
                         {
@@ -60,32 +61,24 @@ const ChatModel: React.FC<ChatModelProps> = ({ chatData }) => {
                             />
                         }
                     </div>
-
                 ))}
-                <div className=' h-1 bg-black w-[90%] mx-auto'>
-
-                </div>
-                <div className="w-[90%] mx-auto p-6 flex flex-row">
-                    <input
-                        type="text"
-                        placeholder="Type your message..."
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        className="w-full p-2 border rounded-md border-gray-300"
-                    />
-
+            </div>
+            <div className="flex items-center justify-center p-4 border-t border-purple-700">
+                <textarea
+                    className="w-full p-2 overflow-hidden text-white duration-300 bg-transparent border border-purple-800 rounded-lg resize-y focus:outline-none focus:border-purple-400"
+                    placeholder="Type your message..."
+                    style={{resize:'none'}}
+                />
+                <div className='flex items-center gap-2 ml-4'>
                     <button
-                        className="w-[40px] p-2 mt-2 bg-white rounded-md text-black" // Changed text-white to text-black for better visibility
-                        onClick={() => { }}
+                        id='fn_button'
+                        style={{ fontSize: '1.2rem', padding: '1rem 1rem 1rem 2rem' }}
                     >
-                        Send
+                        Send<p className='ml-3 text-purple-700 '><IoSend /></p><span id='fnButtonSpan' ></span>
                     </button>
-
                 </div>
             </div>
         </div>
-
     );
 };
-
 export default ChatModel;

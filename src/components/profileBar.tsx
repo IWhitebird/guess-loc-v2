@@ -40,13 +40,13 @@ const Dashboard = ({ setFriendModal, visible }: Props) => {
           Are you sure you want to return to main menu?<br />
           Your progress will be lost.
           <div className='flex justify-end gap-3'>
-            <button className='bg-purple-900 hover:bg-purple-950 duration-300 text-white px-3 py-1 rounded-lg' onClick={() => window.location.href = "/mode"}>Yes</button>
-            <button className='bg-purple-900 hover:bg-purple-950 duration-300 text-white px-3 py-1 rounded-lg' onClick={() => setModal(!modal)}>No</button>
+            <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => window.location.href = "/mode"}>Yes</button>
+            <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => setModal(!modal)}>No</button>
           </div>
         </div>
       </div>
 
-      <div className='absolute right-0 flex justify-end p-5 transition-all z-50 duration-300 ease-in-out'>
+      <div className='absolute right-0 z-50 flex justify-end p-5 transition-all duration-300 ease-in-out'>
         <div className={style} onClick={dropdownHandle}>
           <img
             className='rounded-full'
@@ -69,9 +69,9 @@ const Dashboard = ({ setFriendModal, visible }: Props) => {
               <p className='cursor-pointer' onClick={() => location('/profile')}>Profile</p>
               <p className='cursor-pointer' onClick={() => setFriendModal(!visible)}>Friends</p>
               <p className=''>Settings</p>
-              <hr className=' border-gray-200' />
+              <hr className='border-gray-200 ' />
               <p
-                className=' text-red-400 cursor-pointer'
+                className='text-red-400 cursor-pointer '
                 onClick={handelLogout}>
                 Logout
               </p>
