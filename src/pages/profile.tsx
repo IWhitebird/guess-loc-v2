@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import supabase from '../supabase/init'
 import { ImSpinner2 } from 'react-icons/im'
-import { findUser } from '../supabase/Routes'
+import { findUser } from '../supabase/Routes/MainRoutes'
 
 const Profile = () => {
     const prof = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '')

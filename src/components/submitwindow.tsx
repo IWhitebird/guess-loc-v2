@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import FinalResult from './FinalResultWindow';
 import supabase from '../supabase/init'
 import { useNavigate, useLocation } from 'react-router-dom';
-import { findUser, updateScore } from '../supabase/Routes';
+import { findUser, updateScore } from '../supabase/Routes/MainRoutes';
 
 interface SubmitWindowProps {
     lat1: number;
