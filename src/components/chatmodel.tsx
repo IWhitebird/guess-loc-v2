@@ -110,7 +110,7 @@ const ChatModel: React.FC = () => {
                                 {chat.chatter_message}
                             </p>
                             <span className="flex justify-end w-full text-sm font-normal text-gray-500 dark:text-gray-400">
-                                    {chat.chatter_time.split(':')[0] + ':' + chat.chatter_time.split(':')[2]}
+                                    {chat.chatter_time.split(':')[0] + ':' + chat.chatter_time.split(':')[1]}
                                 </span>
                         </div>
                         {

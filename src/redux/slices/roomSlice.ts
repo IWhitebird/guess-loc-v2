@@ -25,8 +25,8 @@ interface RoomState {
     room_owner: string;
     room_name: string;
     room_settings: RoomSettings;
-    room_participants?: RoomUsers[];
-    room_chat?: RoomChat[];
+    room_participants: RoomUsers[];
+    room_chat: RoomChat[];
 }
 
 
@@ -61,24 +61,6 @@ if (localStorage.getItem('custom_room_details') === null) {
         }
     } else {
 
-        const participants : RoomUsers[] = []
-
-        for(let i = 0; i < data[0].room_participants.length; i++) {
-            
-            const usrData = await supabase.from('users').select().eq('id', data[0].room_participants[i].room_user_id) as any
-            
-            if(usrData.error) continue
-
-            participants.push({
-                room_user_id: usrData.data[0].id,
-                room_user_name: usrData.data[0].user_metadata.full_name,
-                room_user_image: usrData.data[0].user_metadata.avatar_url ? 
-                                    data[0].user_metadata.avatar_url : 
-                                    `https://api.dicebear.com/6.x/personas/svg?seed=${data[0].user_metadata.full_name}`
-            })
-        }
-
-
         var iState : RoomState= {
             room_id: data[0].room_id!,
             room_owner: data[0].room_owner!,
@@ -87,7 +69,7 @@ if (localStorage.getItem('custom_room_details') === null) {
                 game_rounds: data[0].room_settings.game_rounds,
                 round_duration: data[0].room_settings.round_duration
             },
-            room_participants: participants,
+            room_participants: data[0].room_participants,
             room_chat: data[0].room_chat
         }
     }

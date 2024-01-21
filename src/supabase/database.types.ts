@@ -15,7 +15,7 @@ export interface Database {
           room_id: string
           room_name: string | null
           room_owner: string
-          room_participants: string[] | null
+          room_participants: Json[] | null
           room_pw: string
           room_settings: Json | null
         }
@@ -24,7 +24,7 @@ export interface Database {
           room_id?: string
           room_name?: string | null
           room_owner: string
-          room_participants?: string[] | null
+          room_participants?: Json[] | null
           room_pw: string
           room_settings?: Json | null
         }
@@ -33,7 +33,7 @@ export interface Database {
           room_id?: string
           room_name?: string | null
           room_owner?: string
-          room_participants?: string[] | null
+          room_participants?: Json[] | null
           room_pw?: string
           room_settings?: Json | null
         }
