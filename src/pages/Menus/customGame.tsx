@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react"
 import supabase from "../../supabase/init"
-import { createRoom } from "../../supabase/SupaScoket"
 import { Link, useNavigate } from "react-router-dom"
 import logo from '../../assets/Untitled-1.png';
 import toast from "react-hot-toast";
+import { RootState } from "../../redux/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { setRoom } from "../../redux/slices/roomSlice";
 
 
 interface IRoom {
@@ -23,8 +25,10 @@ interface IJoinRoom {
 const CustomGame = () => {
 
   const location = useNavigate()
-  const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
-  let channel: any;
+  const dispatch = useDispatch()
+
+  const { user_id , user_name , user_profile_pic  } = useSelector((state: RootState) => state.user)
+  console.log(user_id , user_name , user_profile_pic)
 
   const [createRoomModal, setCreateRoomModal] = useState(false)
   const [roomDetails, setRoomDetails] = useState<IRoom>({
@@ -39,41 +43,6 @@ const CustomGame = () => {
     room_id: "",
     room_password: ""
   })
-
-  const [userId] = useState(loggedIN.user.id)
-  const [roomId, setRoomId] = useState<string>('test')
-  const [joinedRoom, setJoinedRoom] = useState(false)
-  const [msg, setMsg] = useState<string>()
-
-
-  async function SendMessage() {
-    const channel = supabase.channel(`${roomId}`);
-    channel.send({
-      type: 'broadcast',
-      event: 'player-chat',
-      payload: { message: `Hello world! player ${userId}` },
-    });
-  }
-
-  async function createR() {
-    const data: any = await createRoom(userId, "helo");
-    console.log(data);
-    setJoinedRoom(true);
-  }
-
-
-  useEffect(() => {
-    if (joinedRoom) {
-      supabase
-        .channel(`${roomId}`)
-        .on('broadcast', { event: 'player-chat' }, payload => {
-          console.log('New Message received!', payload)
-        })
-        .subscribe()
-
-    }
-  }, [joinedRoom]);
-
 
   async function joinRoomHandle() {
     const loader = toast.loading("Joining room...")
@@ -91,7 +60,14 @@ const CustomGame = () => {
 
       const updateRoom: any = await supabase
         .from('custom_room')
-        .update({ 'room_participants': [...findRoom.data[0].room_participants, userId] })
+        .update({ 'room_participants': [...findRoom.data[0].room_participants, user_id] , 
+                  'room_chat': [...findRoom.data[0].room_chat, {
+                    chatter_id: user_id,
+                    chatter_name: user_name,
+                    chatter_image: user_profile_pic,
+                    chatter_message: `${user_name} joined the room`,
+                    chatter_time: new Date().toLocaleTimeString()
+                   }]})
         .eq('room_id', joinRoomDetails.room_id)
         .eq('room_pw', joinRoomDetails.room_password)
         .select()
@@ -102,9 +78,8 @@ const CustomGame = () => {
       }
 
       toast.success("Room joined")
-      // console.log(updateRoom.data[0]?.room_id)
-      // console.log("Join Room handle data ", updateRoom)
-      localStorage.setItem('custom_game_details', updateRoom.data[0])
+      localStorage.setItem('custom_room_details', JSON.stringify(updateRoom.data[0]))
+      dispatch(setRoom(updateRoom.data[0]))
       location(`/customroom/Room/${updateRoom.data[0]?.room_id}`)
     }
     catch (error) {
@@ -133,16 +108,18 @@ const CustomGame = () => {
           {
             room_name: roomDetails.name,
             room_pw: roomDetails.room_password,
-            room_owner: userId,
+            room_owner: user_id,
             room_settings: {
               game_rounds: roomDetails.game_rounds,
               round_duration: roomDetails.round_duraion
             },
-            room_participants: [userId],
+            room_participants: [user_id],
             room_chat: [{
-              user_id: userId,
-              message: "Welcome to the room",
-              timestamp: new Date().getTime()
+              chatter_id: user_id,
+              chatter_name: user_name,
+              chatter_image: user_profile_pic,
+              chatter_message: `${user_name} created the room`,
+              chatter_time: new Date().toLocaleTimeString()
             }]
           }
         ).select()
@@ -153,7 +130,9 @@ const CustomGame = () => {
       }
       toast.success("Room created")
       console.log(data)
-      localStorage.setItem('custom_game_details', data[0])
+      localStorage.setItem('custom_room_details', JSON.stringify(data[0]))
+      dispatch(setRoom(data[0]))
+      location(`/customroom/Room/${data[0]?.room_id}`)
     }
     catch (error) {
       console.log(error)
@@ -164,7 +143,7 @@ const CustomGame = () => {
     }
   }
 
-  function changeCrateModel(e: any) {
+  function changeCreateModel(e: any) {
     e.preventDefault();
     setRoomDetails({ ...roomDetails, [e.target.name]: e.target.value })
   }
@@ -173,13 +152,6 @@ const CustomGame = () => {
     e.preventDefault();
     setJoinRoomDetails({ ...joinRoomDetails, [e.target.name]: e.target.value })
   }
-
-
-  // console.log(roomDetails, "roomDetails")
-  // console.log(channel, "channel")
-  // console.log(roomId, "roomID")
-  // console.log(msg, "meesage");
-
 
   return (
     <div className="bg-purple-950 w-full h-[100vh] ">
@@ -240,7 +212,7 @@ const CustomGame = () => {
               placeholder="Enter room name"
               value={roomDetails.name}
               name="name"
-              onChange={changeCrateModel}
+              onChange={changeCreateModel}
               className="mx-auto w-full rounded-lg border border-purple-800 duration-300 bg-transparent p-2 mb-4 focus:outline-none focus:border-purple-400"
             />
 
@@ -250,7 +222,7 @@ const CustomGame = () => {
               placeholder="Enter round duration"
               value={roomDetails.room_password}
               name="room_password"
-              onChange={changeCrateModel}
+              onChange={changeCreateModel}
               className=" mx-auto rounded-lg border border-purple-800 bg-transparent duration-300 w-full p-2 mb-4 focus:outline-none focus:border-purple-400"
             />
 
@@ -260,7 +232,7 @@ const CustomGame = () => {
               placeholder="Enter number of rounds"
               value={roomDetails.game_rounds}
               name="game_rounds"
-              onChange={changeCrateModel}
+              onChange={changeCreateModel}
               className="mx-auto w-full rounded-lg border border-purple-800 bg-transparent duration-300 p-2 mb-4 focus:outline-none focus:border-purple-400"
             />
 
@@ -270,7 +242,7 @@ const CustomGame = () => {
               placeholder="Enter round duration"
               value={roomDetails.round_duraion}
               name="round_duraion"
-              onChange={changeCrateModel}
+              onChange={changeCreateModel}
               className=" mx-auto rounded-lg border border-purple-800 bg-transparent duration-300 w-full p-2 mb-4 focus:outline-none focus:border-purple-400"
             />
 
