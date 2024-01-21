@@ -18,9 +18,12 @@ const Dashboard = () => {
     setDropdown(!dropdown);
   }
 
-  const handelLogout = () => {
-    EmailLogout();
-    location('/')
+  const handelLogout = async () => {
+    const logout = await EmailLogout();
+    if(logout) {
+      localStorage.removeItem('sb-stglscmcmjtwkvviwzcc-auth-token');
+      window.location.href = "/";
+    }
   }
 
   const style = 'flex gap-3 relative bg-[rgba(168,85,247,0.3)] hover:bg-[rgba(168,85,247,0.4)] duration-300 border-2 border-purple-500 text-white p-1 px-2 rounded-2xl z-50'
