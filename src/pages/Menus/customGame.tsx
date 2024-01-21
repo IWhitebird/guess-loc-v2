@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import supabase from "../../supabase/init"
 import { Link, useNavigate } from "react-router-dom"
 import logo from '../../assets/Untitled-1.png';
@@ -28,7 +28,6 @@ const CustomGame = () => {
   const dispatch = useDispatch()
 
   const { user_id , user_name , user_profile_pic  } = useSelector((state: RootState) => state.user)
-  console.log(user_id , user_name , user_profile_pic)
 
   const [createRoomModal, setCreateRoomModal] = useState(false)
   const [roomDetails, setRoomDetails] = useState<IRoom>({
@@ -155,29 +154,6 @@ const CustomGame = () => {
 
   return (
     <div className="bg-purple-950 w-full h-[100vh] ">
-      {/* <div className="flex justify-start items-center px-24 h-[100vh] w-[100%] bg-gradient-to-r from-gray-950 to-transparent">
-
-        <button onClick={createR} className="w-[200px] bg-white text-black">Create Room</button>
-
-        <input type="text" 
-         className="w-[200px] bg-white text-black"
-         placeholder="Enter Room ID" 
-         onChange={(e) => setRoomId(e.target.value)} 
-        />
-
-        <button 
-        onClick={() => joinRoom()} 
-        className="w-[200px] bg-white text-black">
-        Join Room
-        </button>
-
-        <button 
-        onClick={() => SendMessage() } 
-        className="w-[200px] bg-white text-black">
-        Send Msg Room
-        </button>
-
-      </div> */}
 
       <div className="absolute top-0 flex justify-between w-full px-20 ">
         <img className="invert w-[200px] h-[200px]" src={logo} alt="Logo" />
@@ -314,6 +290,7 @@ const CustomGame = () => {
 
     </div>
   )
+
 }
 
 export default CustomGame
