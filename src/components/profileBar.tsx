@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { EmailLogout } from '../supabase/Auth';
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useLocation } from 'react-router-dom';
-import { sendFriendRequest } from '../supabase/Routes/FriendRoutes';
+import { sendFriendRequest,acceptFriendRequest } from '../supabase/Routes/FriendRoutes';
 
 interface Props {
   setFriendModal: (visible: boolean) => void;
@@ -31,9 +31,10 @@ const Dashboard = ({ setFriendModal, visible }: Props) => {
     }
   }
 
-  useEffect(() => {
-    sendFriendRequest(loggedIN.user.id,'39f06137-1918-4034-8319-1b6d50688b32')
-  }, [])
+  // useEffect(() => {
+  //   sendFriendRequest(loggedIN.user.id,'96513eb2-1bda-4256-a0fe-02e8df76ca15')
+  //   // acceptFriendRequest(loggedIN.user.id,'39f06137-1918-4034-8319-1b6d50688b32')
+  // }, [])
   
 
   const style = 'flex gap-3 relative bg-[rgba(168,85,247,0.3)] hover:bg-[rgba(168,85,247,0.4)] duration-300 border-2 border-purple-500 text-white p-1 px-2 rounded-2xl z-50'
