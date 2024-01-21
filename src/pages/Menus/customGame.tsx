@@ -234,47 +234,47 @@ const CustomGame = () => {
       <div className={`absolute duration-200 top-0 left-0 ${createRoomModal ? 'opacity-100' : 'opacity-0 invisible'} z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-lg '}`}>
         <div className={`relative w-[400px] border duration-300 text-white border-purple-900 rounded-lg flex flex-col p-10 ${createRoomModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
           <div className="flex flex-col">
-            <label className="mx-auto w-full mb-1">Room Name</label>
+            <label className="w-full mx-auto mb-1">Room Name</label>
             <input
               type="text"
-              placeholder="Enter room name"
+              placeholder="Type Your Message"
               value={roomDetails.name}
               name="name"
               onChange={changeCrateModel}
-              className="mx-auto w-full rounded-lg border border-purple-800 duration-300 bg-transparent p-2 mb-4 focus:outline-none focus:border-purple-400"
+              className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
             />
 
-            <label className="mx-auto w-full  mb-1">Room Password</label>
+            <label className="w-full mx-auto mb-1">Room Password</label>
             <input
               type="number"
               placeholder="Enter round duration"
               value={roomDetails.room_password}
               name="room_password"
               onChange={changeCrateModel}
-              className=" mx-auto rounded-lg border border-purple-800 bg-transparent duration-300 w-full p-2 mb-4 focus:outline-none focus:border-purple-400"
+              className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
             />
 
-            <label className="mx-auto w-full   mb-1">Number of Rounds</label>
+            <label className="w-full mx-auto mb-1">Number of Rounds</label>
             <input
               type="number"
               placeholder="Enter number of rounds"
               value={roomDetails.game_rounds}
               name="game_rounds"
               onChange={changeCrateModel}
-              className="mx-auto w-full rounded-lg border border-purple-800 bg-transparent duration-300 p-2 mb-4 focus:outline-none focus:border-purple-400"
+              className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
             />
 
-            <label className="mx-auto w-full  mb-1">Round Duration (in seconds)</label>
+            <label className="w-full mx-auto mb-1">Round Duration (in seconds)</label>
             <input
               type="number"
               placeholder="Enter round duration"
               value={roomDetails.round_duraion}
               name="round_duraion"
               onChange={changeCrateModel}
-              className=" mx-auto rounded-lg border border-purple-800 bg-transparent duration-300 w-full p-2 mb-4 focus:outline-none focus:border-purple-400"
+              className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
             />
 
-            <div className="flex justify-center flex-row-reverse gap-3 mt-5">
+            <div className="flex flex-row-reverse justify-center gap-3 mt-5">
               <button
                 onClick={createRoomHandle}
                 id='fn_button'
@@ -299,27 +299,27 @@ const CustomGame = () => {
         <div className={`relative w-[400px] duration-300 border text-white border-purple-900 rounded-lg flex flex-col p-10 ${joinRoomModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
 
           <div className="flex flex-col">
-            <label className="mx-auto w-full   mb-1">Room Id</label>
+            <label className="w-full mx-auto mb-1">Room Id</label>
             <input
               type="text"
               placeholder="Enter room name"
               value={joinRoomDetails.room_id}
               name="room_id"
               onChange={changeJoinModel}
-              className="mx-auto w-full rounded-lg border border-purple-800 duration-300 bg-transparent p-2 mb-4 focus:outline-none focus:border-purple-400"
+              className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
             />
 
-            <label className="mx-auto w-full   mb-1">Room Password</label>
+            <label className="w-full mx-auto mb-1">Room Password</label>
             <input
               type="text"
               placeholder="Enter number of rounds"
               value={joinRoomDetails.room_password}
               name="room_password"
               onChange={changeJoinModel}
-              className="mx-auto w-full rounded-lg border border-purple-800 duration-300 bg-transparent p-2 mb-4 focus:outline-none focus:border-purple-400"
+              className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
             />
 
-            <div className="flex justify-center flex-row-reverse gap-3 mt-5">
+            <div className="flex flex-row-reverse justify-center gap-3 mt-5">
               <button
                 onClick={joinRoomHandle}
                 id='fn_button'

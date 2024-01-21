@@ -4,7 +4,12 @@ import { EmailLogout } from '../supabase/Auth';
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useLocation } from 'react-router-dom';
 
-const Dashboard = () => {
+interface Props {
+  setFriendModal: (visible: boolean) => void;
+  visible: boolean;
+}
+
+const Dashboard = ({ setFriendModal, visible }: Props) => {
   const location = useNavigate()
   const location2 = useLocation()
   const [dropdown, setDropdown] = useState(false);
@@ -13,31 +18,35 @@ const Dashboard = () => {
   const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
   const [profileURL] = useState<string>(loggedIN?.user?.user_metadata?.avatar_url ? loggedIN?.user?.user_metadata?.avatar_url : `https://api.dicebear.com/6.x/personas/svg?seed=${loggedIN?.user?.user_metadata?.full_name}`);
 
-
   const dropdownHandle = () => {
     setDropdown(!dropdown);
   }
 
-  const handelLogout = () => {
-    EmailLogout();
-    location('/')
+  const handelLogout = async () => {
+    const logout = await EmailLogout();
+    if (logout) {
+      localStorage.removeItem('sb-stglscmcmjtwkvviwzcc-auth-token');
+      window.location.href = "/";
+    }
   }
 
   const style = 'flex gap-3 relative bg-[rgba(168,85,247,0.3)] hover:bg-[rgba(168,85,247,0.4)] duration-300 border-2 border-purple-500 text-white p-1 px-2 rounded-2xl z-50'
 
   return (
     <div className=''>
+
       <div className={`absolute duration-300 ${location2.pathname === '/spGame' && modal ? 'opacity-100' : 'opacity-0 invisible'} z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-md '}`}>
         <div className={`bg-[rgba(30,30,30,0.5)] text-2xl duration-300 text-white border border-gray-700 p-5 rounded-xl ${modal ? 'scale-100 opacity-100' : 'scale-50 opacity-0 invisible'}`}>
           Are you sure you want to return to main menu?<br />
           Your progress will be lost.
           <div className='flex justify-end gap-3'>
-            <button className='bg-purple-900 hover:bg-purple-950 duration-300 text-white px-3 py-1 rounded-lg' onClick={() => window.location.href = "/mode"}>Yes</button>
-            <button className='bg-purple-900 hover:bg-purple-950 duration-300 text-white px-3 py-1 rounded-lg' onClick={() => setModal(!modal)}>No</button>
+            <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => window.location.href = "/mode"}>Yes</button>
+            <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => setModal(!modal)}>No</button>
           </div>
         </div>
       </div>
-      <div className='absolute right-0 flex justify-end p-5 transition-all z-50 duration-300 ease-in-out'>
+
+      <div className='absolute right-0 z-50 flex justify-end p-5 transition-all duration-300 ease-in-out'>
         <div className={style} onClick={dropdownHandle}>
           <img
             className='rounded-full'
@@ -58,10 +67,11 @@ const Dashboard = () => {
                 {location2.pathname === "/spGame" ? <p onClick={() => setModal(true)}>Main Menu</p> : <p onClick={() => location('/mode')}>Main Menu</p>}
               </div>
               <p className='cursor-pointer' onClick={() => location('/profile')}>Profile</p>
+              <p className='cursor-pointer' onClick={() => setFriendModal(!visible)}>Friends</p>
               <p className=''>Settings</p>
-              <hr className=' border-gray-200' />
+              <hr className='border-gray-200 ' />
               <p
-                className=' text-red-400 cursor-pointer'
+                className='text-red-400 cursor-pointer '
                 onClick={handelLogout}>
                 Logout
               </p>
