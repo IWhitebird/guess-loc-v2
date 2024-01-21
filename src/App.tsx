@@ -11,13 +11,15 @@ import CustomGame from './pages/Menus/customGame'
 import Dashboard from './components/profileBar'
 import Room from './pages/Menus/room'
 import Profile from './pages/profile'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import FriendsList from './components/Friends/FriendsList'
 
 const App = () => {
   const loggedIN = localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token')
+  const [friendModal, setFriendModal] = useState(false)
   const sendDashboard = () => {
     if (loggedIN !== null && (JSON.parse(loggedIN).access_token !== undefined || JSON.parse(loggedIN).access_token !== null)) {
-      return <Dashboard />
+      return <Dashboard setFriendModal={setFriendModal} visible={friendModal} />
     }
   }
 
@@ -30,11 +32,12 @@ const App = () => {
     <>
       <Vnum />
       {sendDashboard()}
+      <FriendsList visible={friendModal} setVisible={setFriendModal} />
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/mode" element={<ModeSelect />} />
+        <Route path="/mode" element={<ModeSelect setFriendModal={setFriendModal} />} />
         <Route path="/verify" element={<Verify />} />
-        
+
         <Route path="/auth" element={<Auth />} />
         <Route path="/spGame" element={<OnePlayer />} />
 
@@ -43,7 +46,7 @@ const App = () => {
         {/* <Route path="/mpGame" element={<MultiPlayer />} /> */}
 
         <Route path="/spGame" element={<OnePlayer />} />
-        <Route path="/profile" element={<Profile/>} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<Landing />} />
       </Routes>
     </>

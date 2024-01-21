@@ -31,9 +31,9 @@ const Room = () => {
   return (
     <div className="bg-purple-950 w-full h-[100vh] ">
         <div className="flex justify-start items-center px-24 h-[100vh] w-[100%] bg-gradient-to-r from-gray-950 to-transparent">
-
             <div className="flex w-full h-full flex-row">
                 {/* player Info */}
+
                 <div className="w-[50%]">
 
                 </div>
@@ -42,7 +42,6 @@ const Room = () => {
                 <div  className="w-[50%] ml-20 mt-16 p-10 flex justify-end">
                     <ChatModel/>
                 </div>
-
 
             </div>
 

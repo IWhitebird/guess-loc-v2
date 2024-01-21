@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+
 import supabase from '../supabase/init';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
+import { IoSend } from "react-icons/io5";
+
 
 
 const ChatModel: React.FC = () => {
@@ -41,10 +44,12 @@ const ChatModel: React.FC = () => {
     return (
         <div className='w-full h-full border bg-[#ffffff2c] border-black backdrop-blur-md rounded-xl flex justify-start flex-col '>
             <div className="flex flex-col items-start h-full gap-5 overflow-y-auto " id="style-3">
+
                 {roomDetails.room_chat.map((chat, index) => (
                     <div
                         key={index}
                         className={`flex items-start gap-5 m-3  ${chat.chatter_id === user_id ? 'self-end' : 'self-start'
+
                             }`}
                     >
                         {
@@ -97,5 +102,4 @@ const ChatModel: React.FC = () => {
         </div>
     );
 };
-
 export default ChatModel;
