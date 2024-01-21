@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import logo from '../../assets/Untitled-1.png';
 import data from '../../assets/data.ts';
 import AudioPlayer from '../../components/AudioPlayer.tsx'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ImSpinner2 } from 'react-icons/im';
 
 interface Props {
@@ -10,8 +10,6 @@ interface Props {
 }
 
 function MainMenu({ setFriendModal }: Props) {
-    const location = useNavigate()
-    const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
 
     const [text, setText] = useState('');
     const [img, setImg] = useState('');
@@ -24,11 +22,6 @@ function MainMenu({ setFriendModal }: Props) {
     }
 
     useEffect(() => {
-        if (loggedIN.access_token === null || loggedIN.access_token === undefined) {
-            location('/auth')
-            setLoading(false)
-        }
-
         setImg(data[currentIndex].image);
         setText(data[currentIndex].text);
         setLoading(false)
