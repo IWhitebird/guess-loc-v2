@@ -11,23 +11,34 @@ const ChatModel: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [newMessage, setNewMessage] = useState<string>('');
 
+    const [curChat , setCurChat] = useState<any[]>(roomDetails.room_chat)
+
 
     async function SendMessage() {
-        // const channel = supabase.channel(`${roomDetails.room_id}`);
-        // channel.send({
-        //   type: 'broadcast',
-        //   event: 'player-chat',
-        //   payload: { 
-        //     chatter_id: user_id,
-        //     chatter_name: user_name,
-        //     chatter_image: user_profile_pic,
-        //     chatter_message: newMessage,
-        //     chatter_time: new Date().toLocaleTimeString()
-        //    },
-        // });
         if (!newMessage.trim()) {
             return;
         }
+
+        const channel = supabase.channel(`${roomDetails.room_id}_chat`, {
+            config: {
+              broadcast: { self: true },
+            },
+          })
+        
+        channel.subscribe((status) => {
+            if (status !== 'SUBSCRIBED') { return } 
+            channel.send({
+                type: 'broadcast',
+                event: 'room_chatting',
+                payload : {
+                    chatter_id: user_id,
+                    chatter_name: user_name,
+                    chatter_image: user_profile_pic,
+                    chatter_message: newMessage,
+                    chatter_time: new Date().toLocaleTimeString()
+                }
+              })
+          })
 
         const d = await supabase.from('custom_room').update({
             room_chat: [...roomDetails.room_chat, {
@@ -38,6 +49,7 @@ const ChatModel: React.FC = () => {
                 chatter_time: new Date().toLocaleTimeString()
             }]
         }).match({ room_id: roomDetails.room_id }).select()
+
         if (d) {
             setNewMessage('')
             scrollToBottom();
@@ -58,20 +70,32 @@ const ChatModel: React.FC = () => {
     };
 
     useEffect(() => {
+        supabase.channel(`${roomDetails.room_id}_chat`).on(
+            'broadcast',
+            { event: 'room_chatting' },
+            ({payload}) => {
+                console.log("PAYLODD" , payload)
+                setCurChat([...curChat, payload])
+            }
+        )
+    }, []);
+
+    useEffect(() => {
         scrollToBottom()
         document.addEventListener('keydown', handleEnterPress)
         return () => {
             document.removeEventListener('keydown', handleEnterPress)
         }
-    }, [newMessage, roomDetails.room_chat]);
+    }, [newMessage, curChat]);
 
     console.log("ROOM DETAILS", roomDetails)
+    console.log("Broad" , curChat)
 
     return (
         <div className='w-full h-full border bg-[#ffffff2c] border-black backdrop-blur-md rounded-xl flex justify-start flex-col '>
             <div className="flex flex-col items-start h-full gap-5 overflow-y-auto " id="style-3"  ref={containerRef}>
 
-                {roomDetails.room_chat.map((chat, index) => (
+                {curChat.map((chat, index) => (
                     <div
                         key={index}
                         className={`flex items-start gap-5 m-3  ${chat.chatter_id === user_id ? 'self-end' : 'self-start'

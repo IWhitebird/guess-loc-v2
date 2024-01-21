@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-
+import supabase from '../../supabase/init'
 
 interface RoomSettings {
     game_rounds: number;
@@ -23,8 +23,9 @@ interface RoomState {
     room_chat: RoomChat[];
 }
 
+
 if (localStorage.getItem('custom_room_details') === null) {
-    var initialState: RoomState = {
+    var iState : RoomState = {
         room_id: '',
         room_owner: '',
         room_name: '',
@@ -37,23 +38,43 @@ if (localStorage.getItem('custom_room_details') === null) {
     }
 } else {
     const parsedToken = JSON.parse(localStorage.getItem('custom_room_details')!);
-    var initialState: RoomState = {
-        room_id: parsedToken.room_id,
-        room_owner: parsedToken.room_owner,
-        room_name: parsedToken.room_name,
-        room_settings: {
-            game_rounds: parsedToken.room_settings.game_rounds,
-            round_duration: parsedToken.room_settings.round_duration
-        },
-        room_participants: parsedToken.room_participants,
-        room_chat: parsedToken.room_chat
+    
+    const {data , error}  = await supabase.from('custom_room').select().eq('room_id', parsedToken.room_id)
+
+    if (error) {
+        var iState : RoomState= {
+            room_id: parsedToken.room_id,
+            room_owner: parsedToken.room_owner,
+            room_name: parsedToken.room_name,
+            room_settings: {
+                game_rounds: parsedToken.room_settings.game_rounds,
+                round_duration: parsedToken.room_settings.round_duration
+            },
+            room_participants: parsedToken.room_participants,
+            room_chat: parsedToken.room_chat
+        }
+    } else {
+        var iState : RoomState= {
+            room_id: data[0].room_id,
+            room_owner: data[0].room_owner,
+            room_name: data[0].room_name,
+            room_settings: {
+                game_rounds: data[0].room_settings.game_rounds,
+                round_duration: data[0].room_settings.round_duration
+            },
+            room_participants: data[0].room_participants,
+            room_chat: data[0].room_chat
+        }
     }
 }
+
+
+
 
 export const roomSlice = createSlice({
   name: 'room',  
 
-  initialState,
+  initialState : iState,
 
   reducers: {
 
@@ -71,6 +92,11 @@ export const roomSlice = createSlice({
         state.room_chat = action.payload as any
     },
 
+    updateSettings: (state, action: PayloadAction<RoomSettings>) => {
+        state.room_settings.game_rounds = action.payload.game_rounds
+        state.room_settings.round_duration = action.payload.round_duration
+    },
+
     removeRoom: (state) => {
         state.room_id = ''
         state.room_owner = ''
@@ -85,6 +111,8 @@ export const roomSlice = createSlice({
 
 })
 
+
 export const { setRoom , removeRoom ,updateChat} = roomSlice.actions
 
 export default roomSlice.reducer 
+
