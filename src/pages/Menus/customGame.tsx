@@ -59,7 +59,11 @@ const CustomGame = () => {
 
       const updateRoom: any = await supabase
         .from('custom_room')
-        .update({ 'room_participants': [...findRoom.data[0].room_participants, user_id] , 
+        .update({ 'room_participants': [...findRoom.data[0].room_participants, {
+                    room_user_id: user_id,
+                    room_user_name: user_name,
+                    room_user_image: user_profile_pic
+                    }] , 
                   'room_chat': [...findRoom.data[0].room_chat, {
                     chatter_id: user_id,
                     chatter_name: user_name,
@@ -112,7 +116,11 @@ const CustomGame = () => {
               game_rounds: roomDetails.game_rounds,
               round_duration: roomDetails.round_duraion
             },
-            room_participants: [user_id],
+            room_participants: [{
+              room_user_id: user_id,
+              room_user_name: user_name,
+              room_user_image: user_profile_pic
+            }],
             room_chat: [{
               chatter_id: user_id,
               chatter_name: user_name,
@@ -130,7 +138,7 @@ const CustomGame = () => {
       toast.success("Room created")
       console.log(data)
       localStorage.setItem('custom_room_details', JSON.stringify(data[0]))
-      dispatch(setRoom(data[0]))
+      dispatch(setRoom(data[0] as any))
       location(`/customroom/Room/${data[0]?.room_id}`)
     }
     catch (error) {
