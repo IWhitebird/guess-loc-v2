@@ -4,6 +4,8 @@ import { EmailLogout } from '../supabase/Auth';
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useLocation } from 'react-router-dom';
 import { sendFriendRequest,acceptFriendRequest } from '../supabase/Routes/FriendRoutes';
+import Notification from '../components/notification';
+
 
 interface Props {
   setFriendModal: (visible: boolean) => void;
@@ -53,6 +55,9 @@ const Dashboard = ({ setFriendModal, visible }: Props) => {
       </div>
 
       <div className='absolute right-0 z-50 flex justify-end p-5 transition-all duration-300 ease-in-out'>
+      <div className='flex items-center justify-center mr-6'>
+        <Notification/>
+      </div>
         <div className={style} onClick={dropdownHandle}>
           <img
             className='rounded-full'
