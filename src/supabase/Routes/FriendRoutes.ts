@@ -135,21 +135,24 @@ export const acceptFriendRequest = async (id: any, friend_id: any) => {
 
     // Update current user's friends list
 
-    const { data: userData, error: userError } = await supabase
+    const cur_list = await supabase
         .from('users')
         .select('friends_id')
         .eq('id', id);
 
-    if (userError) throw userError;
+    
+        if (cur_list.error){
+        throw cur_list.error
+    }
 
-    const currentFriends = userData[0].friends_id || [];
+    const currentFriends = cur_list.data[0].friends_id ? cur_list.data[0].friends_id : [];
 
     if (currentFriends.includes(friend_id)) {
         console.log('Friend already exists');
         return;
     }
 
-    const { error: acceptError } = await supabase
+    await supabase
         .from('users')
         .update({
             friends_id: [...currentFriends, friend_id],
@@ -158,25 +161,26 @@ export const acceptFriendRequest = async (id: any, friend_id: any) => {
         })
         .eq('id', id);
 
-    if (acceptError) throw acceptError;
 
     // Update friend's friends list
 
-    const { data: friendData, error: friendError } = await supabase
+    const cur_fr_list = await supabase
         .from('users')
         .select('friends_id')
         .eq('id', friend_id);
 
-    if (friendError) throw friendError;
+    if (cur_fr_list.error) {
+        throw cur_fr_list.error;
+    } 
 
-    const currentFriendFriends = friendData[0].friends_id || [];
+    const currentFriendFriends = cur_fr_list.data[0].friends_id ? cur_fr_list.data[0].friends_id : [];
 
     if (currentFriendFriends.includes(id)) {
         console.log('Friend already exists');
         return;
     }
 
-    const { error: updateFriendError } = await supabase
+    await supabase
         .from('users')
         .update({
             friends_id: [...currentFriendFriends, id],
@@ -185,7 +189,6 @@ export const acceptFriendRequest = async (id: any, friend_id: any) => {
         })
         .eq('id', friend_id);
 
-    if (updateFriendError) throw updateFriendError;
 }
 
 export const removeFriend = async (id: any, friend_id: any) => {

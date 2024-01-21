@@ -14,7 +14,9 @@ const ChatModel: React.FC = () => {
     const [curChat , setCurChat] = useState<any[]>(roomDetails.room_chat)
 
 
-    async function SendMessage() {
+    async function SendMessage(myMsg : string) {
+        setNewMessage('')
+      
         if (!newMessage.trim()) {
             return;
         }
@@ -23,7 +25,7 @@ const ChatModel: React.FC = () => {
             chatter_id: user_id,
             chatter_name: user_name,
             chatter_image: user_profile_pic,
-            chatter_message: newMessage,
+            chatter_message: myMsg,
             chatter_time: new Date().toLocaleTimeString()
         }])
         
@@ -36,7 +38,7 @@ const ChatModel: React.FC = () => {
                     chatter_id: user_id,
                     chatter_name: user_name,
                     chatter_image: user_profile_pic,
-                    chatter_message: newMessage,
+                    chatter_message: myMsg,
                     chatter_time: new Date().toLocaleTimeString()
                 }
               })
@@ -47,19 +49,12 @@ const ChatModel: React.FC = () => {
                 chatter_id: user_id,
                 chatter_name: user_name,
                 chatter_image: user_profile_pic,
-                chatter_message: newMessage,
+                chatter_message: myMsg,
                 chatter_time: new Date().toLocaleTimeString()
             }]
         }).match({ room_id: roomDetails.room_id })
 
-        setNewMessage('')
         scrollToBottom();
-    }
-
-    const handleEnterPress = (e: any) => {
-        if (e.key === 'Enter') {
-            SendMessage()
-        }
     }
 
     const scrollToBottom = () => {
@@ -78,13 +73,8 @@ const ChatModel: React.FC = () => {
         }
     )
 
-
     useEffect(() => {
         scrollToBottom()
-        document.addEventListener('keydown', handleEnterPress)
-        return () => {
-            document.removeEventListener('keydown', handleEnterPress)
-        }
     }, [curChat]);
 
     console.log("ROOM DETAILS", roomDetails)
@@ -136,7 +126,7 @@ const ChatModel: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-center p-4 border-t border-purple-700">
-                <textarea
+                <input
                     className="w-full p-2 overflow-hidden mr-5 duration-300 bg-transparent border border-purple-800 rounded-lg resize-y focus:outline-none focus:border-purple-400"
                     placeholder="Type your message..."
                     value={newMessage}
@@ -146,7 +136,12 @@ const ChatModel: React.FC = () => {
                 <button
                     id='fn_button'
                     style={{ fontSize: '1.2rem', padding: '1rem 1rem 1rem 1.5rem' }}
-                    onClick={() => SendMessage()}
+                    onClick={() =>{ SendMessage(newMessage) }}
+                    onKeyDown={(e) => {
+                        if(e.key === 'Enter'){
+                            SendMessage(newMessage)
+                        }
+                    }}
                 >
                     Send <IoSend className='ml-3' />
                     <span id='fnButtonSpan'></span>

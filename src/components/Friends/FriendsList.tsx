@@ -6,6 +6,9 @@ import { getFriends,acceptFriendRequest,sendFriendRequest } from '../../supabase
 import { useLocation } from 'react-router-dom';
 import Loader from '../Loader';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store/store';
+
 interface Props {
     visible: boolean;
     setVisible: (visible: boolean) => void;
@@ -13,7 +16,9 @@ interface Props {
 
 export default function FriendsList({ visible, setVisible }: Props) {
     const location = useLocation();
-    const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
+
+    const { user_id } = useSelector((state: RootState) => state.user)
+    
     const [searchModal, setSearchModal] = useState<boolean>(false);
     const [menu, setMenu] = useState({ visible: false, id: '' });
     const [friends, setFriends] = useState<any[]>([]);
@@ -26,15 +31,22 @@ export default function FriendsList({ visible, setVisible }: Props) {
 
     const fetchFriends = async () => {
         setLoading(true);
-        const data = await getFriends(loggedIN.user.id);
+        const data = await getFriends(user_id);
         setFriends(data);
         setLoading(false);
     }
 
     useEffect(() => {
         fetchFriends();
-        acceptFriendRequest('39f06137-1918-4034-8319-1b6d50688b32','96513eb2-1bda-4256-a0fe-02e8df76ca15')
+        aa();
     }, [])
+    
+    function aa() {
+        console.log(user_id)
+        acceptFriendRequest( user_id, '39f06137-1918-4034-8319-1b6d50688b32')
+    }
+
+    
 
     useEffect(() => {
         addEventListener('keydown', (e) => {
