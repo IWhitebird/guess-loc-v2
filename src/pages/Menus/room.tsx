@@ -7,25 +7,29 @@ import { useDispatch } from "react-redux";
 import { setRoom } from "../../redux/slices/roomSlice";
 
 const Room = () => {
-
   const dispatch : AppDispatch = useDispatch()
   const roomDetails = useSelector((state: RootState) => state.room)
+  const channel =   supabase.channel(`${roomDetails.room_id}`)
 
   // useEffect(() => {
-  //       supabase
-  //         .channel(`${roomDetails.room_id}`)
-  //         .on('postgres_changes', 
-  //         { event: 'UPDATE', 
-  //           schema: 'public', 
-  //           table: 'custom_room', 
-  //           filter: 'room_id=eq.'+roomDetails.room_id
-  //         },
-  //           payload => {
-  //             dispatch(setRoom(payload.new as any))
-  //           }
-  //         )
-  //         .subscribe()
-  //   }, []);
+
+
+
+  // }, []);
+
+  
+
+  channel.on('postgres_changes', 
+    { event: 'UPDATE', 
+      schema: 'public', 
+      table: 'custom_room', 
+      filter: 'room_id=eq.'+roomDetails.room_id
+    },
+      payload => {
+        dispatch(setRoom(payload.new as any))
+      }
+    )
+    .subscribe()
  
     
   return (

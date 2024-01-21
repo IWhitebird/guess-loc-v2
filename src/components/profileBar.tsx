@@ -1,11 +1,13 @@
-import { useState,useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { EmailLogout } from '../supabase/Auth';
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useLocation } from 'react-router-dom';
 import { sendFriendRequest,acceptFriendRequest } from '../supabase/Routes/FriendRoutes';
 import Notification from '../components/notification';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store/store';
 
 interface Props {
   setFriendModal: (visible: boolean) => void;
@@ -15,11 +17,11 @@ interface Props {
 const Dashboard = ({ setFriendModal, visible }: Props) => {
   const location = useNavigate()
   const location2 = useLocation()
+
+  const {user_name , user_profile_pic } = useSelector((state: RootState) => state.user)
+
   const [dropdown, setDropdown] = useState(false);
   const [modal, setModal] = useState(false);
-
-  const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
-  const [profileURL] = useState<string>(loggedIN?.user?.user_metadata?.avatar_url ? loggedIN?.user?.user_metadata?.avatar_url : `https://api.dicebear.com/6.x/personas/svg?seed=${loggedIN?.user?.user_metadata?.full_name}`);
 
   const dropdownHandle = () => {
     setDropdown(!dropdown);
@@ -61,12 +63,12 @@ const Dashboard = ({ setFriendModal, visible }: Props) => {
         <div className={style} onClick={dropdownHandle}>
           <img
             className='rounded-full'
-            src={profileURL}
+            src={user_profile_pic}
             alt="profile"
             width="60"
           />
           <div className='flex items-center justify-center'>
-            <p className='text-xl font-bold'>{loggedIN.user.user_metadata.full_name.split(' ')[0]}</p>
+            <p className='text-xl font-bold'>{user_name.split(' ')[0]}</p>
             <IoMdArrowDropdown className={`duration-200 text-3xl mt-1`}
               style={{ transform: dropdown ? 'rotate(180deg)' : 'rotate(0deg)' }}
             />
