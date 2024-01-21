@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import supabase from '../supabase/init';
 import { useSelector } from 'react-redux';
@@ -37,8 +37,17 @@ const ChatModel: React.FC = () => {
                 chatter_time: new Date().toLocaleTimeString()
             }]
         }).match({ room_id: roomDetails.room_id }).select()
+        setNewMessage('')
         console.log(d)
     }
+
+    useEffect(() => {
+        addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                SendMessage();
+            }
+        })
+    }, [])
 
     console.log("ROOM DETAILS", roomDetails)
     return (
