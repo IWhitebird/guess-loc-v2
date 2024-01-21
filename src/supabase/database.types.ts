@@ -9,13 +9,100 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      [_ in never]: never
+      custom_room: {
+        Row: {
+          room_chat: Json[] | null
+          room_id: string
+          room_name: string | null
+          room_owner: string
+          room_participants: Json[] | null
+          room_pw: string
+          room_settings: Json | null
+        }
+        Insert: {
+          room_chat?: Json[] | null
+          room_id?: string
+          room_name?: string | null
+          room_owner: string
+          room_participants?: Json[] | null
+          room_pw: string
+          room_settings?: Json | null
+        }
+        Update: {
+          room_chat?: Json[] | null
+          room_id?: string
+          room_name?: string | null
+          room_owner?: string
+          room_participants?: Json[] | null
+          room_pw?: string
+          room_settings?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_room_room_owner_fkey"
+            columns: ["room_owner"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      users: {
+        Row: {
+          friends_id: string[] | null
+          id: string
+          incoming_fr_reqs: string[] | null
+          outgoing_fr_reqs: string[] | null
+          user_email: string | null
+          user_maxscore: number | null
+          user_name: string | null
+          user_pfp: string | null
+          xp_points: number | null
+          name_email: string | null
+        }
+        Insert: {
+          friends_id?: string[] | null
+          id: string
+          incoming_fr_reqs?: string[] | null
+          outgoing_fr_reqs?: string[] | null
+          user_email?: string | null
+          user_maxscore?: number | null
+          user_name?: string | null
+          user_pfp?: string | null
+          xp_points?: number | null
+        }
+        Update: {
+          friends_id?: string[] | null
+          id?: string
+          incoming_fr_reqs?: string[] | null
+          outgoing_fr_reqs?: string[] | null
+          user_email?: string | null
+          user_maxscore?: number | null
+          user_name?: string | null
+          user_pfp?: string | null
+          xp_points?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "users_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      name_email: {
+        Args: {
+          "": unknown
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

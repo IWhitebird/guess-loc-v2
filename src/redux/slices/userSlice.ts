@@ -20,7 +20,9 @@ if (localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') === null) {
         user_id: parsedToken.user.id,
         user_name: parsedToken.user.user_metadata.full_name,
         user_email: parsedToken.user.email,
-        user_profile_pic: parsedToken.user.user_metadata.avatar_url,
+        user_profile_pic: 
+                parsedToken.user.user_metadata.avatar_url ?  parsedToken.user.user_metadata.avatar_url :
+                `https://api.dicebear.com/6.x/personas/svg?seed=${parsedToken.user.user_metadata.full_name}`,
     }
 }
 
