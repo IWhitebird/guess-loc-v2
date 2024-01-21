@@ -11,21 +11,21 @@ const Room = () => {
   const dispatch : AppDispatch = useDispatch()
   const roomDetails = useSelector((state: RootState) => state.room)
 
-  useEffect(() => {
-        supabase
-          .channel(`${roomDetails.room_id}`)
-          .on('postgres_changes', 
-          { event: 'UPDATE', 
-            schema: 'public', 
-            table: 'custom_room', 
-            filter: 'room_id=eq.'+roomDetails.room_id
-          },
-            payload => {
-              dispatch(setRoom(payload.new as any))
-            }
-          )
-          .subscribe()
-    }, []);
+  // useEffect(() => {
+  //       supabase
+  //         .channel(`${roomDetails.room_id}`)
+  //         .on('postgres_changes', 
+  //         { event: 'UPDATE', 
+  //           schema: 'public', 
+  //           table: 'custom_room', 
+  //           filter: 'room_id=eq.'+roomDetails.room_id
+  //         },
+  //           payload => {
+  //             dispatch(setRoom(payload.new as any))
+  //           }
+  //         )
+  //         .subscribe()
+  //   }, []);
  
     
   return (

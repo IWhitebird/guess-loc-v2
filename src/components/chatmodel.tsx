@@ -11,7 +11,7 @@ const ChatModel: React.FC = () => {
     const roomDetails = useSelector((state: RootState) => state.room)
     const containerRef = useRef<HTMLDivElement>(null);
     const [newMessage, setNewMessage] = useState<string>('');
-
+    const channel = supabase.channel(`${roomDetails.room_id}_chat`)
     const [curChat , setCurChat] = useState<any[]>(roomDetails.room_chat)
 
 
@@ -27,8 +27,6 @@ const ChatModel: React.FC = () => {
             chatter_message: newMessage,
             chatter_time: new Date().toLocaleTimeString()
         }])
-
-        const channel = supabase.channel(`${roomDetails.room_id}_chat`)
         
         channel.subscribe((status) => {
             if (status !== 'SUBSCRIBED') { return } 
@@ -45,7 +43,7 @@ const ChatModel: React.FC = () => {
               })
           })
 
-        const d = await supabase.from('custom_room').update({
+        await supabase.from('custom_room').update({
             room_chat: [...roomDetails.room_chat, {
                 chatter_id: user_id,
                 chatter_name: user_name,
@@ -53,13 +51,10 @@ const ChatModel: React.FC = () => {
                 chatter_message: newMessage,
                 chatter_time: new Date().toLocaleTimeString()
             }]
-        }).match({ room_id: roomDetails.room_id }).select()
+        }).match({ room_id: roomDetails.room_id })
 
-        if (d) {
-            setNewMessage('')
-            scrollToBottom();
-        }
-        console.log(d)
+        setNewMessage('')
+        scrollToBottom();
     }
 
     const handleEnterPress = (e: any) => {
@@ -79,7 +74,6 @@ const ChatModel: React.FC = () => {
             'broadcast',
             { event: 'room_chatting' },
             ({payload}) => {
-                console.log("PAYLODD" , payload)
                 setCurChat([...curChat, payload])
             }
         )
@@ -91,7 +85,7 @@ const ChatModel: React.FC = () => {
         return () => {
             document.removeEventListener('keydown', handleEnterPress)
         }
-    }, [newMessage, curChat]);
+    }, [curChat]);
 
     console.log("ROOM DETAILS", roomDetails)
     console.log("Broad" , curChat)
