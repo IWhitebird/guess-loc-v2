@@ -281,3 +281,9 @@ export const searchFriends = async (search: string) => {
     if (error) throw error
     return data
 }
+
+export const getFriendProfile = async (id: any) => {
+    const { data, error } = await supabase.from('users').select('*').eq('id', id).single()
+    if (error) throw error
+    return data
+}

@@ -13,6 +13,7 @@ import Room from './pages/Menus/room'
 import Profile from './pages/profile'
 import { useEffect, useState } from 'react'
 import FriendsList from './components/Friends/FriendsList'
+import FriendProfilepage from './pages/friendProfilepage'
 
 
 const App = () => {
@@ -45,7 +46,7 @@ const App = () => {
         <Route path="/customroom" element={<CustomGame />} />
         <Route path="/customroom/Room/:id" element={<Room />} />
         {/* <Route path="/mpGame" element={<MultiPlayer />} /> */}
-
+        <Route path="/profile/:id" element={<FriendProfilepage/>} />
         <Route path="/spGame" element={<OnePlayer />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<Landing />} />
