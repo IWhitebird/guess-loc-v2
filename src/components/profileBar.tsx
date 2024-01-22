@@ -58,7 +58,6 @@ const Dashboard = ({ setFriendModal, visible }: Props) => {
 
       <div className='absolute right-0 z-50 flex justify-end p-5 transition-all duration-300 ease-in-out'>
       <div className='flex items-center justify-center mr-6'>
-        <Notification/>
       </div>
         <div className={style} onClick={dropdownHandle}>
           <img

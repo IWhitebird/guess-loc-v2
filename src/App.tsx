@@ -13,14 +13,21 @@ import Room from './pages/Menus/room'
 import Profile from './pages/profile'
 import { useEffect, useState } from 'react'
 import FriendsList from './components/Friends/FriendsList'
-
+import Notification from './components/notification'
 
 const App = () => {
   const loggedIN = localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token')
   const [friendModal, setFriendModal] = useState(false)
   const sendDashboard = () => {
     if (loggedIN !== null && (JSON.parse(loggedIN).access_token !== undefined || JSON.parse(loggedIN).access_token !== null)) {
-      return <Dashboard setFriendModal={setFriendModal} visible={friendModal} />
+      return (
+        <div className='absolute right-0 flex justify-between w-full'>
+          <Dashboard setFriendModal={setFriendModal} visible={friendModal} />
+          <Notification />
+        </div>
+      )
+
+
     }
   }
 
