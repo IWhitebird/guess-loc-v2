@@ -97,7 +97,7 @@ export default function FriendsList({ visible, setVisible }: Props) {
             <FriendSearch visible={searchModal} setVisible={setSearchModal} />
 
             <div className={`fixed duration-300 text-white shadow-3xl ease-in-out top-0 right-0 flex flex-col text-xl h-screen w-[500px] z-50 items-center backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] ${visible ? 'opacity-100' : 'opacity-0 invisible right-[-500px]'}`}>
-                <p className='fixed bottom-2 right-3 justify-end text-base flex items-center text-gray-500 w-full'>Press <span className='border text-base border-gray-500 rounded-lg p-0.5 mx-1'>Esc</span> to close</p>
+                <p className='fixed flex items-center justify-end w-full text-base text-gray-500 bottom-2 right-3'>Press <span className='border text-base border-gray-500 rounded-lg p-0.5 mx-1'>Esc</span> to close</p>
                 <div className='flex absolute px-7 pb-4 pt-5 justify-between items-center w-full top-0 z-50 bg-[rgba(176,80,255,0.1)] backdrop-blur-3xl '>
                     <p className='text-3xl'>Friend list</p>
                     <div className='flex items-center gap-3'>
@@ -124,7 +124,7 @@ export default function FriendsList({ visible, setVisible }: Props) {
                     </div>
                     {/* Friends list */}
                     {!loading && handleState === 'list' ? friends.length > 0 ? friends.map((friend, index) => (
-                        <ul className='flex flex-col gap-2 pb-5 pt-2' id='style-3' key={index}>
+                        <ul className='flex flex-col gap-2 pt-2 pb-5' id='style-3' key={index}>
                             <li className='flex items-center justify-between w-full'>
                                 <div className='relative flex items-center gap-3'>
                                     <img className='rounded-full' src={friend?.user_pfp ? friend?.user_pfp : `https://api.dicebear.com/6.x/personas/svg?seed=${friend.user_name}`} alt='avatar' width='60' height='60' />
