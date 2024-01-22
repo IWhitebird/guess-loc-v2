@@ -249,3 +249,28 @@ export const searchFriends = async (search: string) => {
     if (error) throw error
     return data
 }
+
+export const getFriendRequests = async (id: any) => {
+    const { data, error } = await supabase
+        .from('users')
+        .select('incoming_fr_reqs')
+        .eq('id', id)
+        .single()
+
+    let friendRequests: any = []
+
+    if (data?.incoming_fr_reqs && data?.incoming_fr_reqs.length > 0) {
+        for (let i = 0; i < data?.incoming_fr_reqs.length; i++) {
+            const { data: friendData, error: friendError } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', data.incoming_fr_reqs[i])
+                .single()
+            if (friendError) throw friendError
+            friendRequests.push(friendData)
+        }
+    }
+
+    if (error) throw error
+    return friendRequests
+}

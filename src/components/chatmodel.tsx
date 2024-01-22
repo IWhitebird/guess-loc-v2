@@ -51,9 +51,8 @@ const ChatModel: React.FC = () => {
                 chatter_image: user_profile_pic,
                 chatter_message: myMsg,
                 chatter_time: new Date().toLocaleTimeString()
-            }]
+            }] as any
         }).match({ room_id: roomDetails.room_id })
-
         scrollToBottom();
     }
 
