@@ -10,7 +10,7 @@ const Notification = () => {
   const { user_id } = useSelector((state: RootState) => state.user)
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState([]);
+  const [notification, setNotification] = useState<any>([]);
 
   useEffect(() => {
 
@@ -45,7 +45,7 @@ const Notification = () => {
         </div>
         <div className='flex flex-col w-full h-full p-6 pt-32 pb-0 pr-6 overflow-y-auto'>
           {loading && <Loader />}
-          {notification.map((item, index) => (
+          {notification.map((item: any, index: any) => (
             <div key={index}>
 
               <div className='relative flex items-center gap-3 '>
