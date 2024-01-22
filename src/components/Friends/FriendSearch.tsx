@@ -26,7 +26,7 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
     }
 
     return (
-        <div className={`fixed duration-300 overflow-hidden ${visible ? 'opacity-100 ' : 'opacity-0 invisible'} top-0 justify-start z-50 items-start flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-md  '}`}>
+        <div className={`fixed duration-300 overflow-hidden ${visible ? 'opacity-100 ' : 'opacity-0 invisible'} top-0 justify-start z-50 items-start flex w-full h-full  '}`}>
             <div className={`backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] fixed duration-300 text-white p-5 rounded-tl-lg rounded-bl-lg${visible ? ' opacity-100 right-[31.2rem]' : 'opacity-0 right-0 invisible'}`}>
                 <div className='flex items-center'>
                     <input type="text" placeholder='Search using name or email'

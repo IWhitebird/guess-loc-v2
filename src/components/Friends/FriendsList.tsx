@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import FriendSearch from './FriendSearch';
-import { IoSearchOutline } from "react-icons/io5";
+import { IoSearch } from "react-icons/io5";
 import { FaChevronCircleRight, FaChevronCircleDown } from "react-icons/fa";
-import { getFriends, removeFriend } from '../../supabase/Routes/FriendRoutes'
+import { getFriends, removeFriend, getIncomingFriendRequests } from '../../supabase/Routes/FriendRoutes'
 import { useLocation } from 'react-router-dom';
 import Loader from '../Loader';
+import { RiUserAddFill } from "react-icons/ri";
+
 
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store/store';
+import IncomingAccordion from './IncomingAccordion';
 
 interface Props {
     visible: boolean;
@@ -21,6 +24,8 @@ export default function FriendsList({ visible, setVisible }: Props) {
     const [searchModal, setSearchModal] = useState<boolean>(false);
     const [menu, setMenu] = useState({ visible: false, id: '' });
     const [friends, setFriends] = useState<any[]>([]);
+    const [incomingRequests, setIncomingRequests] = useState<any[]>([]);
+    const [handleState, setHandleState] = useState('list')
     const [loading, setLoading] = useState<boolean>(false);
     const [modal, setModal] = useState({ visible: false, id: '' });
 
@@ -33,11 +38,13 @@ export default function FriendsList({ visible, setVisible }: Props) {
 
     const fetchFriends = async () => {
         const data = await getFriends(user_id);
+        const incomingRequests = await getIncomingFriendRequests(user_id);
         setFriends(data);
+        setIncomingRequests(incomingRequests);
     }
 
     const loadingFetchFriends = async () => {
-        setLoading(true);
+        // setLoading(true);
         await fetchFriends();
         setLoading(false);
     }
@@ -51,7 +58,7 @@ export default function FriendsList({ visible, setVisible }: Props) {
     }, [])
 
     useEffect(() => {
-        loadingFetchFriends
+        loadingFetchFriends();
 
         const setIntervals = setInterval(() => {
             fetchFriends();
@@ -90,24 +97,33 @@ export default function FriendsList({ visible, setVisible }: Props) {
             {/* Search modal for searching friends */}
             <FriendSearch visible={searchModal} setVisible={setSearchModal} />
 
-            <div className={`fixed duration-300 text-white shadow-3xl ease-in-out top-0 right-0 flex text-xl h-screen w-[500px] z-50 items-center backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] ${visible ? 'opacity-100' : 'opacity-0 invisible right-[-500px]'}`}>
+            <div className={`fixed duration-300 text-white shadow-3xl ease-in-out top-0 right-0 flex flex-col text-xl h-screen w-[500px] z-50 items-center backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] ${visible ? 'opacity-100' : 'opacity-0 invisible right-[-500px]'}`}>
                 <div className='flex absolute px-7 pb-4 pt-5 justify-between items-center w-full top-0 z-50 bg-[rgba(176,80,255,0.1)] backdrop-blur-3xl '>
                     <p className='text-3xl'>Friend list</p>
                     <div className='flex items-center gap-3'>
                         <button className='w-[20px] h-[20px]' id='fn_button' onClick={() => setSearchModal(true)}
                             style={{ fontSize: '1.5rem', padding: '1.2rem 2rem' }}
-                        ><p><IoSearchOutline /></p><span id='fnButtonSpan'></span></button>
+                        ><p><RiUserAddFill /></p><span id='fnButtonSpan'></span></button>
+                        <button className='w-[20px] h-[20px]' id='fn_button' onClick={() => console.log('search')}
+                            style={{ fontSize: '1.5rem', padding: '1.2rem 2rem' }}
+                        ><p><IoSearch /></p><span id='fnButtonSpan'></span></button>
                         <button className='w-[20px] h-[20px]' id='fn_button' onClick={hanldeCloseModalBoth}
                             style={{ fontSize: '1.5rem', padding: '1.2rem 2rem' }}
                         ><p><FaChevronCircleRight /></p><span id='fnButtonSpan'></span></button>
                     </div>
                 </div>
 
-                <div className='flex flex-col w-full h-full p-6 pt-24 pb-0 pr-0 overflow-y-auto'>
+                <div className='flex relative items-start justify-evenly cursor-pointer w-full pt-[5.3rem] mb-3'>
+                    <p className={`text-2xl`} onClick={() => setHandleState('list')}>Friends</p>
+                    <p className={`text-2xl`} onClick={() => setHandleState('requests')}>Requests</p>
+                    <div className={`absolute duration-[400ms] ease-in-out bottom-[-0.5rem] ${handleState === 'requests' ? 'left-[285px] w-[120px]' : 'w-[100px] left-[5.9rem]'} h-[2px] bg-white rounded-lg`} />
+                </div>
+                <div className='flex flex-col w-full h-full p-6 pb-0 pr-0 overflow-y-auto'>
                     <div className={` ${loading === false && 'invisible'} bg-[rgba(100,100,100,0.1)] backdrop-blur-3xl flex w-full h-full absolute top-20 left-0 z-50}`}>
                         {loading && <Loader />}
                     </div>
-                    {!loading && friends.length > 0 ? friends.map((friend, index) => (
+                    {/* Friends list */}
+                    {!loading && handleState === 'list' ? friends.length > 0 ? friends.map((friend, index) => (
                         <ul className='flex flex-col gap-5 pb-5' id='style-3' key={index}>
                             <li className='flex items-center justify-between w-full'>
                                 <div className='relative flex items-center gap-3'>
@@ -123,15 +139,15 @@ export default function FriendsList({ visible, setVisible }: Props) {
                                 {/* dropdown */}
                                 <div className={`flex items-center gap-3 pr-8 relative`} ref={dropdownRef}>
                                     <p
-                                        className={`cursor-pointer duration-300 ${menu.visible && menu.id === friend.id && 'rotate-180'}`}
+                                        className={`cursor-pointer text-2xl duration-300 ${menu.visible && menu.id === friend.id && 'rotate-180'}`}
                                         onClick={() => setMenu(prevMenu => ({ visible: !prevMenu.visible, id: friend.id }))}>
                                         <FaChevronCircleDown />
                                     </p>
-                                    <div className={`absolute overflow-hidden ease-in-out duration-300 ${menu.id === friend.id && menu.visible ? 'opacity-100 h-[110px] w-[150px] ' : 'opacity-0 invisible h-0 w-0'} flex z-50 justify-center items-center top-8 right-8 bg-[rgba(0,0,0,0.1)] backdrop-blur-lg p-5 rounded-2xl`}>
+                                    <div className={`absolute overflow-hidden ease-in-out duration-300 ${menu.id === friend.id && menu.visible ? 'opacity-100 h-[110px] w-[120px] ' : 'opacity-0 invisible h-0 w-0'} flex z-50 justify-center items-center top-8 right-8 bg-[rgba(30,30,30,0.8)] shadow-2xl backdrop-blur-3xl p-5 rounded-2xl`}>
                                         <ul className={`flex flex-col cursor-pointer duration-300 gap-3 ${menu.id === friend.id && menu.visible ? 'opacity-100' : 'opacity-0 invisible'}`}>
                                             <li className={`duration-300 hover:text-gray-500 ${location.pathname.startsWith('/customroom/') ? 'cursor-pointer' : 'cursor-not-allowed text-gray-500'}`}>Invite</li>
                                             {/* <li className='duration-300 hover:text-gray-500'>Messaage</li> */}
-                                            <li className='duration-300 hover:text-gray-500' onClick={() => setModal({ visible: true, id: friend.id })}>Remove</li>
+                                            <li className='duration-300 hover:text-red-700' onClick={() => setModal({ visible: true, id: friend.id })}>Remove</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -152,9 +168,21 @@ export default function FriendsList({ visible, setVisible }: Props) {
                             </li>
                             <hr className='mr-5 border' />
                         </ul>
-                    )) : <p className='flex items-center justify-center w-full h-full text-gray-400'>{loading ? '' : 'No friends found'}</p>}
+                    )) : <p className='flex items-center justify-center w-full h-full text-gray-400'>{loading ? '' : 'No friends found'}</p>
+                        : <div className='pb-5'>
+                            {/* Incoming requests */}
+                            <p className='text-2xl bg-[rgba(0,0,0,0.2)] backdrop-blur-lg'>Incoming requests</p>
+                            {incomingRequests.length > 0 && incomingRequests.length > 0 ? incomingRequests.map((request, index) => (
+                                <div className='pt-10'>
+                                    <IncomingAccordion request={request} index={index} />
+
+                                </div>
+                            )) : <p className='flex items-center justify-center w-full h-full text-gray-400'>{loading ? '' : 'No incoming requests'}</p>}
+                        </div>
+                    }
                 </div>
             </div>
         </>
     )
 }
+
