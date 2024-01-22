@@ -1,7 +1,7 @@
 import { IoNotifications, IoSearchOutline } from "react-icons/io5";
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
-import { getIncomingFriendRequests  } from '../supabase/Routes/FriendRoutes';
+import { getIncomingFriendRequests } from '../supabase/Routes/FriendRoutes';
 import { FaChevronCircleRight } from "react-icons/fa";
 import { useState } from 'react';
 import Loader from "./Loader";
@@ -10,11 +10,13 @@ const Notification = () => {
   const { user_id } = useSelector((state: RootState) => state.user)
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState([]);
 
   const handleNotifiy = async () => {
     setVisible(true);
-    const data = await getIncomingFriendRequests (user_id)
-
+    const data = await getIncomingFriendRequests(user_id)
+    setNotification(data);
+    console.log(data);
   }
   return (
     <div>
@@ -28,8 +30,21 @@ const Notification = () => {
             ><p><FaChevronCircleRight /></p><span id='fnButtonSpan'></span></button>
           </div>
         </div>
-        <div className='flex flex-col w-full h-full p-6 pt-24 pb-0 pr-0 overflow-y-auto'>
+        <div className='flex flex-col w-full h-full p-6 pt-32 pb-0 pr-6 overflow-y-auto'>
           {loading && <Loader />}
+          {notification.map((item, index) => (
+            <div key={index}>
+        
+              <div className='relative flex items-center gap-3 '>
+                <img className='rounded-full' src={item?.user_pfp ? item?.user_pfp : `https://api.dicebear.com/6.x/personas/svg?seed=${item.user_name}`} alt='avatar' width='60' height='60' />
+                <div className='flex flex-col'>
+                  <h1>{item.user_name}</h1>
+                  <p className='text-sm text-gray-400'>Sent you a friend request</p>
+                </div>
+              </div>
+              <hr className="w-full my-4"/>
+            </div>
+          ))}
         </div>
       </div>
     </div>
