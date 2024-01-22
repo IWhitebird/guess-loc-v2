@@ -11,12 +11,12 @@ const ChatModel: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [newMessage, setNewMessage] = useState<string>('');
     const channel = supabase.channel(`${roomDetails.room_id}_chat`)
-    const [curChat , setCurChat] = useState<any[]>(roomDetails.room_chat)
+    const [curChat, setCurChat] = useState<any[]>(roomDetails.room_chat)
 
 
-    async function SendMessage(myMsg : string) {
+    async function SendMessage(myMsg: string) {
         setNewMessage('')
-      
+
         if (!newMessage.trim()) {
             return;
         }
@@ -28,21 +28,21 @@ const ChatModel: React.FC = () => {
             chatter_message: myMsg,
             chatter_time: new Date().toLocaleTimeString()
         }])
-        
+
         channel.subscribe((status) => {
-            if (status !== 'SUBSCRIBED') { return } 
+            if (status !== 'SUBSCRIBED') { return }
             channel.send({
                 type: 'broadcast',
                 event: 'room_chatting',
-                payload : {
+                payload: {
                     chatter_id: user_id,
                     chatter_name: user_name,
                     chatter_image: user_profile_pic,
                     chatter_message: myMsg,
                     chatter_time: new Date().toLocaleTimeString()
                 }
-              })
-          })
+            })
+        })
 
         await supabase.from('custom_room').update({
             room_chat: [...roomDetails.room_chat, {
@@ -66,8 +66,8 @@ const ChatModel: React.FC = () => {
     channel.on(
         'broadcast',
         { event: 'room_chatting' },
-        ({payload}) => {
-            console.log("paylod" , payload)
+        ({ payload }) => {
+            console.log("paylod", payload)
             setCurChat([...curChat, payload])
         }
     )
@@ -77,11 +77,11 @@ const ChatModel: React.FC = () => {
     }, [curChat]);
 
     console.log("ROOM DETAILS", roomDetails)
-    console.log("Broad" , curChat)
+    console.log("Broad", curChat)
 
     return (
         <div className='w-full h-full border bg-[#ffffff2c] border-black backdrop-blur-md rounded-xl flex justify-start flex-col '>
-            <div className="flex flex-col items-start h-full gap-5 overflow-y-auto " id="style-3"  ref={containerRef}>
+            <div className="flex flex-col items-start h-full gap-5 overflow-y-auto " id="style-3" ref={containerRef}>
 
                 {curChat.map((chat, index) => (
                     <div
@@ -109,8 +109,8 @@ const ChatModel: React.FC = () => {
                                 {chat.chatter_message}
                             </p>
                             <span className="flex justify-end w-full text-sm font-normal text-gray-500 dark:text-gray-400">
-                                    {chat.chatter_time.split(':')[0] + ':' + chat.chatter_time.split(':')[1]}
-                                </span>
+                                {chat.chatter_time.split(':')[0] + ':' + chat.chatter_time.split(':')[2]}
+                            </span>
                         </div>
                         {
                             chat.chatter_id === user_id &&
@@ -135,9 +135,9 @@ const ChatModel: React.FC = () => {
                 <button
                     id='fn_button'
                     style={{ fontSize: '1.2rem', padding: '1rem 1rem 1rem 1.5rem' }}
-                    onClick={() =>{ SendMessage(newMessage) }}
+                    onClick={() => { SendMessage(newMessage) }}
                     onKeyDown={(e) => {
-                        if(e.key === 'Enter'){
+                        if (e.key === 'Enter') {
                             SendMessage(newMessage)
                         }
                     }}

@@ -1,5 +1,6 @@
-import supabase  from '../init'
+import supabase from '../init'
 
+// main fetch routes
 export const getFriends = async (id: any) => {
     const { data, error } = await supabase
         .from('users')
@@ -25,6 +26,34 @@ export const getFriends = async (id: any) => {
     return friendsList
 }
 
+export const getIncomingFriendRequests = async (id: any) => {
+    const { data, error } = await supabase
+        .from('users')
+        .select('incoming_fr_reqs')
+        .eq('id', id)
+        .single()
+
+    let incomingRequests: any = []
+
+    if (data?.incoming_fr_reqs && data?.incoming_fr_reqs.length > 0) {
+        for (let i = 0; i < data?.incoming_fr_reqs.length; i++) {
+            const { data: friendData, error: friendError } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', data.incoming_fr_reqs[i])
+                .single()
+            if (friendError) throw friendError
+            incomingRequests.push(friendData)
+        }
+    }
+
+    if (error) throw error
+    return incomingRequests
+}
+
+//===========================================================================================
+// post routes
+//send friend request
 export const sendFriendRequest = async (id: any, friend_id: any) => {
 
     // Update current user's outgoing friend requests
@@ -78,6 +107,7 @@ export const sendFriendRequest = async (id: any, friend_id: any) => {
     if (updateFriendError) throw updateFriendError;
 }
 
+//cancel friend request
 export const cancelFriendRequest = async (id: any, friend_id: any) => {
 
     // Update current user's outgoing friend requests
@@ -131,6 +161,7 @@ export const cancelFriendRequest = async (id: any, friend_id: any) => {
     if (updateFriendError) throw updateFriendError;
 }
 
+//accept friend request
 export const acceptFriendRequest = async (id: any, friend_id: any) => {
 
     // Update current user's friends list
@@ -140,8 +171,8 @@ export const acceptFriendRequest = async (id: any, friend_id: any) => {
         .select('friends_id')
         .eq('id', id);
 
-    
-        if (cur_list.error){
+
+    if (cur_list.error) {
         throw cur_list.error
     }
 
@@ -171,7 +202,7 @@ export const acceptFriendRequest = async (id: any, friend_id: any) => {
 
     if (cur_fr_list.error) {
         throw cur_fr_list.error;
-    } 
+    }
 
     const currentFriendFriends = cur_fr_list.data[0].friends_id ? cur_fr_list.data[0].friends_id : [];
 
@@ -191,6 +222,7 @@ export const acceptFriendRequest = async (id: any, friend_id: any) => {
 
 }
 
+//remove friend
 export const removeFriend = async (id: any, friend_id: any) => {
 
     // Update current user's friends list
@@ -248,29 +280,4 @@ export const searchFriends = async (search: string) => {
     const { data, error } = await supabase.from('users').select().textSearch('name_email', `${search}`)
     if (error) throw error
     return data
-}
-
-export const getFriendRequests = async (id: any) => {
-    const { data, error } = await supabase
-        .from('users')
-        .select('incoming_fr_reqs')
-        .eq('id', id)
-        .single()
-
-    let friendRequests: any = []
-
-    if (data?.incoming_fr_reqs && data?.incoming_fr_reqs.length > 0) {
-        for (let i = 0; i < data?.incoming_fr_reqs.length; i++) {
-            const { data: friendData, error: friendError } = await supabase
-                .from('users')
-                .select('*')
-                .eq('id', data.incoming_fr_reqs[i])
-                .single()
-            if (friendError) throw friendError
-            friendRequests.push(friendData)
-        }
-    }
-
-    if (error) throw error
-    return friendRequests
 }

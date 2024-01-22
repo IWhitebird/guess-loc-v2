@@ -14,20 +14,19 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
     const [friends, setFriends] = useState<any[]>([]);
     const [search, setSearch] = useState('')
     const { user_id } = useSelector((state: RootState) => state.user)
+
     async function handlesearch() {
         const data = await searchFriends(search);
         setFriends(data);
-        console.log('data', data);
     }
 
-    const sendfr = async (user_id: any, id: any, event: React.MouseEvent<HTMLButtonElement>) => {
-        const data = await sendFriendRequest(user_id, id);
-        console.log('data', data);
+    async function SendFr(friend_id: string) {
+        if (!friend_id || friend_id === undefined) return
+        await sendFriendRequest(user_id, friend_id);
     }
-
 
     return (
-        <div className={`fixed duration-300 overflow-hidden ${visible ? 'opacity-100 ' : 'opacity-0 invisible'} top-0 justify-start z-50 items-start flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-md  '}`}>
+        <div className={`fixed duration-300 overflow-hidden ${visible ? 'opacity-100 ' : 'opacity-0 invisible'} top-0 justify-start z-50 items-start flex w-full h-full  '}`}>
             <div className={`backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] fixed duration-300 text-white p-5 rounded-tl-lg rounded-bl-lg${visible ? ' opacity-100 right-[31.2rem]' : 'opacity-0 right-0 invisible'}`}>
                 <div className='flex items-center'>
                     <input type="text" placeholder='Search using name or email'
@@ -44,15 +43,17 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
                 <ul className='flex flex-col h-screen gap-3 pb-24 mt-3 overflow-y-auto text-xl' id='style-3'>
                     {friends.map((friend, index) => (
                         <>
-                            <li className='flex items-center gap-3' key={index}>
-                                <img src={friend.user_pfp} alt="" className='w-[50px] h-[50px] rounded-full' />
-                                <div className='flex flex-col'>
-                                    <p className='text-lg font-semibold'>{friend.user_name}</p>
-                                    <p className='text-sm text-gray-400'>View Profile</p>
+                            <li key={index} className='flex items-center justify-between'>
+                                <div className='flex items-center gap-3'>
+                                    <img src={friend.user_pfp} alt="" className='w-[50px] h-[50px] rounded-full' />
+                                    <div className='flex flex-col'>
+                                        <p className='text-lg font-semibold'>{friend.user_name}</p>
+                                        <p className='text-sm text-gray-400'>View Profile</p>
+                                    </div>
                                 </div>
-                                <button onClick={(event) => sendfr(user_id, friend.id, event)}>
-                                    Add
-                                </button>
+                                <button className='w-[20px] h-[20px]' id='fn_button' onClick={() => SendFr(friend.id)}
+                                    style={{ fontSize: '1.1rem', padding: '1.2rem 2.3rem' }}
+                                ><p>Add</p><span id='fnButtonSpan'></span></button>
                             </li>
                             <hr className='w-full border-white' />
                         </>

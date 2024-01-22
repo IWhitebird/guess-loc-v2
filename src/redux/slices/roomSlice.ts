@@ -86,8 +86,7 @@ export const roomSlice = createSlice({
         state.room_id = action.payload.room_id
         state.room_owner = action.payload.room_owner
         state.room_name = action.payload.room_name
-        state.room_settings.game_rounds = action.payload.room_settings.game_rounds
-        state.room_settings.round_duration = action.payload.room_settings.round_duration
+        state.room_settings = action.payload.room_settings
         state.room_participants = action.payload.room_participants
         state.room_chat = action.payload.room_chat
     },
