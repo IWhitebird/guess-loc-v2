@@ -60,14 +60,17 @@ export default function FriendsList({ visible, setVisible }: Props) {
     useEffect(() => {
         loadingFetchFriends();
 
-        const setIntervals = setInterval(() => {
-            fetchFriends();
-        }, 3000)
+        if (visible) {
 
-        return () => {
-            clearInterval(setIntervals);
+            const setIntervals = setInterval(() => {
+                fetchFriends();
+            }, 3000)
+
+            return () => {
+                clearInterval(setIntervals);
+            }
         }
-    }, [])
+    }, [visible])
 
     useEffect(() => {
 
