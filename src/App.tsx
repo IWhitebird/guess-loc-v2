@@ -14,14 +14,21 @@ import Profile from './pages/profile'
 import { useEffect, useState } from 'react'
 import FriendsList from './components/Friends/FriendsList'
 import FriendProfilepage from './pages/friendProfilepage'
-
+import Notification from './components/notification'
 
 const App = () => {
   const loggedIN = localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token')
   const [friendModal, setFriendModal] = useState(false)
   const sendDashboard = () => {
     if (loggedIN !== null && (JSON.parse(loggedIN).access_token !== undefined || JSON.parse(loggedIN).access_token !== null)) {
-      return <Dashboard setFriendModal={setFriendModal} visible={friendModal} />
+      return (
+        <div className='absolute right-0 flex justify-between w-full'>
+          <Dashboard setFriendModal={setFriendModal} visible={friendModal} />
+          <Notification />
+        </div>
+      )
+
+
     }
   }
 
@@ -49,6 +56,7 @@ const App = () => {
         <Route path="/profile/:id" element={<FriendProfilepage/>} />
         <Route path="/spGame" element={<OnePlayer />} />
         <Route path="/profile" element={<Profile />} />
+        {/* <Route path="/profile/:id" element={<Profile />} />   //for other users profile */}
         <Route path="*" element={<Landing />} />
       </Routes>
     </>

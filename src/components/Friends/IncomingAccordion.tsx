@@ -1,15 +1,30 @@
 import { FaChevronCircleDown } from 'react-icons/fa'
 import { useEffect, useRef, useState } from 'react'
+import { rejectFriendRequest, acceptFriendRequest } from '../../supabase/Routes/FriendRoutes'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../redux/store/store'
 
 interface IncomingAccordionProps {
     request: any;
     index: any;
+    loadingFetchFriends: any
 }
 
-function IncomingAccordion({ request, index }: IncomingAccordionProps) {
+function IncomingAccordion({ request, index, loadingFetchFriends }: IncomingAccordionProps) {
+    const { user_id } = useSelector((state: RootState) => state.user)
     const [menu, setMenu] = useState({ visible: false, id: '' })
     const [modal, setModal] = useState({ visible: false, id: '' })
     const dropdownRef = useRef<HTMLDivElement>(null)
+
+    const handleAccept = async (id: any) => {
+        await acceptFriendRequest(user_id, id)
+        loadingFetchFriends()
+    }
+
+    const handleReject = async (id: any) => {
+        await rejectFriendRequest(user_id, id)
+        loadingFetchFriends()
+    }
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -24,7 +39,7 @@ function IncomingAccordion({ request, index }: IncomingAccordionProps) {
     }, [dropdownRef])
 
     return (
-        <ul className='flex flex-col gap-1' id='style-3' key={index}>
+        <ul className='flex flex-col' id='style-3' key={index}>
             <li className='flex items-center justify-between w-full'>
                 <div className='relative flex items-center gap-3'>
                     <img className='rounded-full' src={request?.user_pfp ? request?.user_pfp : `https://api.dicebear.com/6.x/personas/svg?seed=${request.user_name}`} alt='avatar' width='60' height='60' />
@@ -45,7 +60,7 @@ function IncomingAccordion({ request, index }: IncomingAccordionProps) {
                     <div className={`absolute overflow-hidden ease-in-out duration-300 ${menu.id === request.id && menu.visible ? 'opacity-100 h-[110px] w-[120px] ' : 'opacity-0 invisible h-0 w-0'} flex z-50 justify-center items-center top-8 right-8 bg-[rgba(30,30,30,0.8)] shadow-2xl backdrop-blur-3xl p-5 rounded-2xl`}>
                         <ul className={`flex flex-col cursor-pointer duration-300 gap-3 ${menu.id === request.id && menu.visible ? 'opacity-100' : 'opacity-0 invisible'}`}>
 
-                            <li className='duration-300 hover:text-green-700'>Accept</li>
+                            <li className='duration-300 hover:text-green-700' onClick={() => handleAccept(request.id)}>Accept</li>
                             <li className='duration-300 hover:text-red-700' onClick={() => setModal({ visible: true, id: request.id })}>Reject</li>
                         </ul>
                     </div>
@@ -56,7 +71,7 @@ function IncomingAccordion({ request, index }: IncomingAccordionProps) {
                     <div className={`text-xl bg-[rgba(0,0,0,0.2)] backdrop-blur-lg duration-300 text-white border border-gray-700 p-5 rounded-xl ${modal.id === request.id ? 'scale-100 opacity-100' : 'scale-50 opacity-0 invisible'}`}>
                         <p className='text-xl'>Are you sure you want to reject <span className='border-b'>{request.user_name}'s</span> friend request?</p>
                         <div className='flex justify-end gap-3 mt-5'>
-                            <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => (console.log('lool'))}>Yes</button>
+                            <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => handleReject(request.id)}>Yes</button>
                             <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => setModal({ visible: false, id: '' })}>No</button>
                         </div>
                     </div>

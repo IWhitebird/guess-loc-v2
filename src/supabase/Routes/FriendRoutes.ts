@@ -107,46 +107,108 @@ export const sendFriendRequest = async (id: any, friend_id: any) => {
     if (updateFriendError) throw updateFriendError;
 }
 
-//cancel friend request
-export const cancelFriendRequest = async (id: any, friend_id: any) => {
+//accept friend request
+export const acceptFriendRequest = async (id: any, friend_id: any) => {
 
-    // Update current user's outgoing friend requests
-
-    const { data: userData, error: userError } = await supabase
+    // Update current user's friends list
+    const { data, error } = await supabase
         .from('users')
-        .select('outgoing_fr_reqs')
-        .eq('id', id);
+        .select('*')
+        .eq('id', id)
+        .single();
 
-    if (userError) throw userError;
+    if (error) throw error;
 
-    const currentOutgoing = userData[0].outgoing_fr_reqs || [];
+    let currentFriends = data.friends_id || [];
+    let currentIncoming = data.incoming_fr_reqs || [];
 
-    if (!currentOutgoing.includes(friend_id)) {
+    if (!currentIncoming.includes(friend_id)) {
         console.log('Friend request does not exist');
         return;
     }
 
-    const { error: sendError } = await supabase
+    currentFriends.push(friend_id);
+
+    const { error: acceptError } = await supabase
         .from('users')
         .update({
-            outgoing_fr_reqs: currentOutgoing.filter((friend: any) => friend !== friend_id),
+            friends_id: currentFriends,
+            incoming_fr_reqs: currentIncoming.filter((friend: any) => friend !== friend_id),
         })
         .eq('id', id);
 
-    if (sendError) throw sendError;
+    if (acceptError) throw acceptError;
 
-    // Update friend's incoming friend requests
-
+    // Update friend' friends list
     const { data: friendData, error: friendError } = await supabase
         .from('users')
-        .select('incoming_fr_reqs')
-        .eq('id', friend_id);
+        .select('*')
+        .eq('id', friend_id)
+        .single();
 
     if (friendError) throw friendError;
 
-    const currentIncoming = friendData[0].incoming_fr_reqs || [];
+    let currentFriendFriends = friendData.friends_id || [];
+    let currentFriendOutgoing = friendData.outgoing_fr_reqs || [];
 
-    if (!currentIncoming.includes(id)) {
+    if (!currentFriendOutgoing.includes(id)) {
+        console.log('Friend request does not exist');
+        return;
+    }
+
+    currentFriendFriends.push(id);
+
+    const { error: updateFriendError } = await supabase
+        .from('users')
+        .update({
+            friends_id: currentFriendFriends,
+            outgoing_fr_reqs: currentFriendOutgoing.filter((friend: any) => friend !== id),
+        })
+        .eq('id', friend_id);
+
+    if (updateFriendError) throw updateFriendError;
+}
+
+//reject friend request
+export const rejectFriendRequest = async (id: any, friend_id: any) => {
+
+    // Update current user's incoming friend requests
+    const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error) throw error;
+
+    let currentIncoming = data.incoming_fr_reqs || [];
+
+    if (!currentIncoming.includes(friend_id)) {
+        console.log('Friend request does not exist');
+        return;
+    }
+
+    const { error: rejectError } = await supabase
+        .from('users')
+        .update({
+            incoming_fr_reqs: currentIncoming.filter((friend: any) => friend !== friend_id),
+        })
+        .eq('id', id);
+
+    if (rejectError) throw rejectError;
+
+    // Update friend's outgoing friend requests
+    const { data: friendData, error: friendError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', friend_id)
+        .single();
+
+    if (friendError) throw friendError;
+
+    let currentFriendOutgoing = friendData.outgoing_fr_reqs || [];
+
+    if (!currentFriendOutgoing.includes(id)) {
         console.log('Friend request does not exist');
         return;
     }
@@ -154,72 +216,11 @@ export const cancelFriendRequest = async (id: any, friend_id: any) => {
     const { error: updateFriendError } = await supabase
         .from('users')
         .update({
-            incoming_fr_reqs: currentIncoming.filter((friend: any) => friend !== id),
+            outgoing_fr_reqs: currentFriendOutgoing.filter((friend: any) => friend !== id),
         })
         .eq('id', friend_id);
 
     if (updateFriendError) throw updateFriendError;
-}
-
-//accept friend request
-export const acceptFriendRequest = async (id: any, friend_id: any) => {
-
-    // Update current user's friends list
-
-    const cur_list = await supabase
-        .from('users')
-        .select('friends_id')
-        .eq('id', id);
-
-
-    if (cur_list.error) {
-        throw cur_list.error
-    }
-
-    const currentFriends = cur_list.data[0].friends_id ? cur_list.data[0].friends_id : [];
-
-    if (currentFriends.includes(friend_id)) {
-        console.log('Friend already exists');
-        return;
-    }
-
-    await supabase
-        .from('users')
-        .update({
-            friends_id: [...currentFriends, friend_id],
-            incoming_fr_reqs: null,
-            outgoing_fr_reqs: null,
-        })
-        .eq('id', id);
-
-
-    // Update friend's friends list
-
-    const cur_fr_list = await supabase
-        .from('users')
-        .select('friends_id')
-        .eq('id', friend_id);
-
-    if (cur_fr_list.error) {
-        throw cur_fr_list.error;
-    }
-
-    const currentFriendFriends = cur_fr_list.data[0].friends_id ? cur_fr_list.data[0].friends_id : [];
-
-    if (currentFriendFriends.includes(id)) {
-        console.log('Friend already exists');
-        return;
-    }
-
-    await supabase
-        .from('users')
-        .update({
-            friends_id: [...currentFriendFriends, id],
-            outgoing_fr_reqs: null,
-            incoming_fr_reqs: null,
-        })
-        .eq('id', friend_id);
-
 }
 
 //remove friend
@@ -277,7 +278,7 @@ export const removeFriend = async (id: any, friend_id: any) => {
 }
 
 export const searchFriends = async (search: string) => {
-    const { data, error } = await supabase.from('users').select().textSearch('name_email', `${search}`)
+    const {data , error} = await supabase.rpc('name_email_search', {'search_term': `${search}`})
     if (error) throw error
     return data
 }
