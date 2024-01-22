@@ -38,7 +38,6 @@ export default function FriendsList({ visible, setVisible }: Props) {
             filter: `id=eq.${user_id}`
         },
         payload => {
-            console.log("payload", payload)
             loadingFetchFriends()
         }
     ).subscribe()
@@ -51,7 +50,7 @@ export default function FriendsList({ visible, setVisible }: Props) {
     }
 
     const loadingFetchFriends = async () => {
-        // setLoading(true);
+        setLoading(true);
         await getFriends(user_id).then(data => setFriends(data))
         await getIncomingFriendRequests(user_id).then(data => setIncomingRequests(data))
         setLoading(false);
@@ -180,7 +179,7 @@ export default function FriendsList({ visible, setVisible }: Props) {
                             {/* Incoming requests */}
                             {incomingRequests.length > 0 && incomingRequests.length > 0 ? incomingRequests.map((request, index) => (
                                 <div className='py-2'>
-                                    <IncomingAccordion request={request} index={index} loadingFetchFriends={loadingFetchFriends} />
+                                    <IncomingAccordion request={request} index={index} loadingFetchFriends={loadingFetchFriends} setLoading={setLoading} loading={loading} />
 
                                 </div>
                             )) : <p className='flex items-center justify-center w-full h-full text-gray-400'>{loading ? '' : 'No incoming requests'}</p>}
