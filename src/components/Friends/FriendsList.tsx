@@ -3,11 +3,10 @@ import FriendSearch from './FriendSearch';
 import { IoSearch } from "react-icons/io5";
 import { FaChevronCircleRight, FaChevronCircleDown } from "react-icons/fa";
 import { getFriends, removeFriend, getIncomingFriendRequests } from '../../supabase/Routes/FriendRoutes'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Loader from '../Loader';
 import { RiUserAddFill } from "react-icons/ri";
-
-
+import { ImSpinner2 } from 'react-icons/im'
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store/store';
 import IncomingAccordion from './IncomingAccordion';
@@ -19,6 +18,7 @@ interface Props {
 
 export default function FriendsList({ visible, setVisible }: Props) {
     const location = useLocation();
+    const nav = useNavigate();
     const dropdownRef = useRef<HTMLDivElement | null>(null);
     const { user_id } = useSelector((state: RootState) => state.user)
     const [searchModal, setSearchModal] = useState<boolean>(false);
@@ -85,7 +85,7 @@ export default function FriendsList({ visible, setVisible }: Props) {
     }, [dropdownRef]);
 
     const removeFriendClick = async (user_id: string, friend_id: string) => {
-        console.log(friend_id)
+        setLoading(true);
         await removeFriend(user_id, friend_id);
         setModal({ visible: false, id: '' });
         setMenu(prevMenu => ({ visible: prevMenu.visible, id: '' }));
@@ -118,13 +118,13 @@ export default function FriendsList({ visible, setVisible }: Props) {
                     <p className={`text-2xl`} onClick={() => setHandleState('requests')}>Requests</p>
                     <div className={`absolute duration-[400ms] ease-in-out bottom-[-0.5rem] ${handleState === 'requests' ? 'left-[285px] w-[120px]' : 'w-[100px] left-[5.9rem]'} h-[2px] bg-white rounded-lg`} />
                 </div>
-                <div className='flex flex-col w-full h-full p-6 pb-0 pr-0 overflow-y-auto'>
+                <div className='flex flex-col w-full h-full p-6 pb-0 pr-0 overflow-y-auto' id='style-3'>
                     <div className={` ${loading === false && 'invisible'} bg-[rgba(100,100,100,0.1)] backdrop-blur-3xl flex w-full h-full absolute top-20 left-0 z-50}`}>
                         {loading && <Loader />}
                     </div>
                     {/* Friends list */}
                     {!loading && handleState === 'list' ? friends.length > 0 ? friends.map((friend, index) => (
-                        <ul className='flex flex-col gap-5 pb-5' id='style-3' key={index}>
+                        <ul className='flex flex-col gap-2 pb-5 pt-2' id='style-3' key={index}>
                             <li className='flex items-center justify-between w-full'>
                                 <div className='relative flex items-center gap-3'>
                                     <img className='rounded-full' src={friend?.user_pfp ? friend?.user_pfp : `https://api.dicebear.com/6.x/personas/svg?seed=${friend.user_name}`} alt='avatar' width='60' height='60' />
@@ -137,16 +137,16 @@ export default function FriendsList({ visible, setVisible }: Props) {
                                 </div>
 
                                 {/* dropdown */}
-                                <div className={`flex items-center gap-3 pr-8 relative`} ref={dropdownRef}>
+                                <div className={`flex items-center gap pr-8 relative`} ref={dropdownRef}>
                                     <p
                                         className={`cursor-pointer text-2xl duration-300 ${menu.visible && menu.id === friend.id && 'rotate-180'}`}
                                         onClick={() => setMenu(prevMenu => ({ visible: !prevMenu.visible, id: friend.id }))}>
                                         <FaChevronCircleDown />
                                     </p>
-                                    <div className={`absolute overflow-hidden ease-in-out duration-300 ${menu.id === friend.id && menu.visible ? 'opacity-100 h-[110px] w-[120px] ' : 'opacity-0 invisible h-0 w-0'} flex z-50 justify-center items-center top-8 right-8 bg-[rgba(30,30,30,0.8)] shadow-2xl backdrop-blur-3xl p-5 rounded-2xl`}>
+                                    <div className={`absolute overflow-hidden ease-in-out duration-300 ${menu.id === friend.id && menu.visible ? 'opacity-100 h-[130px] w-[120px] ' : 'opacity-0 invisible h-0 w-0'} flex z-50 justify-center items-center top-8 right-8 bg-[rgba(30,30,30,0.8)] shadow-2xl backdrop-blur-3xl p-5 rounded-2xl`}>
                                         <ul className={`flex flex-col cursor-pointer duration-300 gap-3 ${menu.id === friend.id && menu.visible ? 'opacity-100' : 'opacity-0 invisible'}`}>
                                             <li className={`duration-300 hover:text-gray-500 ${location.pathname.startsWith('/customroom/') ? 'cursor-pointer' : 'cursor-not-allowed text-gray-500'}`}>Invite</li>
-                                            {/* <li className='duration-300 hover:text-gray-500'>Messaage</li> */}
+                                            <li className='duration-300 hover:text-gray-500' onClick={() => nav(`/profile/${friend.id}`)}>Profile</li>
                                             <li className='duration-300 hover:text-red-700' onClick={() => setModal({ visible: true, id: friend.id })}>Remove</li>
                                         </ul>
                                     </div>
@@ -159,22 +159,27 @@ export default function FriendsList({ visible, setVisible }: Props) {
                                         <br />
                                         This action cannot be undone.
                                         <div className='flex justify-end gap-3 mt-5'>
-                                            <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => removeFriendClick(user_id, friend.id)}>Yes</button>
+                                            <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' disabled={loading} onClick={() => removeFriendClick(user_id, friend.id)}>
+                                                {loading ? <p className='flex items-center'>
+                                                    <span className='animate-spin '><ImSpinner2 /></span>
+                                                    Wait..
+                                                </p>
+                                                    : 'Yes'}
+
+                                            </button>
                                             <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => setModal({ visible: false, id: '' })}>No</button>
                                         </div>
                                     </div>
                                 </div>
-
                             </li>
                             <hr className='mr-5 border' />
                         </ul>
                     )) : <p className='flex items-center justify-center w-full h-full text-gray-400'>{loading ? '' : 'No friends found'}</p>
                         : <div className='pb-5'>
                             {/* Incoming requests */}
-                            <p className='text-2xl bg-[rgba(0,0,0,0.2)] backdrop-blur-lg'>Incoming requests</p>
                             {incomingRequests.length > 0 && incomingRequests.length > 0 ? incomingRequests.map((request, index) => (
-                                <div className='pt-10'>
-                                    <IncomingAccordion request={request} index={index} />
+                                <div className='py-2'>
+                                    <IncomingAccordion request={request} index={index} loadingFetchFriends={loadingFetchFriends} />
 
                                 </div>
                             )) : <p className='flex items-center justify-center w-full h-full text-gray-400'>{loading ? '' : 'No incoming requests'}</p>}

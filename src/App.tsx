@@ -47,6 +47,7 @@ const App = () => {
 
         <Route path="/spGame" element={<OnePlayer />} />
         <Route path="/profile" element={<Profile />} />
+        {/* <Route path="/profile/:id" element={<Profile />} />   //for other users profile */}
         <Route path="*" element={<Landing />} />
       </Routes>
     </>
