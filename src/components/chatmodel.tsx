@@ -53,7 +53,6 @@ const ChatModel: React.FC = () => {
                 chatter_time: new Date().toLocaleTimeString()
             }] as any
         }).match({ room_id: roomDetails.room_id })
-
         scrollToBottom();
     }
 

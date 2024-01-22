@@ -14,6 +14,7 @@ import Profile from './pages/profile'
 import { useEffect, useState } from 'react'
 import FriendsList from './components/Friends/FriendsList'
 
+
 const App = () => {
   const loggedIN = localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token')
   const [friendModal, setFriendModal] = useState(false)

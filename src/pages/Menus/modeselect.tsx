@@ -5,6 +5,7 @@ import AudioPlayer from '../../components/AudioPlayer.tsx'
 import { Link } from 'react-router-dom';
 import { ImSpinner2 } from 'react-icons/im';
 
+
 interface Props {
     setFriendModal: (visible: boolean) => void;
 }
@@ -62,7 +63,7 @@ function MainMenu({ setFriendModal }: Props) {
                                         Multiplayer
                                     </li>
                                 </Link>
-                                <li className="text-5xl mb-8 italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300" onClick={() => setFriendModal(true)}>
+                                <li className="mb-8 text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300" onClick={() => setFriendModal(true)}>
                                     Friends
                                 </li>
                                 <li className="text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300" onClick={handlevolume}>
