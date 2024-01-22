@@ -1,7 +1,7 @@
 import { IoNotifications, IoSearchOutline } from "react-icons/io5";
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
-import { getFriendRequests } from '../supabase/Routes/FriendRoutes';
+import { getIncomingFriendRequests  } from '../supabase/Routes/FriendRoutes';
 import { FaChevronCircleRight } from "react-icons/fa";
 import { useState } from 'react';
 import Loader from "./Loader";
@@ -13,7 +13,7 @@ const Notification = () => {
 
   const handleNotifiy = async () => {
     setVisible(true);
-    const data = await getFriendRequests(user_id)
+    const data = await getIncomingFriendRequests (user_id)
 
   }
   return (
