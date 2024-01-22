@@ -15,9 +15,11 @@ import supabase from '../../supabase/init';
 interface Props {
     visible: boolean;
     setVisible: (visible: boolean) => void;
+    handleState: string
+    setHandleState: (handleState: string) => void
 }
 
-export default function FriendsList({ visible, setVisible }: Props) {
+export default function FriendsList({ visible, setVisible, handleState, setHandleState }: Props) {
     const location = useLocation();
     const nav = useNavigate();
     const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -26,7 +28,6 @@ export default function FriendsList({ visible, setVisible }: Props) {
     const [menu, setMenu] = useState({ visible: false, id: '' });
     const [friends, setFriends] = useState<any[]>([]);
     const [incomingRequests, setIncomingRequests] = useState<any[]>([]);
-    const [handleState, setHandleState] = useState('list')
     const [loading, setLoading] = useState<boolean>(false);
     const [modal, setModal] = useState({ visible: false, id: '' })
 

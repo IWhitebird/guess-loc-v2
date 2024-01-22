@@ -19,16 +19,15 @@ import Notification from './components/notification'
 const App = () => {
   const loggedIN = localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token')
   const [friendModal, setFriendModal] = useState(false)
+  const [handleState, setHandleState] = useState('list')
   const sendDashboard = () => {
     if (loggedIN !== null && (JSON.parse(loggedIN).access_token !== undefined || JSON.parse(loggedIN).access_token !== null)) {
       return (
         <div className='absolute right-0 flex justify-between w-full'>
           <Dashboard setFriendModal={setFriendModal} visible={friendModal} />
-          <Notification />
+          <Notification handleState={handleState} setHandleState={setHandleState} friendModal={friendModal} setFriendModal={setFriendModal} />
         </div>
       )
-
-
     }
   }
 
@@ -41,7 +40,7 @@ const App = () => {
     <>
       <Vnum />
       {sendDashboard()}
-      <FriendsList visible={friendModal} setVisible={setFriendModal} />
+      <FriendsList visible={friendModal} setVisible={setFriendModal} handleState={handleState} setHandleState={setHandleState} />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/mode" element={<ModeSelect setFriendModal={setFriendModal} />} />

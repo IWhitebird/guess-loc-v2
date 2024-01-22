@@ -6,16 +6,20 @@ import { FaChevronCircleRight } from "react-icons/fa";
 import { useState, useEffect } from 'react';
 import Loader from "./Loader";
 
+interface props {
+  handleState: string
+  setHandleState: (handleState: string) => void
+  friendModal: boolean
+  setFriendModal: (friendModal: boolean) => void
+}
 
-const Notification = () => {
+const Notification = ({ handleState, setHandleState, friendModal, setFriendModal }: props) => {
   const { user_id } = useSelector((state: RootState) => state.user)
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState([]);
-  const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
-
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         setVisible(false);
@@ -24,11 +28,18 @@ const Notification = () => {
 
   }, [])
 
+  function setRedirect() {
+    setHandleState('requests');
+    setFriendModal(true);
+    setVisible(false);
+  }
+
   const handleNotifiy = async () => {
     setVisible(true);
+    setLoading(true);
     const data = await getIncomingFriendRequests(user_id)
     setNotification(data);
-    console.log(data);
+    setLoading(false);
   }
 
   return (
@@ -46,22 +57,22 @@ const Notification = () => {
           </div>
         </div>
         <div className='flex flex-col w-full h-full p-6 pt-32 pb-0 pr-6 overflow-y-auto'>
-          {loading && <Loader />}
-          {notification.map((item: any, index: any) => (
-            <div key={index}>
-              <div className='relative flex items-center gap-3 '>
-                <img className='rounded-full' src={item?.user_pfp ? item?.user_pfp : `https://api.dicebear.com/6.x/personas/svg?seed=${item.user_name}`} alt='avatar' width='60' height='60' />
-                <div className='flex flex-col'>
-                  <h1>{item.user_name}</h1>
-                  <p className='text-sm text-gray-400'>Sent you a friend request</p>
+          {loading ? <Loader /> : notification.length > 0 ? notification.map((item: any, index: any) => (
+            <>
+              <div className="flex justify-between w-full items-center" key={index}>
+                <div className='relative flex items-center gap-3 '>
+                  <img className='rounded-full' src={item?.user_pfp ? item?.user_pfp : `https://api.dicebear.com/6.x/personas/svg?seed=${item.user_name}`} alt='avatar' width='60' height='60' />
+                  <div className='flex flex-col'>
+                    <h1>{item.user_name}</h1>
+                    <p className='text-sm text-gray-400'>Sent you a friend request</p>
+                  </div>
                 </div>
                 <button className='w-[20px] h-[20px]' id='fn_button'
-                  style={{ fontSize: '1.5rem', padding: '1.6rem 3rem', marginLeft: '7rem' }} onClick={() => setRedirect(true)}
-                ><p className="text-md">View</p><span id='fnButtonSpan'></span></button>
+                  style={{ fontSize: '1.3rem', padding: '1.3rem 2.8rem' }} onClick={() => setRedirect()}>View</button>
               </div>
               <hr className="w-full my-4" />
-            </div>
-          ))}
+            </>
+          )) : <p className='flex flex-col w-full h-full items-center justify-center text-2xl'>No Notifications</p>}
         </div>
       </div>
     </div>
