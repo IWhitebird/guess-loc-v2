@@ -58,7 +58,6 @@ export interface Database {
           user_name: string | null
           user_pfp: string | null
           xp_points: number | null
-          name_email: string | null
         }
         Insert: {
           friends_id?: string[] | null
@@ -97,11 +96,67 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      name_email: {
+      gtrgm_compress: {
         Args: {
           "": unknown
         }
-        Returns: string
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: {
+          "": unknown
+        }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      name_email_search: {
+        Args: {
+          search_term: string
+        }
+        Returns: {
+          friends_id: string[] | null
+          id: string
+          incoming_fr_reqs: string[] | null
+          outgoing_fr_reqs: string[] | null
+          user_email: string | null
+          user_maxscore: number | null
+          user_name: string | null
+          user_pfp: string | null
+          xp_points: number | null
+        }[]
+      }
+      set_limit: {
+        Args: {
+          "": number
+        }
+        Returns: number
+      }
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      show_trgm: {
+        Args: {
+          "": string
+        }
+        Returns: unknown
       }
     }
     Enums: {

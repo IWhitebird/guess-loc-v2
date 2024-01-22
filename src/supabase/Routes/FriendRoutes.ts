@@ -278,7 +278,7 @@ export const removeFriend = async (id: any, friend_id: any) => {
 }
 
 export const searchFriends = async (search: string) => {
-    const { data, error } = await supabase.from('users').select().textSearch('name_email', `${search}`)
+    const {data , error} = await supabase.rpc('name_email_search', {'search_term': `${search}`})
     if (error) throw error
     return data
 }

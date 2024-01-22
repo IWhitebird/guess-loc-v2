@@ -41,7 +41,7 @@ const Dashboard = ({ setFriendModal, visible }: Props) => {
   // }, [])
   
 
-  const style = 'flex gap-3 relative bg-[rgba(168,85,247,0.3)] hover:bg-[rgba(168,85,247,0.4)] duration-300 border-2 border-purple-500 text-white p-1 px-2 rounded-2xl z-50'
+  const style = 'flex gap-3 relative bg-gradient-to-r from-fuchsia-200 to-indigo-600 hover:bg-[rgba(168,85,247,0.4)] duration-300 border-2 border-purple-500 text-white p-1 px-2 rounded-2xl z-50'
 
   return (
     <div className=''>
