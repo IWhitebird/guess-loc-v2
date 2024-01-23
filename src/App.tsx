@@ -23,12 +23,16 @@ const App = () => {
   const [handleState, setHandleState] = useState('list')
   const [audioSettings, setAudioSettings] = useState(false)
   const [notifModal, setNotifModal] = useState(false)
+  const [receivedNotif, setReceivedNotif] = useState(false)
+  
   const sendDashboard = () => {
     if (loggedIN !== null && (JSON.parse(loggedIN).access_token !== undefined || JSON.parse(loggedIN).access_token !== null)) {
       return (
         <div className='absolute w-full'>
-          <Dashboard setFriendModal={setFriendModal} visible={friendModal} audioSettings={audioSettings} setAudioSettings={setAudioSettings} setNotifModal={setNotifModal} />
-          <Notification handleState={handleState} setHandleState={setHandleState} friendModal={friendModal} setFriendModal={setFriendModal} visible={notifModal} setVisible={setNotifModal} />
+          <Dashboard setFriendModal={setFriendModal} visible={friendModal} audioSettings={audioSettings} setAudioSettings={setAudioSettings} setNotifModal={setNotifModal} 
+            receivedNotif={receivedNotif} setReceivedNotif={setReceivedNotif} />
+          <Notification handleState={handleState} setHandleState={setHandleState} friendModal={friendModal}
+            setFriendModal={setFriendModal} visible={notifModal} setVisible={setNotifModal} receivedNotif={receivedNotif} setReceivedNotif={setReceivedNotif} />
           <AudioPlayer audioSettings={audioSettings} setAudioSettings={setAudioSettings} />
         </div>
       )
@@ -47,7 +51,7 @@ const App = () => {
       <FriendsList visible={friendModal} setVisible={setFriendModal} handleState={handleState} setHandleState={setHandleState} />
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/mode" element={<ModeSelect setFriendModal={setFriendModal} audioSettings={audioSettings} setAudioSettings={setAudioSettings}/>} />
+        <Route path="/mode" element={<ModeSelect setFriendModal={setFriendModal} audioSettings={audioSettings} setAudioSettings={setAudioSettings} />} />
         <Route path="/verify" element={<Verify />} />
 
         <Route path="/auth" element={<Auth />} />
@@ -56,7 +60,7 @@ const App = () => {
         <Route path="/customroom" element={<CustomGame />} />
         <Route path="/customroom/Room/:id" element={<Room />} />
         {/* <Route path="/mpGame" element={<MultiPlayer />} /> */}
-        <Route path="/profile/:id" element={<FriendProfilepage/>} />
+        <Route path="/profile/:id" element={<FriendProfilepage />} />
         <Route path="/spGame" element={<OnePlayer />} />
         <Route path="/profile" element={<Profile />} />
         {/* <Route path="/profile/:id" element={<Profile />} />   //for other users profile */}

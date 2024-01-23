@@ -14,9 +14,11 @@ interface props {
   setFriendModal: (friendModal: boolean) => void
   visible: boolean
   setVisible: (visible: boolean) => void
+  receivedNotif: boolean
+  setReceivedNotif: (receivedNotif: boolean) => void
 }
 
-const Notification = ({ visible, setHandleState, setVisible, setFriendModal }: props) => {
+const Notification = ({ visible, setHandleState, setVisible, setFriendModal, receivedNotif, setReceivedNotif }: props) => {
   const { user_id } = useSelector((state: RootState) => state.user)
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState([]);
@@ -44,14 +46,19 @@ const Notification = ({ visible, setHandleState, setVisible, setFriendModal }: p
       filter: `id=eq.${user_id}`
     },
     payload => {
+      console.log(payload)
       getNotifications();
     }
   ).subscribe()
 
+  useEffect(() => {
+    getNotifications();
+  }, [])
+
   const getNotifications = async () => {
     setLoading(true);
     const data = await getIncomingFriendRequests(user_id)
-    console.log(data)
+    setReceivedNotif(data.length > 0 ? true : false);
     setNotification(data);
     setLoading(false);
   }

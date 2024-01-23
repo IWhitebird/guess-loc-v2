@@ -13,9 +13,11 @@ interface Props {
   audioSettings: boolean;
   setAudioSettings: (audioSettings: boolean) => void;
   setNotifModal: (visible: boolean) => void;
+  receivedNotif: boolean
+  setReceivedNotif: (receivedNotif: boolean) => void
 }
 
-const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, setNotifModal }: Props) => {
+const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, setNotifModal, receivedNotif, setReceivedNotif }: Props) => {
   const location = useNavigate()
   const location2 = useLocation()
   const { user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
@@ -39,6 +41,11 @@ const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, s
     setModal(false);
     setDropdown(false);
     location('/mode')
+  }
+
+  function handleClick() {
+    setNotifModal(true)
+    setReceivedNotif(false)
   }
 
   useEffect(() => {
@@ -70,8 +77,12 @@ const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, s
       </div>
 
       <div className='absolute flex items-center right-0 z-50 p-5 transition-all duration-300 ease-in-out' ref={menubar}>
-        <IoNotificationsCircleOutline className='  cursor-pointer duration-300 hover:scale-105 
-      hover:bg-[rgba(30,30,30,0.2)] z-50 border-2 border-purple-600 w-16 h-16 p-2 text-white backdrop-blur-sm rounded-lg' onClick={() => setNotifModal(true)} />
+        <div className='flex relative'>
+          <IoNotificationsCircleOutline className='cursor-pointer duration-300 hover:scale-105 
+      hover:bg-[rgba(30,30,30,0.2)] z-50 border-2 border-purple-600 w-16 h-16 p-2 text-white backdrop-blur-sm rounded-lg' onClick={handleClick} />
+          <p className={`absolute top-7 right-2 z-50 px-3 shadow-xl text-white ${receivedNotif ? 'opacity-100' : 'opacity-0 invisible'} cursor-pointer bg-[rgba(255,0,0,0.8)] animate-pulse rounded-full py-1`}
+            onClick={handleClick}>{receivedNotif ? '!' : ''}</p>
+        </div>
         <div className='flex items-center justify-center mr-6'>
         </div>
         <div className={style} onClick={dropdownHandle}>
