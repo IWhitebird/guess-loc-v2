@@ -45,7 +45,7 @@ const Room = () => {
         await supabase
         .from('custom_room')
         .update({
-          'room_participants' : [...roomDetails.room_participants.filter((participant : any) => participant.room_user_id !== user_id)]
+          'room_participants' : [...roomDetails.room_participants.filter((participant : any) => participant.room_user_id !== user_id)] as any
         })
         .match({ 'room_id': roomDetails.room_id })
         
@@ -74,7 +74,7 @@ const Room = () => {
               chatter_image: user_profile_pic,
               chatter_message: `${user_name} has left the room`,
               chatter_time: new Date().toLocaleTimeString()
-          }]
+          }] as any
       }).match({ room_id: roomDetails.room_id })
 
         localStorage.removeItem('custom_room_details')

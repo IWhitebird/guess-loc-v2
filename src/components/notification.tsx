@@ -36,7 +36,7 @@ const Notification = ({ visible, setHandleState, setVisible, setFriendModal }: p
     setVisible(false);
   }
 
-  supabase.channel(`user_${user_id}`).on('postgres_changes',
+  supabase.channel(`notif_${user_id}`).on('postgres_changes',
     {
       event: 'UPDATE',
       schema: 'public',
@@ -51,6 +51,7 @@ const Notification = ({ visible, setHandleState, setVisible, setFriendModal }: p
   const getNotifications = async () => {
     setLoading(true);
     const data = await getIncomingFriendRequests(user_id)
+    console.log(data)
     setNotification(data);
     setLoading(false);
   }
