@@ -69,7 +69,7 @@ export const sendFriendRequest = async (id: any, friend_id: any) => {
 
     if (currentOutgoing.includes(friend_id)) {
         console.log('Friend request already sent');
-        return;
+        return true
     }
 
     const { error: sendError } = await supabase

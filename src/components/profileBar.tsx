@@ -1,27 +1,27 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { EmailLogout } from '../supabase/Auth';
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useLocation } from 'react-router-dom';
-import { sendFriendRequest,acceptFriendRequest } from '../supabase/Routes/FriendRoutes';
-import Notification from '../components/notification';
-
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
+import { IoNotificationsCircleOutline } from "react-icons/io5";
 
 interface Props {
   setFriendModal: (visible: boolean) => void;
   visible: boolean;
+  audioSettings: boolean;
+  setAudioSettings: (audioSettings: boolean) => void;
+  setNotifModal: (visible: boolean) => void;
 }
 
-const Dashboard = ({ setFriendModal, visible }: Props) => {
+const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, setNotifModal }: Props) => {
   const location = useNavigate()
   const location2 = useLocation()
-
-  const {user_name , user_profile_pic } = useSelector((state: RootState) => state.user)
-
+  const { user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
   const [dropdown, setDropdown] = useState(false);
   const [modal, setModal] = useState(false);
+  const menubar = useRef<HTMLDivElement>(null);
 
   const dropdownHandle = () => {
     setDropdown(!dropdown);
@@ -35,13 +35,20 @@ const Dashboard = ({ setFriendModal, visible }: Props) => {
     }
   }
 
-  // useEffect(() => {
-  //   sendFriendRequest(loggedIN.user.id,'96513eb2-1bda-4256-a0fe-02e8df76ca15')
-  //   // acceptFriendRequest(loggedIN.user.id,'39f06137-1918-4034-8319-1b6d50688b32')
-  // }, [])
-  
+  useEffect(() => {
+    const handleOutsideClick = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setDropdown(false);
+      }
+    }
+    window.addEventListener('keydown', handleOutsideClick);
 
-  const style = 'flex gap-3 relative bg-gradient-to-r from-fuchsia-200 to-indigo-600 hover:bg-[rgba(168,85,247,0.4)] duration-300 border-2 border-purple-500 text-white p-1 px-2 rounded-2xl z-50'
+    return () => {
+      window.removeEventListener('keydown', handleOutsideClick);
+    };
+  }, [])
+
+  const style = 'flex gap-3 cursor-pointer relative bg-gradient-to-r from-purple-950 to-fuchsia-800 duration-300 border-2 border-purple-800 hover:border-purple-500 text-white p-1 px-2 rounded-2xl z-50'
 
   return (
     <div className=''>
@@ -56,9 +63,11 @@ const Dashboard = ({ setFriendModal, visible }: Props) => {
         </div>
       </div>
 
-      <div className='absolute right-0 z-50 flex justify-end p-5 transition-all duration-300 ease-in-out'>
-      <div className='flex items-center justify-center mr-6'>
-      </div>
+      <div className='absolute flex items-center right-0 z-50 p-5 transition-all duration-300 ease-in-out' ref={menubar}>
+        <IoNotificationsCircleOutline className='  cursor-pointer duration-300 hover:scale-105 
+      hover:bg-[rgba(30,30,30,0.2)] z-50 border-2 border-purple-600 w-16 h-16 p-2 text-white backdrop-blur-sm rounded-lg' onClick={() => setNotifModal(true)} />
+        <div className='flex items-center justify-center mr-6'>
+        </div>
         <div className={style} onClick={dropdownHandle}>
           <img
             className='rounded-full'
@@ -80,7 +89,7 @@ const Dashboard = ({ setFriendModal, visible }: Props) => {
               </div>
               <p className='cursor-pointer' onClick={() => location('/profile')}>Profile</p>
               <p className='cursor-pointer' onClick={() => setFriendModal(!visible)}>Friends</p>
-              <p className=''>Settings</p>
+              <p className='cursor-pointer' onClick={() => setAudioSettings(!audioSettings)}>Settings</p>
               <hr className='border-gray-200 ' />
               <p
                 className='text-red-400 cursor-pointer '

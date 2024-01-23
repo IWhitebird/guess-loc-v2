@@ -8,20 +8,18 @@ import { ImSpinner2 } from 'react-icons/im';
 
 interface Props {
     setFriendModal: (visible: boolean) => void;
+    audioSettings: boolean;
+    setAudioSettings: (audioSettings: boolean) => void;
 }
 
-function MainMenu({ setFriendModal }: Props) {
+function MainMenu({ setFriendModal, audioSettings, setAudioSettings }: Props) {
 
     const [text, setText] = useState('');
     const [img, setImg] = useState('');
     const [fadeIn, setFadeIn] = useState(true);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [visible, setVisible] = useState(false);
-    const handlevolume = () => {
-        setVisible(!visible);
-    }
-
+    
     useEffect(() => {
         setImg(data[currentIndex].image);
         setText(data[currentIndex].text);
@@ -66,7 +64,7 @@ function MainMenu({ setFriendModal }: Props) {
                                 <li className="mb-8 text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300" onClick={() => setFriendModal(true)}>
                                     Friends
                                 </li>
-                                <li className="text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300" onClick={handlevolume}>
+                                <li className="text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300" onClick={() => setAudioSettings(true)}>
                                     Settings
                                 </li>
                             </ul>
@@ -86,7 +84,6 @@ function MainMenu({ setFriendModal }: Props) {
                     </div>
                 </>
             )}
-            <AudioPlayer visible={visible} setVisible={setVisible} />
         </div>
     );
 }

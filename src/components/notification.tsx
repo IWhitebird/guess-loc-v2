@@ -1,21 +1,23 @@
-import { IoNotifications } from "react-icons/io5";
+import { IoNotificationsCircleOutline } from "react-icons/io5";
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
 import { getIncomingFriendRequests } from '../supabase/Routes/FriendRoutes';
 import { FaChevronCircleRight } from "react-icons/fa";
 import { useState, useEffect } from 'react';
 import Loader from "./Loader";
+import supabase from "../supabase/init"
 
 interface props {
   handleState: string
   setHandleState: (handleState: string) => void
   friendModal: boolean
   setFriendModal: (friendModal: boolean) => void
+  visible: boolean
+  setVisible: (visible: boolean) => void
 }
 
-const Notification = ({ handleState, setHandleState, friendModal, setFriendModal }: props) => {
+const Notification = ({ visible, setHandleState, setVisible, setFriendModal }: props) => {
   const { user_id } = useSelector((state: RootState) => state.user)
-  const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState([]);
 
@@ -34,8 +36,19 @@ const Notification = ({ handleState, setHandleState, friendModal, setFriendModal
     setVisible(false);
   }
 
-  const handleNotifiy = async () => {
-    setVisible(true);
+  supabase.channel(`user_${user_id}`).on('postgres_changes',
+    {
+      event: 'UPDATE',
+      schema: 'public',
+      table: 'users',
+      filter: `id=eq.${user_id}`
+    },
+    payload => {
+      getNotifications();
+    }
+  ).subscribe()
+
+  const getNotifications = async () => {
     setLoading(true);
     const data = await getIncomingFriendRequests(user_id)
     setNotification(data);
@@ -44,9 +57,7 @@ const Notification = ({ handleState, setHandleState, friendModal, setFriendModal
 
   return (
     <div>
-      <IoNotifications className=' bg-[rgba(168,85,247,0.3)] hover:bg-[rgba(168,85,247,0.4)] absolute right-56 top-6 z-50 border-2 border-purple-500 w-16 h-16 p-2 text-white backdrop-blur-sm rounded-lg' onClick={handleNotifiy} />
-      <div className={`fixed duration-300 text-white shadow-3xl ease-in-out top-0 right-0 flex text-2xl h-screen w-[550px] z-50 items-center backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] ${visible ? 'opacity-100' : 'opacity-0 invisible right-[-500px]'}`}
-      >
+      <div className={`fixed duration-300 text-white shadow-3xl ease-in-out top-0 right-0 flex text-2xl h-screen w-[550px] z-50 items-center backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] ${visible ? 'opacity-100' : 'opacity-0 invisible right-[-500px]'}`} >
         <p className='fixed flex items-center justify-end w-full text-base text-gray-500 bottom-2 right-3'>Press <span className='border text-base border-gray-500 rounded-lg p-0.5 mx-1'>Esc</span> to close</p>
         <div className='flex absolute px-7 py-9 justify-between items-center w-full top-0 bg-[rgba(176,80,255,0.1)] backdrop-blur-3xl '>
           <p className='text-3xl'>Notifications</p>
@@ -72,7 +83,7 @@ const Notification = ({ handleState, setHandleState, friendModal, setFriendModal
               </div>
               <hr className="w-full my-4" />
             </>
-          )) : <p className='flex flex-col w-full h-full items-center justify-center text-2xl'>No Notifications</p>}
+          )) : <p className='flex flex-col w-full h-full items-center justify-center text-2xl'>No notifications</p>}
         </div>
       </div>
     </div>
