@@ -9,10 +9,10 @@ const ChatModel: React.FC = () => {
     const { user_id, user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
     const roomDetails = useSelector((state: RootState) => state.room)
     const containerRef = useRef<HTMLDivElement>(null);
+    const enterRef = useRef<HTMLButtonElement>(null);
     const [newMessage, setNewMessage] = useState<string>('');
     const channel = supabase.channel(`${roomDetails.room_id}_chat`)
     const [curChat, setCurChat] = useState<any[]>(roomDetails.room_chat)
-
 
     async function SendMessage(myMsg: string) {
         setNewMessage('')
@@ -62,6 +62,21 @@ const ChatModel: React.FC = () => {
         }
     };
 
+    // useEffect(() => {
+    //     if (newMessage.trim()) return
+    //     const handleKeyPress = async (e: KeyboardEvent) => {
+    //         if (e.key === 'Enter') {
+    //             e.preventDefault();
+    //             SendMessage(newMessage);
+    //         }
+    //     };
+
+    //     window.addEventListener('keydown', handleKeyPress);
+
+    //     return () => {
+    //         window.removeEventListener('keydown', handleKeyPress);
+    //     };
+    // }, []);
 
     channel.on(
         'broadcast',
@@ -136,11 +151,7 @@ const ChatModel: React.FC = () => {
                     id='fn_button'
                     style={{ fontSize: '1.2rem', padding: '1rem 1rem 1rem 1.5rem' }}
                     onClick={() => { SendMessage(newMessage) }}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            SendMessage(newMessage)
-                        }
-                    }}
+                    ref={enterRef}
                 >
                     Send <IoSend className='ml-3' />
                     <span id='fnButtonSpan'></span>

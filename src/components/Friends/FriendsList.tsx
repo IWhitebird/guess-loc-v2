@@ -10,13 +10,16 @@ import { ImSpinner2 } from 'react-icons/im'
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store/store';
 import IncomingAccordion from './IncomingAccordion';
+import supabase from '../../supabase/init';
 
 interface Props {
     visible: boolean;
     setVisible: (visible: boolean) => void;
+    handleState: string
+    setHandleState: (handleState: string) => void
 }
 
-export default function FriendsList({ visible, setVisible }: Props) {
+export default function FriendsList({ visible, setVisible, handleState, setHandleState }: Props) {
     const location = useLocation();
     const nav = useNavigate();
     const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -25,9 +28,20 @@ export default function FriendsList({ visible, setVisible }: Props) {
     const [menu, setMenu] = useState({ visible: false, id: '' });
     const [friends, setFriends] = useState<any[]>([]);
     const [incomingRequests, setIncomingRequests] = useState<any[]>([]);
-    const [handleState, setHandleState] = useState('list')
     const [loading, setLoading] = useState<boolean>(false);
-    const [modal, setModal] = useState({ visible: false, id: '' });
+    const [modal, setModal] = useState({ visible: false, id: '' })
+
+    supabase.channel(`user_${user_id}`).on('postgres_changes',
+        {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'users',
+            filter: `id=eq.${user_id}`
+        },
+        payload => {
+            loadingFetchFriends()
+        }
+    ).subscribe()
 
     const hanldeCloseModalBoth = () => {
         setVisible(false);
@@ -36,16 +50,10 @@ export default function FriendsList({ visible, setVisible }: Props) {
         setModal({ visible: false, id: '' });
     }
 
-    const fetchFriends = async () => {
-        const data = await getFriends(user_id);
-        const incomingRequests = await getIncomingFriendRequests(user_id);
-        setFriends(data);
-        setIncomingRequests(incomingRequests);
-    }
-
     const loadingFetchFriends = async () => {
-        // setLoading(true);
-        await fetchFriends();
+        setLoading(true);
+        await getFriends(user_id).then(data => setFriends(data))
+        await getIncomingFriendRequests(user_id).then(data => setIncomingRequests(data))
         setLoading(false);
     }
 
@@ -58,19 +66,8 @@ export default function FriendsList({ visible, setVisible }: Props) {
     }, [])
 
     useEffect(() => {
-        loadingFetchFriends();
-
-        if (visible) {
-
-            const setIntervals = setInterval(() => {
-                fetchFriends();
-            }, 3000)
-
-            return () => {
-                clearInterval(setIntervals);
-            }
-        }
-    }, [visible])
+        loadingFetchFriends()
+    }, [])
 
     useEffect(() => {
 
@@ -183,7 +180,7 @@ export default function FriendsList({ visible, setVisible }: Props) {
                             {/* Incoming requests */}
                             {incomingRequests.length > 0 && incomingRequests.length > 0 ? incomingRequests.map((request, index) => (
                                 <div className='py-2'>
-                                    <IncomingAccordion request={request} index={index} loadingFetchFriends={loadingFetchFriends} />
+                                    <IncomingAccordion request={request} index={index} loadingFetchFriends={loadingFetchFriends} setLoading={setLoading} loading={loading} />
 
                                 </div>
                             )) : <p className='flex items-center justify-center w-full h-full text-gray-400'>{loading ? '' : 'No incoming requests'}</p>}
