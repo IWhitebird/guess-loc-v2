@@ -48,7 +48,7 @@ const Room = () => {
       await supabase
         .from('custom_room')
         .update({
-          'room_participants': [...roomDetails.room_participants.filter((participant: any) => participant.room_user_id !== user_id)] as any
+          'room_participants': [...roomDetails.room_participants.filter((participant: any) => participant.room_user_id !== user_id)]
         })
         .match({ 'room_id': roomDetails.room_id })
 
@@ -77,7 +77,7 @@ const Room = () => {
           chatter_image: user_profile_pic,
           chatter_message: `${user_name} has left the room`,
           chatter_time: new Date().toLocaleTimeString()
-        }] as any
+        }] as any 
       }).match({ room_id: roomDetails.room_id })
 
       localStorage.removeItem('custom_room_details')
@@ -111,9 +111,9 @@ const Room = () => {
 
   return (
     <div className="bg-purple-950 w-full h-[100vh] ">
-      <div className="flex justify-start items-center px-24 h-[100vh] w-[100%] bg-gradient-to-r from-gray-950 to-transparent">
+      <div className="flex justify-start items-center p-6 h-[100vh] w-[100%] bg-gradient-to-r from-gray-950 to-transparent">
         <div className="flex flex-row w-full h-full">
-          <div className="flex flex-col items-center justify-center w-full h-20">
+          <div className="flex flex-col items-center justify-center w-full h-20 pt-24">
             <h1 className="flex text-2xl text-white">ROOM INFO</h1>
             <div className="flex flex-col items-center w-full h-20 mt-10 justify-left">
               <div className="text-lg text-white">Name : {roomDetails.room_name}</div>
@@ -136,7 +136,7 @@ const Room = () => {
             </div>
           </div>
       
-          <div className="">
+          <div className="w-full">
             <h1 className="pt-6 pl-2 text-2xl text-white">Players</h1>
             {
               roomDetails?.room_participants?.map((participant: any, index) => {
@@ -149,7 +149,7 @@ const Room = () => {
               })
             }
           </div>
-          <div className="w-[50%] ml-20 mt-16 p-10 flex justify-end">
+          <div className="w-[50%] pt-20 flex justify-end">
             <ChatModel />
           </div>
         </div>
