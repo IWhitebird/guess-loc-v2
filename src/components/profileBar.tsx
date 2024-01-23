@@ -35,6 +35,12 @@ const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, s
     }
   }
 
+  function handleYes() {
+    setModal(false);
+    setDropdown(false);
+    location('/mode')
+  }
+
   useEffect(() => {
     const handleOutsideClick = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -52,12 +58,12 @@ const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, s
 
   return (
     <div className=''>
-      <div className={`absolute duration-300 ${location2.pathname === '/spGame' && modal ? 'opacity-100' : 'opacity-0 invisible'} z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-md '}`}>
+      <div className={`fixed duration-300 ${location2.pathname === '/spGame' && modal ? 'opacity-100' : 'opacity-0 invisible'} z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-md '}`}>
         <div className={`bg-[rgba(30,30,30,0.5)] text-2xl duration-300 text-white border border-gray-700 p-5 rounded-xl ${modal ? 'scale-100 opacity-100' : 'scale-50 opacity-0 invisible'}`}>
           Are you sure you want to return to main menu?<br />
           Your progress will be lost.
           <div className='flex justify-end gap-3'>
-            <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => location('/mode')}>Yes</button>
+            <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => handleYes()}>Yes</button>
             <button className='px-3 py-1 text-white duration-300 bg-purple-900 rounded-lg hover:bg-purple-950' onClick={() => setModal(!modal)}>No</button>
           </div>
         </div>
