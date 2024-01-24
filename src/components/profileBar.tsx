@@ -32,7 +32,7 @@ const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, s
   const handelLogout = async () => {
     const logout = await EmailLogout();
     if (logout) {
-      localStorage.removeItem('sb-stglscmcmjtwkvviwzcc-auth-token');
+      localStorage.removeItem('sb-pdnogztwriouxeskllgm-auth-token');
       window.location.href = "/";
     }
   }

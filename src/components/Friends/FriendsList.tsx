@@ -81,7 +81,7 @@ export default function FriendsList({ visible, setVisible, handleState, setHandl
         return () => {
             window.removeEventListener('beforeunload', cleanup);
         }
-    }, []);
+    }, [user_id,]);
 
     const hanldeCloseModalBoth = () => {
         setVisible(false);
@@ -91,7 +91,7 @@ export default function FriendsList({ visible, setVisible, handleState, setHandl
     }
 
     const loadingFetchFriends = async () => {
-        // setLoading(true);
+        setLoading(true);
         await getFriends(user_id).then(data => setFriends(data))
         await getIncomingFriendRequests(user_id).then(data => setIncomingRequests(data))
         setLoading(false);

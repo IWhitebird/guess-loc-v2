@@ -8,7 +8,7 @@ function Verify() {
     const location = useNavigate()
     const [loading, setLoading] = useState(true)
     // const { setLogin } = useContext(LoginContext)
-    const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
+    const loggedIN = JSON.parse(localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token') || '{}');
 
     useEffect(() => {
         const checkLogin = async () => {

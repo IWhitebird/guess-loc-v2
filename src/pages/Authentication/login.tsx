@@ -16,7 +16,7 @@ function Auth() {
     })
     const [formState, setFormState] = useState("login")
     const [loading, setLoading] = useState(true)
-    let localToken = localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token')
+    let localToken = localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token')
 
     useEffect(() => {
         if (localToken && JSON.parse(localToken).user.role) {

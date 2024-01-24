@@ -9,7 +9,7 @@ interface FinalResultProps {
 }
 
 const FinalResult = ({ score, onReset, rounds }: FinalResultProps) => {
-    const loggedIN = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '{}');
+    const loggedIN = JSON.parse(localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token') || '{}');
     const [loading, setLoading] = useState(true)
     const [newScore, setNewScore] = useState(false)
     const [maxScore, setmaxScore] = useState(0)

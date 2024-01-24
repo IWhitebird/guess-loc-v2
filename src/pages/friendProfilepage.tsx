@@ -7,7 +7,7 @@ import { getFriendProfile } from '../supabase/Routes/FriendRoutes';
 
 
 const FriendProfilepage = () => {
-    const prof = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '')
+    const prof = JSON.parse(localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token') || '')
     const [loading, setLoading] = useState(true)
     const [friendinfo,setFriendinfo] = useState<any>({});
     const { id } = useParams<{ id: string }>();

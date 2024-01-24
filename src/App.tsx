@@ -20,7 +20,7 @@ import AudioPlayer from './components/AudioPlayer'
 const App = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const loggedIN = localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token')
+  const loggedIN = localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token')
   const [friendModal, setFriendModal] = useState(false)
   const [handleState, setHandleState] = useState('list')
   const [audioSettings, setAudioSettings] = useState(false)

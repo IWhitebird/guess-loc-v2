@@ -4,7 +4,7 @@ import { ImSpinner2 } from 'react-icons/im'
 import { findUser } from '../supabase/Routes/MainRoutes'
 
 const Profile = () => {
-    const prof = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') || '')
+    const prof = JSON.parse(localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token') || '')
     const [loading, setLoading] = useState(true)
     const [maxScore, setmaxScore] = useState(0)
 
