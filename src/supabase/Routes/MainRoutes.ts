@@ -18,3 +18,16 @@ export const updateScore = async (id: any, score: any) => {
     if (error) throw error
     return data
 }
+
+//set online status
+export const setOnline = async (id: any, status: string) => {
+    console.log(status, id)
+    const { data, error } = await supabase
+        .from('users')
+        // @ts-ignore
+        .update({ online_status: status })
+        .eq('id', id)
+
+    if (error) throw error
+    return data
+}

@@ -46,7 +46,6 @@ const Notification = ({ visible, setHandleState, setVisible, setFriendModal, rec
       filter: `id=eq.${user_id}`
     },
     payload => {
-      console.log(payload)
       getNotifications();
     }
   ).subscribe()

@@ -3,6 +3,7 @@ import FriendSearch from './FriendSearch';
 import { IoSearch } from "react-icons/io5";
 import { FaChevronCircleRight, FaChevronCircleDown } from "react-icons/fa";
 import { getFriends, removeFriend, getIncomingFriendRequests } from '../../supabase/Routes/FriendRoutes'
+import { setOnline } from '../../supabase/Routes/MainRoutes';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Loader from '../Loader';
 import { RiUserAddFill } from "react-icons/ri";
@@ -43,6 +44,45 @@ export default function FriendsList({ visible, setVisible, handleState, setHandl
         }
     ).subscribe()
 
+    async function setOnlines(id: any, status: string) {
+        const res = await setOnline(id, status)
+    }
+
+    useEffect(() => {
+        const onlineChannel = supabase.channel(`online_users_geoQuizv2`);
+        let onlineStatus: string;
+
+        onlineChannel.on('presence', { event: 'sync' }, () => {
+            const newState = onlineChannel.presenceState();
+
+            for (const key in newState) {
+                const user = newState[key];
+                for (const key in user) {
+                    //@ts-ignore
+                    onlineStatus = user[key].user_id;
+                    if (onlineStatus === user_id) {
+                        setOnlines(onlineStatus, 'online')
+                    }
+                }
+            }
+        }).subscribe(async (status) => {
+            if (status !== 'SUBSCRIBED') return;
+
+            await onlineChannel.track({ user_id, online_at: new Date().toISOString() });
+        });
+
+        const cleanup = () => {
+            onlineChannel.unsubscribe();
+            setOnlines(user_id, 'offline')
+        }
+
+        window.addEventListener('beforeunload', cleanup);
+
+        return () => {
+            window.removeEventListener('beforeunload', cleanup);
+        }
+    }, []);
+
     const hanldeCloseModalBoth = () => {
         setVisible(false);
         setSearchModal(false);
@@ -51,7 +91,7 @@ export default function FriendsList({ visible, setVisible, handleState, setHandl
     }
 
     const loadingFetchFriends = async () => {
-        setLoading(true);
+        // setLoading(true);
         await getFriends(user_id).then(data => setFriends(data))
         await getIncomingFriendRequests(user_id).then(data => setIncomingRequests(data))
         setLoading(false);
@@ -128,12 +168,15 @@ export default function FriendsList({ visible, setVisible, handleState, setHandl
                         <ul className='flex flex-col gap-2 pt-2 pb-5' id='style-3' key={index}>
                             <li className='flex items-center justify-between w-full'>
                                 <div className='relative flex items-center gap-3'>
-                                    <img className='rounded-full' src={friend?.user_pfp ? friend?.user_pfp : `https://api.dicebear.com/6.x/personas/svg?seed=${friend.user_name}`} alt='avatar' width='60' height='60' />
-                                    <div className='absolute bottom-0 w-5 h-5 bg-green-500 border border-white rounded-full left-5'></div> {/* online change left to left-10 */}
-                                    <div className='absolute bottom-0 w-5 h-5 bg-gray-700 border border-white rounded-full left-10'></div> {/* offline indicator */}
+                                    <img className='rounded-full bg-gray-700' src={friend?.user_pfp ? friend?.user_pfp : `https://api.dicebear.com/6.x/personas/svg?seed=${friend.user_name}`} alt='avatar' width='60' height='60' />
+                                    {friend.online_status === 'online' ?
+                                        <div className='absolute bottom-0 w-5 h-5 bg-green-500 border border-white rounded-full left-10'></div>
+                                        :
+                                        <div className='absolute bottom-0 w-5 h-5 bg-gray-700 border border-white rounded-full left-10'></div>
+                                    }
                                     <div className='flex flex-col'>
                                         <p>{friend.user_name}</p>
-                                        <p className='text-sm text-gray-400'>Playing/Online/Offline</p>
+                                        <p className='text-sm capitalize text-gray-400'>{friend.online_status}</p>
                                     </div>
                                 </div>
 

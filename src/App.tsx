@@ -1,6 +1,6 @@
 import './App.css'
 // import { UserProvider } from './Context'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import Landing from './pages/landing'
 import ModeSelect from './pages/Menus/modeselect'
 import Auth from './pages/Authentication/login'
@@ -18,18 +18,20 @@ import Notification from './components/notification'
 import AudioPlayer from './components/AudioPlayer'
 
 const App = () => {
+  const location = useLocation()
+  const navigate = useNavigate()
   const loggedIN = localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token')
   const [friendModal, setFriendModal] = useState(false)
   const [handleState, setHandleState] = useState('list')
   const [audioSettings, setAudioSettings] = useState(false)
   const [notifModal, setNotifModal] = useState(false)
   const [receivedNotif, setReceivedNotif] = useState(false)
-  
+
   const sendDashboard = () => {
     if (loggedIN !== null && (JSON.parse(loggedIN).access_token !== undefined || JSON.parse(loggedIN).access_token !== null)) {
       return (
         <div className='absolute w-full'>
-          <Dashboard setFriendModal={setFriendModal} visible={friendModal} audioSettings={audioSettings} setAudioSettings={setAudioSettings} setNotifModal={setNotifModal} 
+          <Dashboard setFriendModal={setFriendModal} visible={friendModal} audioSettings={audioSettings} setAudioSettings={setAudioSettings} setNotifModal={setNotifModal}
             receivedNotif={receivedNotif} setReceivedNotif={setReceivedNotif} />
           <Notification handleState={handleState} setHandleState={setHandleState} friendModal={friendModal}
             setFriendModal={setFriendModal} visible={notifModal} setVisible={setNotifModal} receivedNotif={receivedNotif} setReceivedNotif={setReceivedNotif} />
@@ -41,6 +43,9 @@ const App = () => {
 
   useEffect(() => {
     sendDashboard()
+    if (!loggedIN && location.pathname !== '/auth' && location.pathname !== '/') {
+      navigate('/auth')
+    }
   }, [loggedIN])
 
   return (
