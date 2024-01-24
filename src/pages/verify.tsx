@@ -2,13 +2,15 @@ import { useEffect, useState } from "react"
 import { CheckUser } from "../supabase/Auth"
 // import { LoginContext } from "../Context"
 import { useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux"
 import { ImSpinner2 } from "react-icons/im";
+import { RootState } from "../redux/store/store";
 
 function Verify() {
     const location = useNavigate()
     const [loading, setLoading] = useState(true)
     // const { setLogin } = useContext(LoginContext)
-    const loggedIN = JSON.parse(localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token') || '{}');
+    const loggedIN = useSelector((state: RootState) => state.user)
 
     useEffect(() => {
         const checkLogin = async () => {

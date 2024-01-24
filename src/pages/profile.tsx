@@ -1,24 +1,27 @@
 import { useEffect, useState } from 'react'
 import { ImSpinner2 } from 'react-icons/im'
 import { findUser } from '../supabase/Routes/MainRoutes'
+import { useSelector } from 'react-redux'
+import { RootState } from '../redux/store/store'
 
 const Profile = () => {
-    const prof = JSON.parse(localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token') || '')
+    const prof = useSelector((state: RootState) => state.user)
     const [loading, setLoading] = useState(true)
     const [maxScore, setmaxScore] = useState(0)
 
     const getScore = async () => {
         setLoading(true)
-        const data = await findUser(prof.user.id)
+        const data = await findUser(prof.user_id)
         if (data) {
             setLoading(false)
             setmaxScore(data.user_maxscore || 0);
         }
-
-        useEffect(() => {
-            getScore()
-        }, [])
     }
+
+    useEffect(() => {
+        getScore()
+    }, [])
+
 
     return (
         <div className="bg-purple-950 w-full h-[100vh]">
@@ -35,15 +38,15 @@ const Profile = () => {
                         <div className='relative border border-purple-600 rounded-lg'>
                             <div className='p-4 flex flex-col gap-3'>
                                 <div className='flex'>
-                                    <img src={prof.user.user_metadata.picture} alt="Description of the image" className='pt-4 h-36 w-36' />
+                                    <img src={prof.user_profile_pic} alt="Description of the image" className='pt-4 h-36 w-36' />
                                     <div className='flex flex-col justify-center items-center'>
                                         <h1 className=' text-2xl '>Level 35</h1>
                                         <div className="progress_bar"></div>
                                         <p>XP</p>
                                     </div>
                                 </div>
-                                <h1 className='text-xl'>Name: {prof.user.user_metadata.name}</h1>
-                                <h1 className='text-xl'>Email: {prof.user.email}</h1>
+                                <h1 className='text-xl'>Name: {prof.user_name}</h1>
+                                <h1 className='text-xl'>Email: {prof.user_email}</h1>
                                 <h1 className='text-xl'>HighScore: {maxScore}</h1>
                             </div>
                         </div>

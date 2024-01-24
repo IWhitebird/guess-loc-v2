@@ -16,11 +16,13 @@ import FriendsList from './components/Friends/FriendsList'
 import FriendProfilepage from './pages/friendProfilepage'
 import Notification from './components/notification'
 import AudioPlayer from './components/AudioPlayer'
+import { useSelector } from 'react-redux'
+import { RootState } from './redux/store/store'
 
 const App = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const loggedIN = localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token')
+  const loggedIN = useSelector((state: RootState) => state.user)
   const [friendModal, setFriendModal] = useState(false)
   const [handleState, setHandleState] = useState('list')
   const [audioSettings, setAudioSettings] = useState(false)
@@ -28,7 +30,7 @@ const App = () => {
   const [receivedNotif, setReceivedNotif] = useState(false)
 
   const sendDashboard = () => {
-    if (loggedIN !== null && (JSON.parse(loggedIN).access_token !== undefined || JSON.parse(loggedIN).access_token !== null)) {
+    if (loggedIN !== null && loggedIN !== undefined){
       return (
         <div className='absolute w-full'>
           <Dashboard setFriendModal={setFriendModal} visible={friendModal} audioSettings={audioSettings} setAudioSettings={setAudioSettings} setNotifModal={setNotifModal}
