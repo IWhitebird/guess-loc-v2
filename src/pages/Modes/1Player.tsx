@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import randomStreetView from "../../scripts/index";
 import SubmitWindow from "../../components/submitwindow";
-import Dashboard from "../../components/profileBar"
 import { ImSpinner2 } from 'react-icons/im'
 
 declare global {

@@ -45,7 +45,7 @@ if (localStorage.getItem('custom_room_details') === null) {
 } else {
     const parsedToken = JSON.parse(localStorage.getItem('custom_room_details')!);
     
-    const { data , error}  = await supabase.from('custom_room').select().eq('room_id', parsedToken.room_id) as any
+    const { data , error}  = supabase.from('custom_room').select().eq('room_id', parsedToken.room_id) as any
 
     if (error) {
         var iState : RoomState = {

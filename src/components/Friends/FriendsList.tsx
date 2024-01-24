@@ -40,12 +40,14 @@ export default function FriendsList({ visible, setVisible, handleState, setHandl
             filter: `id=eq.${user_id}`
         },
         payload => {
-            loadingFetchFriends()
+            if(payload){
+                loadingFetchFriends()
+            }
         }
     ).subscribe()
 
     async function setOnlines(id: any, status: string) {
-        const res = await setOnline(id, status)
+         await setOnline(id, status)
     }
 
     useEffect(() => {

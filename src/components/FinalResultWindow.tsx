@@ -8,7 +8,7 @@ interface FinalResultProps {
     rounds: number;
 }
 
-const FinalResult = ({ score, onReset, rounds }: FinalResultProps) => {
+const FinalResult = ({ score, onReset }: FinalResultProps) => {
     const loggedIN = JSON.parse(localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token') || '{}');
     const [loading, setLoading] = useState(true)
     const [newScore, setNewScore] = useState(false)
@@ -17,8 +17,8 @@ const FinalResult = ({ score, onReset, rounds }: FinalResultProps) => {
     const getScore = async () => {
         const data = await findUser(loggedIN.user.id)
         if (data) {
-            if (score > data.user_maxscore) {
-                setmaxScore(data.user_maxscore)
+            if (score > (data?.user_maxscore ?? 0)) {
+                setmaxScore(data?.user_maxscore ?? 0)
                 setNewScore(true)
             }
         }

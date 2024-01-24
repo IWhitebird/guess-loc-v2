@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import supabase from '../supabase/init'
 import { ImSpinner2 } from 'react-icons/im'
 import { findUser } from '../supabase/Routes/MainRoutes'
 
@@ -13,13 +12,14 @@ const Profile = () => {
         const data = await findUser(prof.user.id)
         if (data) {
             setLoading(false)
-            setmaxScore(data.user_maxscore)
+            setmaxScore(data.user_maxscore || 0);
         }
+
+        useEffect(() => {
+            getScore()
+        }, [])
     }
 
-    useEffect(() => {
-        getScore()
-    }, [])
     return (
         <div className="bg-purple-950 w-full h-[100vh]">
             <div className="flex flex-col text-white items-center px-24 h-[100vh] w-[100%] bg-gradient-to-r from-gray-950 to-transparent">
@@ -51,7 +51,6 @@ const Profile = () => {
                 }
             </div>
         </div>
-
     )
 }
 export default Profile;

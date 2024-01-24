@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import logo from '../../assets/Untitled-1.png';
 import data from '../../assets/data.ts';
-import AudioPlayer from '../../components/AudioPlayer.tsx'
 import { Link } from 'react-router-dom';
 import { ImSpinner2 } from 'react-icons/im';
-
 
 interface Props {
     setFriendModal: (visible: boolean) => void;
@@ -12,7 +10,7 @@ interface Props {
     setAudioSettings: (audioSettings: boolean) => void;
 }
 
-function MainMenu({ setFriendModal, audioSettings, setAudioSettings }: Props) {
+function MainMenu({ setFriendModal, setAudioSettings }: Props) {
 
     const [text, setText] = useState('');
     const [img, setImg] = useState('');
@@ -56,9 +54,9 @@ function MainMenu({ setFriendModal, audioSettings, setAudioSettings }: Props) {
                                         Singleplayer
                                     </li>
                                 </Link>
-                                <Link to="/customroom">
+                                <Link to={''}>
                                     <li className="mb-8 text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300">
-                                        Multiplayer
+                                        Multiplayer (Coming Soon)
                                     </li>
                                 </Link>
                                 <li className="mb-8 text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300" onClick={() => setFriendModal(true)}>
