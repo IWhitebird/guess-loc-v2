@@ -1,4 +1,4 @@
-import { AuthError, Provider } from '@supabase/supabase-js';
+import { Provider } from '@supabase/supabase-js';
 import supabase from './init'
 
 export async function CheckUser() {
@@ -42,7 +42,7 @@ export async function EmailLogout() {
         if (error) {
             console.error(error);
             throw error;
-        }else{
+        } else {
             return true;
         }
     } catch (error) {
@@ -68,7 +68,7 @@ export async function EmailSignUpNewUser(email: string, password: string, name: 
             return false;
         }
 
-        const { data, error } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
             email,
             password,
             options: {
@@ -92,10 +92,10 @@ export async function EmailSignUpNewUser(email: string, password: string, name: 
 
 export async function OAuthLogin(provider: Provider) {
     try {
-        const { data, error } = await supabase.auth.signInWithOAuth({
+        const { error } = await supabase.auth.signInWithOAuth({
             provider,
         });
-        
+
         if (error) {
             console.error(error);
             throw error;

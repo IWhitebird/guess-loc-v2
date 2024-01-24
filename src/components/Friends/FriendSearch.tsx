@@ -21,7 +21,6 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
     const [loading, setLoading] = useState(false);
     const [loading2, setLoading2] = useState(false);
     const listenKey = useRef<any>(null)
-    let frsent: any = null;
 
     async function handlesearch() {
         if (!search.trim()) return
@@ -84,7 +83,6 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
         setLoading(true);
         const frsentResult = await sendFriendRequest(user_id, friend_id);
         if (frsentResult) {
-            frsent = frsentResult;
             toast.error("You've already sent a friend request to this person!");
             setLoading(false);
         } else {

@@ -48,7 +48,7 @@ const Room = () => {
       await supabase
         .from('custom_room')
         .update({
-          'room_participants': [...roomDetails.room_participants.filter((participant: any) => participant.room_user_id !== user_id)]
+          'room_participants': [...roomDetails.room_participants.filter((participant: any) => participant.room_user_id !== user_id)] as any 
         })
         .match({ 'room_id': roomDetails.room_id })
 

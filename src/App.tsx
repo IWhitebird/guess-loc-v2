@@ -7,9 +7,9 @@ import Auth from './pages/Authentication/login'
 import Verify from './pages/verify'
 import OnePlayer from './pages/Modes/1Player'
 import Vnum from './components/vnum'
-import CustomGame from './pages/Menus/customGame'
+// import CustomGame from './pages/Menus/customGame'
 import Dashboard from './components/profileBar'
-import Room from './pages/Menus/room'
+// import Room from './pages/Menus/room'
 import Profile from './pages/profile'
 import { useEffect, useState } from 'react'
 import FriendsList from './components/Friends/FriendsList'
@@ -61,9 +61,9 @@ const App = () => {
 
         <Route path="/auth" element={<Auth />} />
         <Route path="/spGame" element={<OnePlayer />} />
-
+{/* 
         <Route path="/customroom" element={<CustomGame />} />
-        <Route path="/customroom/Room/:id" element={<Room />} />
+        <Route path="/customroom/Room/:id" element={<Room />} /> */}
         {/* <Route path="/mpGame" element={<MultiPlayer />} /> */}
         <Route path="/profile/:id" element={<FriendProfilepage />} />
         <Route path="/spGame" element={<OnePlayer />} />

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import FinalResult from './FinalResultWindow';
-import supabase from '../supabase/init'
 import { useNavigate, useLocation } from 'react-router-dom';
 import { findUser, updateScore } from '../supabase/Routes/MainRoutes';
 
@@ -127,8 +126,8 @@ const SubmitWindow = ({
     const storeScore = async () => {
         const data = await findUser(loggedIN.user.id)
         if (data) {
-            if (points > data.user_maxscore) {
-                const storeScore = await updateScore(loggedIN.user.id, points)
+            if (data && data.user_maxscore !== null && points > data.user_maxscore) {
+                await updateScore(loggedIN.user.id, points);
             }
         }
     }

@@ -7,7 +7,6 @@ import { RootState } from "../../redux/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setRoom } from "../../redux/slices/roomSlice";
 
-
 interface IRoom {
   room_id?: string;
   owner?: string;
@@ -56,8 +55,6 @@ const CustomGame = () => {
         toast.error("Room doesnt exist")
         return;
       }
-
-
 
       const updateRoom: any = await supabase
         .from('custom_room')

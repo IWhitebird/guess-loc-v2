@@ -1,4 +1,3 @@
-import { IoNotificationsCircleOutline } from "react-icons/io5";
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
 import { getIncomingFriendRequests } from '../supabase/Routes/FriendRoutes';
@@ -18,7 +17,7 @@ interface props {
   setReceivedNotif: (receivedNotif: boolean) => void
 }
 
-const Notification = ({ visible, setHandleState, setVisible, setFriendModal, receivedNotif, setReceivedNotif }: props) => {
+const Notification = ({ visible, setHandleState, setVisible, setFriendModal, setReceivedNotif }: props) => {
   const { user_id } = useSelector((state: RootState) => state.user)
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState([]);
@@ -46,7 +45,9 @@ const Notification = ({ visible, setHandleState, setVisible, setFriendModal, rec
       filter: `id=eq.${user_id}`
     },
     payload => {
-      getNotifications();
+      if(payload){
+        getNotifications();
+      }
     }
   ).subscribe()
 

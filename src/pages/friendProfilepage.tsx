@@ -1,19 +1,14 @@
 import { useEffect, useState } from 'react'
-import supabase from '../supabase/init'
 import { ImSpinner2 } from 'react-icons/im'
-import { findUser } from '../supabase/Routes/MainRoutes'
 import { useParams } from 'react-router-dom';
 import { getFriendProfile } from '../supabase/Routes/FriendRoutes';
 
 
 const FriendProfilepage = () => {
-    const prof = JSON.parse(localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token') || '')
     const [loading, setLoading] = useState(true)
     const [friendinfo,setFriendinfo] = useState<any>({});
     const { id } = useParams<{ id: string }>();
-    console.log("Friend_id",id);
     
-
     const getFriendinfo = async () => {
         const data = await getFriendProfile(id)
         if (data) {
