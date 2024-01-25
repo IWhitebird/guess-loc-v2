@@ -92,9 +92,13 @@ export async function EmailSignUpNewUser(email: string, password: string, name: 
 
 export async function OAuthLogin(provider: Provider) {
     try {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider,
-        });
+        const { error } = await supabase.auth.signInWithOAuth(
+            {
+                provider,
+                options: {
+                    redirectTo: 'http://localhost:5173/verify',
+                }
+            });
 
         if (error) {
             console.error(error);

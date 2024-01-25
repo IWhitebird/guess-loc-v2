@@ -1,16 +1,9 @@
 import { useEffect, useState } from "react"
 import { CheckUser } from "../supabase/Auth"
-// import { LoginContext } from "../Context"
-import { useNavigate } from "react-router-dom"
-import { useSelector } from "react-redux"
 import { ImSpinner2 } from "react-icons/im";
-import { RootState } from "../redux/store/store";
 
 function Verify() {
-    const location = useNavigate()
     const [loading, setLoading] = useState(true)
-    // const { setLogin } = useContext(LoginContext)
-    const loggedIN = useSelector((state: RootState) => state.user)
 
     useEffect(() => {
         const checkLogin = async () => {
@@ -18,19 +11,16 @@ function Verify() {
             const user = await CheckUser()
             if (user?.aud === "authenticated") {
                 setTimeout(() => {
-                    location("/mode")
-                }, 2000);
+                    window.location.href = '/mode'
+                }, 1000)
             }
         }
 
-        if (loggedIN) {
-            redirect()
-        }
         checkLogin()
     }, [])
 
     const redirect = () => {
-        location('/mode')
+        window.location.href = '/mode'
     }
 
     return (
@@ -46,9 +36,8 @@ function Verify() {
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <h1 className="text-4xl text-white font-bold">Thank You !</h1>
-                        <p className="text-lg text-white">Thank you for your interest in our game!</p>
-                        <p className="text-lg text-white">You'll be redirected to the home page,<br />
-                            <span className="text-blue-400 cursor-pointer pl-5" onClick={redirect}> click here if you're not redirected</span></p>
+                        <p className="text-lg text-white mt-5">You'll be redirected to the home page,<br />
+                            <span className="text-blue-400 cursor-pointer pl-5" onClick={redirect} > click here if you're not redirected</span></p>
                     </div>
                 </div>
             )}

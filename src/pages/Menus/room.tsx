@@ -105,8 +105,7 @@ const Room = () => {
       console.log("payload", payload)
       dispatch(setRoom(payload.new as any))
     }
-  )
-    .subscribe()
+  ).subscribe()
 
 
   return (
