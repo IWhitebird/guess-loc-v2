@@ -3,6 +3,9 @@ import logo from '../../assets/Untitled-1.png';
 import data from '../../assets/data.ts';
 import { Link } from 'react-router-dom';
 import { ImSpinner2 } from 'react-icons/im';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { RootState } from '../../redux/store/store';
 
 interface Props {
     setFriendModal: (visible: boolean) => void;
@@ -11,7 +14,8 @@ interface Props {
 }
 
 function MainMenu({ setFriendModal, setAudioSettings }: Props) {
-
+    const navigate = useNavigate();
+    const { user_id } = useSelector((state: RootState) => state.user)
     const [text, setText] = useState('');
     const [img, setImg] = useState('');
     const [fadeIn, setFadeIn] = useState(true);
@@ -32,6 +36,12 @@ function MainMenu({ setFriendModal, setAudioSettings }: Props) {
 
         return () => clearTimeout(timer);
     }, [currentIndex]);
+
+    useEffect( () => {
+            if (user_id !== '') {
+                navigate('/mode')
+            }
+        }, [user_id])
 
     return (
         <div className="bg-purple-950 w-full h-[100vh] overflow-hidden">
@@ -54,7 +64,7 @@ function MainMenu({ setFriendModal, setAudioSettings }: Props) {
                                         Singleplayer
                                     </li>
                                 </Link>
-                                <Link to={''}>
+                                <Link to=''>
                                     <li className="mb-8 text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300">
                                         Multiplayer (Coming Soon)
                                     </li>

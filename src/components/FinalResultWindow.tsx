@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { ImSpinner2 } from 'react-icons/im'
 import { findUser } from '../supabase/Routes/MainRoutes'
+import { RootState } from '../redux/store/store'
+import { useSelector } from 'react-redux'
 
 interface FinalResultProps {
     score: number;
@@ -9,13 +11,13 @@ interface FinalResultProps {
 }
 
 const FinalResult = ({ score, onReset }: FinalResultProps) => {
-    const loggedIN = JSON.parse(localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token') || '{}');
+    const loggedIN = useSelector((state: RootState) => state.user)
     const [loading, setLoading] = useState(true)
     const [newScore, setNewScore] = useState(false)
     const [maxScore, setmaxScore] = useState(0)
 
     const getScore = async () => {
-        const data = await findUser(loggedIN.user.id)
+        const data = await findUser(loggedIN.user_id)
         if (data) {
             if (score > (data?.user_maxscore ?? 0)) {
                 setmaxScore(data?.user_maxscore ?? 0)

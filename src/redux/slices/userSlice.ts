@@ -1,33 +1,38 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface UserState {
-    user_id: string;
-    user_name: string;
-    user_email: string;
-    user_profile_pic: string;
+  user_id: string;
+  user_name: string;
+  user_email: string;
+  user_profile_pic: string;
 }
-
+//live below
 if (localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token') === null) {
-    var initialState: UserState = {
-        user_id: '',
-        user_name: '',
-        user_email: '',
-        user_profile_pic: '',
-    }
+//dev below line
+// if (localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') === null) {
+  var initialState: UserState = {
+    user_id: '',
+    user_name: '',
+    user_email: '',
+    user_profile_pic: '',
+  }
 } else {
-    const parsedToken = JSON.parse(localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token')!);
-    var initialState: UserState = {
-        user_id: parsedToken.user.id,
-        user_name: parsedToken.user.user_metadata.full_name,
-        user_email: parsedToken.user.email,
-        user_profile_pic: 
-                parsedToken.user.user_metadata.avatar_url ?  parsedToken.user.user_metadata.avatar_url :
-                `https://api.dicebear.com/6.x/personas/svg?seed=${parsedToken.user.user_metadata.full_name}`,
-    }
+  //live below
+  const parsedToken = JSON.parse(localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token')!);
+  //dev below line
+  // const parsedToken = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token')!);
+  var initialState: UserState = {
+    user_id: parsedToken.user.id,
+    user_name: parsedToken.user.user_metadata.full_name,
+    user_email: parsedToken.user.email,
+    user_profile_pic:
+      parsedToken.user.user_metadata.avatar_url ? parsedToken.user.user_metadata.avatar_url :
+        `https://api.dicebear.com/6.x/personas/svg?seed=${parsedToken.user.user_metadata.full_name}`,
+  }
 }
 
 export const userSlice = createSlice({
-  name: 'user',  
+  name: 'user',
 
   initialState,
 
@@ -51,6 +56,6 @@ export const userSlice = createSlice({
 
 })
 
-export const { setUser , removeUser } = userSlice.actions
+export const { setUser, removeUser } = userSlice.actions
 
 export default userSlice.reducer

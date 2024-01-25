@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import FinalResult from './FinalResultWindow';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { findUser, updateScore } from '../supabase/Routes/MainRoutes';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store/store';
 
 interface SubmitWindowProps {
     lat1: number;
@@ -30,7 +32,7 @@ const SubmitWindow = ({
 }: SubmitWindowProps) => {
     const location2 = useLocation()
     const navigate = useNavigate();
-    const loggedIN = JSON.parse(localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token') || '{}');
+    const loggedIN = useSelector((state: RootState) => state.user)
     const submitMapContainerRef = useRef(null);
     const infoWindowRef1 = useRef(new window.google.maps.InfoWindow());
     const infoWindowRef2 = useRef(new window.google.maps.InfoWindow());
@@ -124,10 +126,10 @@ const SubmitWindow = ({
     }, [lat1, lng1, guessLat, guessLng, midLat, midLng]);
 
     const storeScore = async () => {
-        const data = await findUser(loggedIN.user.id)
+        const data = await findUser(loggedIN.user_id)
         if (data) {
             if (data && data.user_maxscore !== null && points > data.user_maxscore) {
-                await updateScore(loggedIN.user.id, points);
+                await updateScore(loggedIN.user_id, points);
             }
         }
     }
