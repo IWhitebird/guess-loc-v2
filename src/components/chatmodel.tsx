@@ -101,9 +101,7 @@ const ChatModel: React.FC = () => {
                 {curChat.map((chat, index) => (
                     <div
                         key={index}
-                        className={`flex items-start gap-5 m-3  ${chat.chatter_id === user_id ? 'self-end' : 'self-start'
-
-                            }`}
+                        className={`flex items-start gap-5 m-3  ${chat.chatter_id === user_id ? 'self-end' : 'self-start'}`}
                     >
                         {
                             chat.chatter_id !== user_id &&
@@ -124,7 +122,7 @@ const ChatModel: React.FC = () => {
                                 {chat.chatter_message}
                             </p>
                             <span className="flex justify-end w-full text-sm font-normal text-gray-500 dark:text-gray-400">
-                                {chat.chatter_time.split(':')[0] + ':' + chat.chatter_time.split(':')[2]}
+                                {chat.chatter_time.split(':')[0] + ':' + chat.chatter_time.split(':')[1] + ' ' + chat.chatter_time.split(' ')[1]}
                             </span>
                         </div>
                         {
