@@ -175,9 +175,7 @@ const Room = () => {
                   onChange={changeSettingsInput}
                   className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
                 />
-                
               </div>
-
               <label className="w-full mx-auto mb-1">Round Duration</label>
               <input
                 type="text"
