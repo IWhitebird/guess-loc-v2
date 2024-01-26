@@ -7,9 +7,9 @@ interface UserState {
   user_profile_pic: string;
 }
 //live below
-if (localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token') === null) {
+// if (localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token') === null) {
 //dev below line
-// if (localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') === null) {
+if (localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token') === null) {
   var initialState: UserState = {
     user_id: '',
     user_name: '',
@@ -18,9 +18,9 @@ if (localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token') === null) {
   }
 } else {
   //live below
-  const parsedToken = JSON.parse(localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token')!);
+  // const parsedToken = JSON.parse(localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token')!);
   //dev below line
-  // const parsedToken = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token')!);
+  const parsedToken = JSON.parse(localStorage.getItem('sb-stglscmcmjtwkvviwzcc-auth-token')!);
   var initialState: UserState = {
     user_id: parsedToken.user.id,
     user_name: parsedToken.user.user_metadata.full_name,

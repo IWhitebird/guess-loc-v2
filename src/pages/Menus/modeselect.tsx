@@ -64,7 +64,7 @@ function MainMenu({ setFriendModal, setAudioSettings }: Props) {
                                         Singleplayer
                                     </li>
                                 </Link>
-                                <Link to=''>
+                                <Link to='/customroom'>
                                     <li className="mb-8 text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300">
                                         Multiplayer (Coming Soon)
                                     </li>
