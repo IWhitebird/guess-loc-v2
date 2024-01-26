@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { RootState } from "../../redux/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setRoom } from "../../redux/slices/roomSlice";
+import { sendMessage } from "../../supabase/Routes/RoomRoutes";
 
 interface IRoom {
   room_id?: string;
@@ -77,22 +78,24 @@ const CustomGame = () => {
         .eq('room_pw', joinRoomDetails.room_password)
         .select()
 
-        let tempChanel = supabase.channel(`${joinRoomDetails.room_id}_chat`)
+        sendMessage(roomDetails.room_id as string, `${user_name} joined the room`, user_id, user_name, user_profile_pic)    
         
-        tempChanel.subscribe((status) => {
-          if (status !== 'SUBSCRIBED') { return } 
-          tempChanel.send({
-              type: 'broadcast',
-              event: 'room_chatting',
-              payload : {
-                  chatter_id: user_id,
-                  chatter_name: user_name,
-                  chatter_image: user_profile_pic,
-                  chatter_message: `${user_name} has joined the room`,
-                  chatter_time: new Date().toLocaleTimeString()
-              }
-            })
-        })
+        // let tempChanel = supabase.channel(`${joinRoomDetails.room_id}_chat`)
+        
+        // tempChanel.subscribe((status) => {
+        //   if (status !== 'SUBSCRIBED') { return } 
+        //   tempChanel.send({
+        //       type: 'broadcast',
+        //       event: 'room_chatting',
+        //       payload : {
+        //           chatter_id: user_id,
+        //           chatter_name: user_name,
+        //           chatter_image: user_profile_pic,
+        //           chatter_message: `${user_name} has joined the room`,
+        //           chatter_time: new Date().toLocaleTimeString()
+        //       }
+        //     })
+        // })
 
       if (updateRoom.error) {
         toast.error("Error joining room")
