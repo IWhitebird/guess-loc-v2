@@ -3,6 +3,7 @@ import supabase from '../supabase/init';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
 import { IoSend } from "react-icons/io5";
+import { sendMessage , updateRoom } from '../supabase/Routes/RoomRoutes';
 
 const ChatModel: React.FC = () => {
 
@@ -29,30 +30,36 @@ const ChatModel: React.FC = () => {
             chatter_time: new Date().toLocaleTimeString()
         }])
 
-        channel.subscribe((status) => {
-            if (status !== 'SUBSCRIBED') { return }
-            channel.send({
-                type: 'broadcast',
-                event: 'room_chatting',
-                payload: {
-                    chatter_id: user_id,
-                    chatter_name: user_name,
-                    chatter_image: user_profile_pic,
-                    chatter_message: myMsg,
-                    chatter_time: new Date().toLocaleTimeString()
-                }
-            })
-        })
+        
+        sendMessage(roomDetails.room_id as string, myMsg, user_id, user_name, user_profile_pic)    
+        await updateRoom(roomDetails.room_id as string, myMsg, roomDetails, user_id, user_name, user_profile_pic)
+        
 
-        await supabase.from('custom_room').update({
-            room_chat: [...roomDetails.room_chat, {
-                chatter_id: user_id,
-                chatter_name: user_name,
-                chatter_image: user_profile_pic,
-                chatter_message: myMsg,
-                chatter_time: new Date().toLocaleTimeString()
-            }] as any
-        }).match({ room_id: roomDetails.room_id })
+        // channel.subscribe((status) => {
+        //     if (status !== 'SUBSCRIBED') { return }
+        //     channel.send({
+        //         type: 'broadcast',
+        //         event: 'room_chatting',
+        //         payload: {
+        //             chatter_id: user_id,
+        //             chatter_name: user_name,
+        //             chatter_image: user_profile_pic,
+        //             chatter_message: myMsg,
+        //             chatter_time: new Date().toLocaleTimeString()
+        //         }
+        //     })
+        // })
+
+        // await supabase.from('custom_room').update({
+        //     room_chat: [...roomDetails.room_chat, {
+        //         chatter_id: user_id,
+        //         chatter_name: user_name,
+        //         chatter_image: user_profile_pic,
+        //         chatter_message: myMsg,
+        //         chatter_time: new Date().toLocaleTimeString()
+        //     }] as any
+        // }).match({ room_id: roomDetails.room_id })
+
         scrollToBottom();
     }
 

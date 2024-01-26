@@ -9,7 +9,7 @@ interface props {
 }
 
 const AudioPlayer = ({ audioSettings, setAudioSettings }: props) => {
-  const [volume, setVolume] = useState<number>(1);
+  const [volume, setVolume] = useState<number>(0.1);
   const [forceRender, setForceRender] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
   const storedVolume = localStorage.getItem('volume');
