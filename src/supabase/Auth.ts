@@ -75,7 +75,8 @@ export async function EmailSignUpNewUser(email: string, password: string, name: 
                 data: {
                     full_name: name
                 },
-                emailRedirectTo: 'http://localhost:5173/verify',
+                // emailRedirectTo: 'http://localhost:5173/verify',
+                emailRedirectTo: 'https://guess-loc-v2.vercel.app/verify',
             },
         });
 
@@ -92,9 +93,14 @@ export async function EmailSignUpNewUser(email: string, password: string, name: 
 
 export async function OAuthLogin(provider: Provider) {
     try {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider,
-        });
+        const { error } = await supabase.auth.signInWithOAuth(
+            {
+                provider,
+                options: {
+                    // redirectTo: 'http://localhost:5173/verify',
+                    redirectTo: 'https://guess-loc-v2.vercel.app/verify',
+                }
+            });
 
         if (error) {
             console.error(error);

@@ -46,18 +46,18 @@ if (localStorage.getItem('custom_room_details') === null) {
     const parsedToken = JSON.parse(localStorage.getItem('custom_room_details')!);
     
     const { data , error}  = supabase.from('custom_room').select().eq('room_id', parsedToken.room_id) as any
-
+    
     if (error) {
         var iState : RoomState = {
-            room_id: parsedToken.room_id,
-            room_owner: parsedToken.room_owner,
-            room_name: parsedToken.room_name,
+            room_id: '',
+            room_owner: '',
+            room_name: '',
             room_settings: {
-                game_rounds: parsedToken.room_settings.game_rounds,
-                round_duration: parsedToken.room_settings.round_duration
+                game_rounds: 0,
+                round_duration: 0
             },
-            room_participants: parsedToken.room_participants,
-            room_chat: parsedToken.room_chat
+            room_participants: [],
+            room_chat: []  
         }
     } else {
 

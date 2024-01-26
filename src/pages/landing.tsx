@@ -51,11 +51,6 @@ const Landing = () => {
             <h4>
               <img src={logo} alt="logo" className="invert w-[200px]" />
             </h4>
-            <div className="flex items-center">
-              <Link to="/auth" className="text-white text-2xl border border-white rounded-full px-5 py-2 transition-all ease-in-out duration-300 hover:border-r-8 ">
-                Login
-              </Link>
-            </div>
           </div>
           <div className="flex w-[100vw] h-[100vh] overflow-hidden main ">
 
@@ -89,7 +84,7 @@ const Landing = () => {
                   </ul>
                 </ul>
                 <div className="px-[15rem] py-10">
-                  <Link to="/register" className="op_button">
+                  <Link to="/auth" className="op_button">
                     <span></span>
                     <span></span>
                     <span></span>

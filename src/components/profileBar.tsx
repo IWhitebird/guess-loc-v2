@@ -33,6 +33,7 @@ const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, s
     const logout = await EmailLogout();
     if (logout) {
       localStorage.removeItem('sb-pdnogztwriouxeskllgm-auth-token');
+      localStorage.removeItem('custom_room_details')
       window.location.href = "/";
     }
   }
