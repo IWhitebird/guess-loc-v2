@@ -48,7 +48,7 @@ const Room = () => {
       await supabase
         .from('custom_room')
         .update({
-          'room_participants': [...roomDetails.room_participants.filter((participant: any) => participant.room_user_id !== user_id)] as any 
+          'room_participants': [...roomDetails.room_participants.filter((participant: any) => participant.room_user_id !== user_id)] as any
         })
         .match({ 'room_id': roomDetails.room_id })
 
@@ -77,7 +77,7 @@ const Room = () => {
           chatter_image: user_profile_pic,
           chatter_message: `${user_name} has left the room`,
           chatter_time: new Date().toLocaleTimeString()
-        }] as any 
+        }] as any
       }).match({ room_id: roomDetails.room_id })
 
       localStorage.removeItem('custom_room_details')
@@ -123,18 +123,24 @@ const Room = () => {
           <div className="flex flex-col items-center justify-center w-full h-20 mt-9">
             <div className="pt-4">
               <button id='fn_button' style={{ fontSize: '1.1rem', padding: '1rem 1rem 1rem 1.5rem' }} onClick={() => setChangeSettingsModal(true)}>
-              <IoSettingsSharp className="mr-2"/> CHANGE SETTINGS 
+                <IoSettingsSharp className="mr-2" /> CHANGE SETTINGS
                 <span id='fnButtonSpan'></span>
               </button>
             </div>
             <div className="pt-4">
-              <button id='fn_button' style={{ fontSize: '1.1rem', padding: '1rem 1rem 1rem 1.5rem' }}  onClick={LeaveRoom}>
-              <RiDoorOpenFill className="mr-2"/>LEAVE ROOM 
+              <button id='fn_button' style={{ fontSize: '1.1rem', padding: '1rem 1rem 1rem 1.5rem' }} onClick={LeaveRoom}>
+                <RiDoorOpenFill className="mr-2" />LEAVE ROOM
+                <span id='fnButtonSpan'></span>
+              </button>
+            </div>
+            <div className="pt-4">
+              <button id='fn_button' style={{ fontSize: '1.1rem', padding: '1rem 1rem 1rem 1.5rem' }}>
+                START GAME
                 <span id='fnButtonSpan'></span>
               </button>
             </div>
           </div>
-      
+
           <div className="w-full">
             <h1 className="pt-6 pl-2 text-2xl text-white">Players</h1>
             {
@@ -152,55 +158,57 @@ const Room = () => {
             <ChatModel />
           </div>
         </div>
-        {
-          changeSettingsModal &&
-          <div className={`absolute duration-200 top-0 left-0 
+
+        <div className={`absolute duration-200 top-0 left-0 
           ${changeSettingsModal ? 'opacity-100' : 'opacity-0 invisible'} 
           z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-lg '}`}>
-            <div className={`relative w-[400px] duration-300 border text-white border-purple-900 rounded-lg flex flex-col p-10 ${changeSettingsModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
+          <div className={`relative w-[400px] duration-300 border text-white border-purple-900 rounded-lg flex flex-col p-10 ${changeSettingsModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
 
-              <div className="flex flex-col">
-                <label className="w-full mx-auto mb-1">Game Rounds</label>
+            <div className="flex flex-col">
+              <label className="w-full mx-auto mb-1">Game Rounds</label>
+              <div className="flex">
                 <input
-                  type="text"
+                  type='number'
                   placeholder={roomDetails.room_settings.game_rounds.toString()}
                   value={roomSettingsChange.game_rounds}
                   name="game_rounds"
                   onChange={changeSettingsInput}
                   className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
                 />
-
-                <label className="w-full mx-auto mb-1">Round Duration</label>
-                <input
-                  type="text"
-                  placeholder={roomDetails.room_settings.round_duration.toString()}
-                  value={roomSettingsChange.round_duration}
-                  name="round_duration"
-                  onChange={changeSettingsInput}
-                  className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
-                />
-
-                <div className="flex flex-row-reverse justify-center gap-3 mt-5">
-                  <button
-                    onClick={ChangeRoomSettings}
-                    id='fn_button'
-                    style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
-                  >
-                    Done<span id='fnButtonSpan'></span>
-                  </button>
-                  <button
-                    onClick={() => setChangeSettingsModal(false)}
-                    id='fn_button'
-                    style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
-                  >
-                    Close<span id='fnButtonSpan'></span>
-                  </button>
-                </div>
-
+                
               </div>
+
+              <label className="w-full mx-auto mb-1">Round Duration</label>
+              <input
+                type="text"
+                placeholder={roomDetails.room_settings.round_duration.toString()}
+                value={roomSettingsChange.round_duration}
+                name="round_duration"
+                onChange={changeSettingsInput}
+                className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
+              />
+
+              <div className="flex flex-row-reverse justify-center gap-3 mt-5">
+                <button
+                  onClick={ChangeRoomSettings}
+                  id='fn_button'
+                  style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
+                >
+                  Done<span id='fnButtonSpan'></span>
+                </button>
+                <button
+                  onClick={() => setChangeSettingsModal(false)}
+                  id='fn_button'
+                  style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
+                >
+                  Close<span id='fnButtonSpan'></span>
+                </button>
+              </div>
+
             </div>
           </div>
-        }
+        </div>
+
       </div>
     </div>
   )

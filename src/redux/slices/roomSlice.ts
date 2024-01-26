@@ -29,9 +29,20 @@ interface RoomState {
     room_chat: RoomChat[];
 }
 
+var iState: RoomState = {
+    room_id: '',
+    room_owner: '',
+    room_name: '',
+    room_settings: {
+        game_rounds: 0,
+        round_duration: 0
+    },
+    room_participants: [],
+    room_chat: []
+};
 
 if (localStorage.getItem('custom_room_details') === null) {
-    var iState : RoomState = {
+    var iState: RoomState = {
         room_id: '',
         room_owner: '',
         room_name: '',
@@ -40,28 +51,15 @@ if (localStorage.getItem('custom_room_details') === null) {
             round_duration: 0
         },
         room_participants: [],
-        room_chat: []  
+        room_chat: []
     }
 } else {
     const parsedToken = JSON.parse(localStorage.getItem('custom_room_details')!);
-    
-    const { data , error}  = supabase.from('custom_room').select().eq('room_id', parsedToken.room_id) as any
-    
-    if (error) {
-        var iState : RoomState = {
-            room_id: '',
-            room_owner: '',
-            room_name: '',
-            room_settings: {
-                game_rounds: 0,
-                round_duration: 0
-            },
-            room_participants: [],
-            room_chat: []  
-        }
-    } else {
 
-        var iState : RoomState= {
+    const { data, error } = supabase.from('custom_room').select().eq('room_id', parsedToken.room_id) as any
+
+    if (data !== undefined) {
+        iState = {
             room_id: data[0].room_id!,
             room_owner: data[0].room_owner!,
             room_name: data[0].room_name!,
@@ -73,49 +71,63 @@ if (localStorage.getItem('custom_room_details') === null) {
             room_chat: data[0].room_chat
         }
     }
+
+    if (error) {
+        iState = {
+            room_id: '',
+            room_owner: '',
+            room_name: '',
+            room_settings: {
+                game_rounds: 0,
+                round_duration: 0
+            },
+            room_participants: [],
+            room_chat: []
+        }
+    }
 }
 
 export const roomSlice = createSlice({
-  name: 'room',  
+    name: 'room',
 
-  initialState : iState,
+    initialState: iState,
 
-  reducers: {
+    reducers: {
 
-    setRoom: (state, action: PayloadAction<RoomState>) => {
-        state.room_id = action.payload.room_id
-        state.room_owner = action.payload.room_owner
-        state.room_name = action.payload.room_name
-        state.room_settings = action.payload.room_settings
-        state.room_participants = action.payload.room_participants
-        state.room_chat = action.payload.room_chat
+        setRoom: (state, action: PayloadAction<RoomState>) => {
+            state.room_id = action.payload.room_id
+            state.room_owner = action.payload.room_owner
+            state.room_name = action.payload.room_name
+            state.room_settings = action.payload.room_settings
+            state.room_participants = action.payload.room_participants
+            state.room_chat = action.payload.room_chat
+        },
+
+        updateChat: (state, action: PayloadAction<RoomChat>) => {
+            state.room_chat = action.payload as any
+        },
+
+        updateSettings: (state, action: PayloadAction<RoomSettings>) => {
+            state.room_settings.game_rounds = action.payload.game_rounds
+            state.room_settings.round_duration = action.payload.round_duration
+        },
+
+        removeRoom: (state) => {
+            state.room_id = ''
+            state.room_owner = ''
+            state.room_name = ''
+            state.room_settings.game_rounds = 0
+            state.room_settings.round_duration = 0
+            state.room_participants = []
+            state.room_chat = []
+        },
+
     },
-
-    updateChat : (state, action: PayloadAction<RoomChat>) => {
-        state.room_chat = action.payload as any
-    },
-
-    updateSettings: (state, action: PayloadAction<RoomSettings>) => {
-        state.room_settings.game_rounds = action.payload.game_rounds
-        state.room_settings.round_duration = action.payload.round_duration
-    },
-
-    removeRoom: (state) => {
-        state.room_id = ''
-        state.room_owner = ''
-        state.room_name = ''
-        state.room_settings.game_rounds = 0
-        state.room_settings.round_duration = 0
-        state.room_participants = []
-        state.room_chat = []
-    },
-
-  },
 
 })
 
 
-export const { setRoom , removeRoom ,updateChat} = roomSlice.actions
+export const { setRoom, removeRoom, updateChat } = roomSlice.actions
 
-export default roomSlice.reducer 
+export default roomSlice.reducer
 
