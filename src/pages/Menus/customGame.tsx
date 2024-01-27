@@ -78,25 +78,8 @@ const CustomGame = () => {
         .eq('room_pw', joinRoomDetails.room_password)
         .select()
 
-        sendMessage(roomDetails.room_id as string, `${user_name} joined the room`, user_id, user_name, user_profile_pic)    
+      sendMessage(joinRoomDetails.room_id as string, `${user_name} joined the room`, user_id, user_name, user_profile_pic)    
         
-        // let tempChanel = supabase.channel(`${joinRoomDetails.room_id}_chat`)
-        
-        // tempChanel.subscribe((status) => {
-        //   if (status !== 'SUBSCRIBED') { return } 
-        //   tempChanel.send({
-        //       type: 'broadcast',
-        //       event: 'room_chatting',
-        //       payload : {
-        //           chatter_id: user_id,
-        //           chatter_name: user_name,
-        //           chatter_image: user_profile_pic,
-        //           chatter_message: `${user_name} has joined the room`,
-        //           chatter_time: new Date().toLocaleTimeString()
-        //       }
-        //     })
-        // })
-
       if (updateRoom.error) {
         toast.error("Error joining room")
         return;
@@ -105,7 +88,7 @@ const CustomGame = () => {
       toast.success("Room joined")
       localStorage.setItem('custom_room_details', JSON.stringify(updateRoom.data[0]))
       dispatch(setRoom(updateRoom.data[0]))
-      location(`/customroom/Room/${updateRoom.data[0]?.room_id}`)
+      location(`/customroom/Room/${updateRoom.data[0].room_id}`)
     }
     catch (error) {
       console.log(error)
@@ -157,11 +140,14 @@ const CustomGame = () => {
         toast.error("Error creating room")
         return;
       }
+
+      sendMessage(data[0].room_id as string, `${user_name} joined the room`, user_id, user_name, user_profile_pic)    
+
       toast.success("Room created")
       console.log(data)
       localStorage.setItem('custom_room_details', JSON.stringify(data[0]))
       dispatch(setRoom(data[0] as any))
-      location(`/customroom/Room/${data[0]?.room_id}`)
+      location(`/customroom/Room/${data[0].room_id}`)
     }
     catch (error) {
       console.log(error)

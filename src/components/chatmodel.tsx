@@ -3,7 +3,7 @@ import supabase from '../supabase/init';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
 import { IoSend } from "react-icons/io5";
-import { sendMessage , updateRoom } from '../supabase/Routes/RoomRoutes';
+import { sendMessage, updateRoom } from '../supabase/Routes/RoomRoutes';
 
 const ChatModel: React.FC = () => {
 
@@ -15,7 +15,7 @@ const ChatModel: React.FC = () => {
     const channel = supabase.channel(`${roomDetails.room_id}_chat`)
     const [curChat, setCurChat] = useState<any[]>(roomDetails.room_chat)
 
-    async function SendMessage(myMsg: string) {
+    async function SendMessageHandle(myMsg: string) {
         setNewMessage('')
 
         if (!newMessage.trim()) {
@@ -30,35 +30,10 @@ const ChatModel: React.FC = () => {
             chatter_time: new Date().toLocaleTimeString()
         }])
 
-        
-        sendMessage(roomDetails.room_id as string, myMsg, user_id, user_name, user_profile_pic)    
+
+        sendMessage(roomDetails.room_id as string, myMsg, user_id, user_name, user_profile_pic)
         await updateRoom(roomDetails.room_id as string, myMsg, roomDetails, user_id, user_name, user_profile_pic)
-        
 
-        // channel.subscribe((status) => {
-        //     if (status !== 'SUBSCRIBED') { return }
-        //     channel.send({
-        //         type: 'broadcast',
-        //         event: 'room_chatting',
-        //         payload: {
-        //             chatter_id: user_id,
-        //             chatter_name: user_name,
-        //             chatter_image: user_profile_pic,
-        //             chatter_message: myMsg,
-        //             chatter_time: new Date().toLocaleTimeString()
-        //         }
-        //     })
-        // })
-
-        // await supabase.from('custom_room').update({
-        //     room_chat: [...roomDetails.room_chat, {
-        //         chatter_id: user_id,
-        //         chatter_name: user_name,
-        //         chatter_image: user_profile_pic,
-        //         chatter_message: myMsg,
-        //         chatter_time: new Date().toLocaleTimeString()
-        //     }] as any
-        // }).match({ room_id: roomDetails.room_id })
 
         scrollToBottom();
     }
@@ -85,6 +60,7 @@ const ChatModel: React.FC = () => {
     //     };
     // }, []);
 
+    console.log(channel)
     channel.on(
         'broadcast',
         { event: 'room_chatting' },
@@ -94,12 +70,13 @@ const ChatModel: React.FC = () => {
         }
     )
 
+
     useEffect(() => {
         scrollToBottom()
     }, [curChat]);
 
     console.log("ROOM DETAILS", roomDetails)
-    console.log("Broad", curChat)
+    console.log("Broard", curChat)
 
     return (
         <div className='w-[500px] h-full border bg-[#ffffff2c] border-black backdrop-blur-md rounded-xl flex justify-start flex-col '>
@@ -155,7 +132,7 @@ const ChatModel: React.FC = () => {
                 <button
                     id='fn_button'
                     style={{ fontSize: '1.2rem', padding: '1rem 1rem 1rem 1.5rem' }}
-                    onClick={() => { SendMessage(newMessage) }}
+                    onClick={() => { SendMessageHandle(newMessage) }}
                     ref={enterRef}
                 >
                     Send <IoSend className='ml-3' />

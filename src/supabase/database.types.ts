@@ -47,11 +47,27 @@ export interface Database {
           }
         ]
       }
+      multiplayer: {
+        Row: {
+          cords: Json | null
+          id: number
+        }
+        Insert: {
+          cords?: Json | null
+          id?: number
+        }
+        Update: {
+          cords?: Json | null
+          id?: number
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           friends_id: string[] | null
           id: string
           incoming_fr_reqs: string[] | null
+          online_status: string
           outgoing_fr_reqs: string[] | null
           user_email: string | null
           user_maxscore: number | null
@@ -63,6 +79,7 @@ export interface Database {
           friends_id?: string[] | null
           id: string
           incoming_fr_reqs?: string[] | null
+          online_status?: string
           outgoing_fr_reqs?: string[] | null
           user_email?: string | null
           user_maxscore?: number | null
@@ -74,6 +91,7 @@ export interface Database {
           friends_id?: string[] | null
           id?: string
           incoming_fr_reqs?: string[] | null
+          online_status?: string
           outgoing_fr_reqs?: string[] | null
           user_email?: string | null
           user_maxscore?: number | null
@@ -134,6 +152,7 @@ export interface Database {
           friends_id: string[] | null
           id: string
           incoming_fr_reqs: string[] | null
+          online_status: string
           outgoing_fr_reqs: string[] | null
           user_email: string | null
           user_maxscore: number | null

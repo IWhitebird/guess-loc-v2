@@ -5,7 +5,7 @@ import Landing from './pages/landing'
 import ModeSelect from './pages/Menus/modeselect'
 import Auth from './pages/Authentication/login'
 import Verify from './pages/verify'
-import OnePlayer from './pages/Modes/1Player'
+import OnePlayer from './pages/Modes/SinglePlayer'
 import Vnum from './components/vnum'
 import CustomGame from './pages/Menus/customGame'
 import Dashboard from './components/profileBar'
@@ -18,6 +18,7 @@ import Notification from './components/notification'
 import AudioPlayer from './components/AudioPlayer'
 import { useSelector } from 'react-redux'
 import { RootState } from './redux/store/store'
+import MultiPlayer from './pages/Modes/MultiPlayer'
 
 const App = () => {
   const loggedIN = useSelector((state: RootState) => state.user)
@@ -64,7 +65,7 @@ const App = () => {
             <Route path="/spGame" element={<OnePlayer />} />
             <Route path="/customroom" element={<CustomGame />} />
             <Route path="/customroom/Room/:id" element={<Room />} />
-            {/* <Route path="/mpGame" element={<MultiPlayer />} /> */}
+            <Route path="/mpGame/:id" element={<MultiPlayer />} />
             <Route path="/profile/:id" element={<FriendProfilepage />} />
             <Route path="/spGame" element={<OnePlayer />} />
             <Route path="/profile" element={<Profile />} />
