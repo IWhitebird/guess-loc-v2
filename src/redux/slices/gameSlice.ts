@@ -55,7 +55,6 @@ let iState: GameState = {
     game_participants: [],
     round_details : [],
     cur_round_start_time : null,
-    
 };
 
 if (localStorage.getItem('custom_game_details') === null) {
@@ -75,7 +74,7 @@ if (localStorage.getItem('custom_game_details') === null) {
 } else {
     const parsedToken = JSON.parse(localStorage.getItem('custom_game_details')!);
     const data : any = await updateGame(parsedToken.game_id)
-    
+
     iState = {
         game_id: data[0].game_id,
         room_id: data[0].room_id,
@@ -96,7 +95,7 @@ async function updateGame(game_id : string) {
         .from('game')
         .select()
         .eq('game_id', game_id)
-    
+
     if (error) {
         return "error"
     }
@@ -130,7 +129,7 @@ export const gameSlice = createSlice({
         updateRoundDetails : (state, action : PayloadAction<RoundDetails[]>) => {
             state.round_details = action.payload
         },
-    
+
         updateRoundStartTime : (state, action : PayloadAction<Date>) => {
             state.cur_round_start_time = action.payload
         },
@@ -150,6 +149,7 @@ export const gameSlice = createSlice({
             state.game_winner = null
             state.game_participants = []
             state.round_details = []
+            state.cur_round_start_time = null   
         },
 
     },

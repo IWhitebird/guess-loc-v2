@@ -5,19 +5,20 @@ import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import Earth from "../components/earth";
 import logo from "../assets/Untitled-1.png";
-import { CheckUser } from "../supabase/Auth";
 import { ImSpinner2 } from "react-icons/im";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/reducers/reducers";
 
 const Landing = () => {
   const location = useNavigate()
   const [loading, setLoading] = useState(true)
+  const user = useSelector((state: RootState) => state.user)
 
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        const user = await CheckUser()
         setLoading(false)
-        if (user?.aud === "authenticated") {
+        if (user.user_id) {
           location("/mode")
         }
       } catch (error) {

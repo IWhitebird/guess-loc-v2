@@ -47,7 +47,7 @@ export default function FriendsList({ visible, setVisible, handleState, setHandl
     ).subscribe()
 
     async function setOnlines(id: any, status: string) {
-         await setOnline(id, status)
+        if(id) await setOnline(id, status)
     }
 
     useEffect(() => {
@@ -69,7 +69,6 @@ export default function FriendsList({ visible, setVisible, handleState, setHandl
             }
         }).subscribe(async (status) => {
             if (status !== 'SUBSCRIBED') return;
-
             await onlineChannel.track({ user_id, online_at: new Date().toISOString() });
         });
 

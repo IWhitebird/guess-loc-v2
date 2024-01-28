@@ -43,19 +43,19 @@ const App = () => {
   }
 
   useEffect(() => {
-    // console.log(loggedIN)
     sendDashboard()
-    // if (loggedIN.user_id === '' || loggedIN.user_id === undefined) {
-    //   navigate('/auth')
-    // }
   }, [loggedIN])
 
   return (
-    // <UserProvider>
     <>
       <Vnum />
       {sendDashboard()}
-      <FriendsList visible={friendModal} setVisible={setFriendModal} handleState={handleState} setHandleState={setHandleState} />
+
+      {
+        loggedIN.user_id !== '' &&
+          <FriendsList visible={friendModal} setVisible={setFriendModal} handleState={handleState} setHandleState={setHandleState} />
+      }
+
       <Routes>
         <Route path="/" element={<Landing />} />
 
@@ -73,7 +73,6 @@ const App = () => {
           </>
         }
         <Route path="/verify" element={<Verify />} />
-
         <Route path="/auth" element={<Auth />} />
 
 
