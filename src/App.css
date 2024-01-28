@@ -2,7 +2,6 @@
     display: none;
 }
 */
-@import url('https://fonts.googleapis.com/css?family=Open%20Sans:800');
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -178,7 +177,7 @@ input[type=number] {
     display: none;
 }
 */
-@import url('https://fonts.googleapis.com/css?family=Open%20Sans:800');
+
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

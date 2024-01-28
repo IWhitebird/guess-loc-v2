@@ -10,6 +10,8 @@ import { IoSettingsSharp } from "react-icons/io5";
 import { RiDoorOpenFill } from "react-icons/ri";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { PiPlayFill } from "react-icons/pi";
+import randomStreetView from "../../scripts/index";
+import { toast } from "react-hot-toast";
 
 const Room = () => {
   const dispatch: AppDispatch = useDispatch()
@@ -17,11 +19,12 @@ const Room = () => {
 
   const { user_id, user_name, user_profile_pic, } = useSelector((state: RootState) => state.user)
   const roomDetails = useSelector((state: RootState) => state.room)
+  const [gameMode, setGameMode] = useState(false)
 
   const channel = supabase.channel(`${roomDetails.room_id}`)
 
   const [roomSettingsChange, setRoomSettingsChange] = useState({
-    game_rounds: roomDetails.room_settings.game_rounds || 1,
+    game_rounds: roomDetails.room_settings.game_rounds,
     round_duration: roomDetails.room_settings.round_duration
   })
   const [changeSettingsModal, setChangeSettingsModal] = useState(false)
@@ -90,10 +93,73 @@ const Room = () => {
     }
   }
 
+  async function startGameHandle() {
+    const startingGame = toast.loading("Starting Game...")
+
+      const randomLatLng = await randomStreetView.getRandomLocations(roomDetails.room_settings.game_rounds);
+      interface lat_lng {
+        lat: string;
+        lng: string;
+      }
+     
+      const lat_lng_arr : lat_lng[] = [];
+
+      for (let i = 0; i < randomLatLng.length; i++) {
+        const temp : lat_lng = {
+          lat: randomLatLng[i][0].toString(),
+          lng: randomLatLng[i][1].toString()
+        }
+        lat_lng_arr.push(temp)
+      }
+
+
+      const { data , error } : any = await supabase.from('game').insert({
+        game_type: gameMode,
+        room_id: roomDetails.room_id,
+        total_rounds: roomDetails.room_settings.game_rounds,
+        round_duration: roomDetails.room_settings.round_duration,
+        game_participants: roomDetails.room_participants,
+        lat_lng_arr: lat_lng_arr,
+        cur_round : 0,
+        cur_round_start_time : null,
+        round_details : null,
+        game_winner : null,
+      }).select()
+
+    if (error) {
+      toast.dismiss(startingGame)
+      toast.error("Error in creating game")
+      throw error
+    }
+
+    await supabase.from('custom_room').update({
+      cur_game_id: data[0].game_id
+    }).match({ room_id: roomDetails.room_id })
+
+    dispatch(setRoom({
+      ...roomDetails,
+      cur_game_id: data[0].game_id
+    }))
+    toast.dismiss(startingGame)
+    toast.success("Game Started")
+
+    channel.send({
+      type: 'broadcast',
+      event: 'game_started',
+      payload: {
+        game_id: data[0].game_id,
+        message: 'Game Started'
+      }
+    });
+
+    navigate(`/mpGame/${data[0].game_id}`)
+  }
+
   function changeSettingsInput(e: any) {
     e.preventDefault();
     setRoomSettingsChange({ ...roomSettingsChange, [e.target.name]: e.target.value })
   }
+
 
   channel.on('postgres_changes',
     {
@@ -107,6 +173,20 @@ const Room = () => {
       dispatch(setRoom(payload.new as any))
     }
   ).subscribe()
+
+  channel.on(
+      'broadcast',
+      { event: 'game_started' },
+      ({payload}) => {
+        toast.success("Game Started")
+        dispatch(setRoom({
+          ...roomDetails,
+          cur_game_id: payload.game_id
+        }))
+        navigate(`/mpGame/${payload.game_id}`)
+      }
+  )
+
 
   return (
     <div className="bg-purple-950 w-full h-[100vh] ">
@@ -134,7 +214,7 @@ const Room = () => {
               </button>
             </div>
             <div className="pt-4">
-              <button id='fn_button' style={{ fontSize: '1.1rem', padding: '1rem 1rem 1rem 1.5rem' }}>
+              <button onClick={startGameHandle} id='fn_button' style={{ fontSize: '1.1rem', padding: '1rem 1rem 1rem 1.5rem' }}>
                 <PiPlayFill className="mr-2" />START GAME
                 <span id='fnButtonSpan'></span>
               </button>
@@ -159,8 +239,8 @@ const Room = () => {
           </div>
         </div>
 
-        <div className={`absolute duration-200 top-0 left-0 
-          ${changeSettingsModal ? 'opacity-100' : 'opacity-0 invisible'} 
+        <div className={`absolute duration-200 top-0 left-0
+          ${changeSettingsModal ? 'opacity-100' : 'opacity-0 invisible'}
           z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-lg '}`}>
           <div className={`relative w-[400px] duration-300 border text-white border-purple-900 rounded-lg flex flex-col p-10 ${changeSettingsModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
 

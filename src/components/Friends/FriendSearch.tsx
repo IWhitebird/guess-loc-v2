@@ -15,7 +15,7 @@ interface FriendSearchProps {
 
 function FriendSearch({ visible, setVisible }: FriendSearchProps) {
     const [friends, setFriends] = useState<any[]>([]);
-    const [search, setSearch] = useState('')
+    const [search, setSearch] = useState<string>("")
     const { user_id } = useSelector((state: RootState) => state.user)
     const [alreadyFriends, setAlreadyFriends] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
         const data = await searchFriends(search);
         if (data) {
             getFriendss();
-            setFriends(data.filter((friend) => friend.id !== user_id));
+            setFriends(data.filter((friend : any) => friend.id !== user_id));
             setLoading2(false);
             return data;
         }
@@ -100,6 +100,12 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
                     <input type="text" placeholder='Search using name or email'
                         className='bg-[rgba(30,30,30,0.5)] relative duration-300 mr-1 w-[260px] text-white border border-purple-800 p-2 pl-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-700 focus:border-transparent'
                         value={search}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handlesearch();
+                            }
+                        }}
                         onChange={(e) => setSearch(e.target.value)} />
                     <button className='w-[20px] h-[20px]' id='fn_button' onClick={() => handlesearch()} ref={listenKey}
                         style={{ fontSize: '1.5rem', padding: '1.2rem 2rem', margin: '0rem 0.5rem' }}

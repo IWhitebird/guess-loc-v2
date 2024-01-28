@@ -27,9 +27,10 @@ interface RoomState {
     room_settings: RoomSettings;
     room_participants: RoomUsers[];
     room_chat: RoomChat[];
+    cur_game_id?: string;
 }
 
-var iState: RoomState = {
+let iState: RoomState = {
     room_id: '',
     room_owner: '',
     room_name: '',
@@ -38,11 +39,12 @@ var iState: RoomState = {
         round_duration: 0
     },
     room_participants: [],
-    room_chat: []
+    room_chat: [],
+    cur_game_id: '',
 };
 
 if (localStorage.getItem('custom_room_details') === null) {
-    var iState: RoomState = {
+    iState = {
         room_id: '',
         room_owner: '',
         room_name: '',
@@ -51,14 +53,16 @@ if (localStorage.getItem('custom_room_details') === null) {
             round_duration: 0
         },
         room_participants: [],
-        room_chat: []
+        room_chat: [],
+        cur_game_id: '',
     }
 } else {
     const parsedToken = JSON.parse(localStorage.getItem('custom_room_details')!);
+    
+    const data : any = await updateRoom(parsedToken.room_id)
 
-    const { data, error } = supabase.from('custom_room').select().eq('room_id', parsedToken.room_id) as any
-
-    if (data !== undefined) {
+    if (data) {
+        
         iState = {
             room_id: data[0].room_id!,
             room_owner: data[0].room_owner!,
@@ -68,11 +72,11 @@ if (localStorage.getItem('custom_room_details') === null) {
                 round_duration: data[0].room_settings.round_duration
             },
             room_participants: data[0].room_participants,
-            room_chat: data[0].room_chat
+            room_chat: data[0].room_chat,
+            cur_game_id: data[0].cur_game_id,
         }
     }
-
-    if (error) {
+    else if (data === "error") {
         iState = {
             room_id: '',
             room_owner: '',
@@ -82,9 +86,22 @@ if (localStorage.getItem('custom_room_details') === null) {
                 round_duration: 0
             },
             room_participants: [],
-            room_chat: []
+            room_chat: [],
+            cur_game_id: '',
         }
     }
+}
+
+async function updateRoom(room_id : string) {
+    const {data , error }  = await supabase.
+    from('custom_room').
+    select().
+    eq('room_id', room_id) 
+    
+    if(error) 
+        return "error" 
+    else 
+        return data;
 }
 
 export const roomSlice = createSlice({
@@ -101,6 +118,7 @@ export const roomSlice = createSlice({
             state.room_settings = action.payload.room_settings
             state.room_participants = action.payload.room_participants
             state.room_chat = action.payload.room_chat
+            state.cur_game_id = action.payload.cur_game_id
         },
 
         updateChat: (state, action: PayloadAction<RoomChat>) => {

@@ -66,7 +66,7 @@ function MainMenu({ setFriendModal, setAudioSettings }: Props) {
                                 </Link>
                                 <Link to='/customroom'>
                                     <li className="mb-8 text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300">
-                                        Multiplayer (Coming Soon)
+                                        Multiplayer
                                     </li>
                                 </Link>
                                 <li className="mb-8 text-5xl italic transition-all ease-in-out cursor-pointer duration-250 hover:tracking-wider hover:text-purple-300" onClick={() => setFriendModal(true)}>
