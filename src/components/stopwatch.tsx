@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import moment from 'moment';
 import toast from 'react-hot-toast';
 
-const Stopwatch = ({ startTime, endTime }: any) => {
+const Stopwatch = ({ startTime, endTime ,endRound }: any) => {
 
   const [curTime, setCurTime] = useState<number>(
         moment(startTime).diff(new Date(), 'seconds') <= 0
@@ -27,8 +27,8 @@ const Stopwatch = ({ startTime, endTime }: any) => {
         }
 
         if (timeDifference <= 0) {1
-          toast.success("Round Ended!");
           clearInterval(intervalId);
+          endRound();
         }
       
         setCurTime(timeDifference);
