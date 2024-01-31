@@ -17,10 +17,14 @@ const MultiPlayer = () => {
   const user = useSelector((state: RootState) => state.user)
   const room = useSelector((state: RootState) => state.room)
 
+  const [guessLat , setGuessLat] = useState<number>(0)
+  const [guessLng , setGuessLng] = useState<number>(0)
+  const [guessDistance , setGuessDistance] = useState<number>(0)
+  const [userPoints , setUserPoints] = useState<number>(0)
+
   const [readyUsers, setReadyUsers] = useState<Set<String>>(new Set())
   const channel1 = supabase.channel(`${game.game_id}_game`)
   const channel2 = supabase.channel(`${game.game_id}`)
-
 
   async function getGame() {
 
@@ -86,10 +90,32 @@ const MultiPlayer = () => {
     console.log("fetching results")
   }
 
+  async function guessLatLng(guessLat: string, guessLng: string) {
+    const usrDetails = {
+      user_id: user.user_id,
+      guess_lat: guessLat,
+      guess_lng: guessLng,
+      user_distance: guessDistance,
+      user_points: userPoints
+    };
+
+    const { data, error } = await supabase
+      .from('game')
+      .update([...game.round_details, usrDetails])
+      .eq('game_id', game.game_id);
+
+    if (error) {
+      console.error('Error updating game:', error);
+    } else {
+      console.log('Game updated successfully:', data);
+    }
+
+    
+  }
+
   useEffect(() => {
     getGame();
   }, []);
-
 
   channel2
   .on('postgres_changes',

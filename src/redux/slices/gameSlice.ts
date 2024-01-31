@@ -12,21 +12,14 @@ interface GameUsers {
     room_user_image: string;
 }
 
-interface details {
+interface RoundDetails {
     user_id : string;
-    user_name : string;
-    user_image : string;
     user_guess_lat : string;
     user_guess_lng : string;
     user_distance : string;
     user_points : number;
 }
 
-interface RoundDetails {
-    round_number : number;
-    round_lat_lng : lat_lng;
-    details : details[];
-}
 
 
 interface GameState {
