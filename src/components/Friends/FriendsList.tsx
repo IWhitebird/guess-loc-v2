@@ -40,14 +40,14 @@ export default function FriendsList({ visible, setVisible, handleState, setHandl
             filter: `id=eq.${user_id}`
         },
         payload => {
-            if(payload){
+            if (payload) {
                 loadingFetchFriends()
             }
         }
     ).subscribe()
 
     async function setOnlines(id: any, status: string) {
-        if(id) await setOnline(id, status)
+        if (id) await setOnline(id, status)
     }
 
     useEffect(() => {
@@ -176,7 +176,7 @@ export default function FriendsList({ visible, setVisible, handleState, setHandl
                                         <div className='absolute bottom-0 w-5 h-5 bg-gray-700 border border-white rounded-full left-10'></div>
                                     }
                                     <div className='flex flex-col'>
-                                        <p>{friend.user_name}</p>
+                                        <p>{(friend.user_name).length > 10 ? (friend.user_name).slice(0, 25) + '...' : friend.user_name}</p>
                                         <p className='text-sm capitalize text-gray-400'>{friend.online_status}</p>
                                     </div>
                                 </div>

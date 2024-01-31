@@ -120,7 +120,7 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
                                 <div className='flex items-center gap-3'>
                                     <img src={friend.user_pfp ? friend?.user_pfp : `https://api.dicebear.com/6.x/personas/svg?seed=${friend.user_name}`} alt="" className='w-[50px] h-[50px] bg-gray-700 rounded-full' />
                                     <div className='flex flex-col'>
-                                        <p className='text-lg font-semibold'>{friend.user_name}</p>
+                                        <p className='text-lg font-semibold'>{(friend.user_name.length > 15) ? friend.user_name.slice(0, 20) + '...' : friend.user_name}</p>
                                         <p className='text-sm text-gray-400'>View Profile</p>
                                     </div>
                                 </div>

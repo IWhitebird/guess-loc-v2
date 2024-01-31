@@ -4,9 +4,11 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
 import { IoSend } from "react-icons/io5";
 import { sendMessage, updateRoom } from '../supabase/Routes/RoomRoutes';
+import { useLocation } from 'react-router-dom';
+
 
 const ChatModel: React.FC = () => {
-
+    const location = useLocation()
     const { user_id, user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
     const roomDetails = useSelector((state: RootState) => state.room)
     const containerRef = useRef<HTMLDivElement>(null);
@@ -79,7 +81,7 @@ const ChatModel: React.FC = () => {
     console.log("Broard", curChat)
 
     return (
-        <div className='w-[500px] h-full border bg-[#ffffff2c] border-black backdrop-blur-md rounded-xl flex justify-start flex-col '>
+        <div className={`w-[500px] h-full border bg-[#ffffff2c] border-black backdrop-blur-md ${location.pathname.startsWith('/mpGame/') ? 'rounded-none' : 'rounded-xl'} flex justify-start flex-col `}>
             <div className="flex flex-col items-start h-full gap-5 overflow-y-auto " id="style-3" ref={containerRef}>
 
                 {curChat.map((chat, index) => (

@@ -94,7 +94,7 @@ const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, s
             width="60"
           />
           <div className='flex items-center justify-center'>
-            <p className='text-xl font-bold'>{user_name.split(' ')[0]}</p>
+            <p className='text-xl font-bold'>{user_name.length > 15 ? (user_name.split(' ')[0]).slice(0, 10) + '...' : user_name.split(' ')[0]}</p>
             <IoMdArrowDropdown className={`duration-200 text-3xl mt-1`}
               style={{ transform: dropdown ? 'rotate(180deg)' : 'rotate(0deg)' }}
             />
