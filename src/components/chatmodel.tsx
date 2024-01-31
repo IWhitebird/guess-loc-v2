@@ -81,7 +81,7 @@ const ChatModel: React.FC = () => {
     console.log("Broard", curChat)
 
     return (
-        <div className={`w-full h-full border bg-[#ffffff2c] border-black backdrop-blur-md ${location.pathname.startsWith('/mpGame/') ? 'rounded-none' : 'rounded-xl'} flex justify-start flex-col `}>
+        <div className={`w-full h-full ${location.pathname.startsWith('/mpGame/') ? 'rounded-none' : 'rounded-xl'} flex justify-start flex-col `}>
             <div className="flex flex-col items-start h-full gap-5 overflow-y-auto " id="style-3" ref={containerRef}>
 
                 {curChat.map((chat, index) => (
