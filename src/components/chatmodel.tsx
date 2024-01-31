@@ -128,6 +128,11 @@ const ChatModel: React.FC = () => {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     style={{ resize: 'none' }}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            SendMessageHandle(newMessage)
+                        }
+                    }}
                 />
                 <button
                     id='fn_button'
