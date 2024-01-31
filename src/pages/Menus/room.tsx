@@ -96,35 +96,35 @@ const Room = () => {
   async function startGameHandle() {
     const startingGame = toast.loading("Starting Game...")
 
-      const randomLatLng = await randomStreetView.getRandomLocations(roomDetails.room_settings.game_rounds);
-      interface lat_lng {
-        lat: string;
-        lng: string;
+    const randomLatLng = await randomStreetView.getRandomLocations(roomDetails.room_settings.game_rounds);
+    interface lat_lng {
+      lat: string;
+      lng: string;
+    }
+
+    const lat_lng_arr: lat_lng[] = [];
+
+    for (let i = 0; i < randomLatLng.length; i++) {
+      const temp: lat_lng = {
+        lat: randomLatLng[i][0].toString(),
+        lng: randomLatLng[i][1].toString()
       }
-     
-      const lat_lng_arr : lat_lng[] = [];
-
-      for (let i = 0; i < randomLatLng.length; i++) {
-        const temp : lat_lng = {
-          lat: randomLatLng[i][0].toString(),
-          lng: randomLatLng[i][1].toString()
-        }
-        lat_lng_arr.push(temp)
-      }
+      lat_lng_arr.push(temp)
+    }
 
 
-      const { data , error } : any = await supabase.from('game').insert({
-        game_type: gameMode,
-        room_id: roomDetails.room_id,
-        total_rounds: roomDetails.room_settings.game_rounds,
-        round_duration: roomDetails.room_settings.round_duration,
-        game_participants: roomDetails.room_participants,
-        lat_lng_arr: lat_lng_arr,
-        cur_round : 0,
-        cur_round_start_time : null,
-        round_details : null,
-        game_winner : null,
-      }).select()
+    const { data, error }: any = await supabase.from('game').insert({
+      game_type: gameMode,
+      room_id: roomDetails.room_id,
+      total_rounds: roomDetails.room_settings.game_rounds,
+      round_duration: roomDetails.room_settings.round_duration,
+      game_participants: roomDetails.room_participants,
+      lat_lng_arr: lat_lng_arr,
+      cur_round: 0,
+      cur_round_start_time: null,
+      round_details: null,
+      game_winner: null,
+    }).select()
 
     if (error) {
       toast.dismiss(startingGame)
@@ -175,16 +175,16 @@ const Room = () => {
   ).subscribe()
 
   channel.on(
-      'broadcast',
-      { event: 'game_started' },
-      ({payload}) => {
-        toast.success("Game Started")
-        dispatch(setRoom({
-          ...roomDetails,
-          cur_game_id: payload.game_id
-        }))
-        navigate(`/mpGame/${payload.game_id}`)
-      }
+    'broadcast',
+    { event: 'game_started' },
+    ({ payload }) => {
+      toast.success("Game Started")
+      dispatch(setRoom({
+        ...roomDetails,
+        cur_game_id: payload.game_id
+      }))
+      navigate(`/mpGame/${payload.game_id}`)
+    }
   )
 
 
@@ -221,21 +221,32 @@ const Room = () => {
             </div>
           </div>
 
-          <div className="w-full">
-            <h1 className="pt-6 pl-2 text-2xl text-white">Players</h1>
-            {
-              roomDetails?.room_participants?.map((participant: any, index) => {
-                return (
-                  <div key={index} className="flex items-center justify-start w-full h-20">
-                    <img className="w-[50px]" src={participant.room_user_image} />
-                    <div className="text-lg text-white">{participant.room_user_name}</div>
-                  </div>
-                )
-              })
-            }
-          </div>
-          <div className="w-[50%] pt-20 flex justify-end">
-            <ChatModel />
+
+          <div className="w-[50%] pt-20 flex justify-end  ">
+            <div className="w-full bg-[#ffffff2c] backdrop-blur-md h-full flex rounded-xl">
+              <div className="flex flex-col  h-full px-4 w-[500px] border-r">
+                <h1 className="pt-6 pl-2 text-2xl text-white">Players</h1>
+                {
+                  roomDetails?.room_participants?.map((participant: any, index) => {
+                    return (
+                      <div key={index} className="flex flex-col w-full ">
+                        <div className="flex items-center justify-start p-3">
+                          <img className="w-[50px] rounded-xl" src={participant.room_user_image} />
+                          <div className="pl-1 text-lg text-white">
+                            {participant.room_user_name.length > 20 ?
+                              `${participant.room_user_name.slice(0, 20)}...` :
+                              participant.room_user_name
+                            }
+                          </div>
+                        </div>
+                        <hr className="w-full"/>
+                      </div>
+                    )
+                  })
+                }
+              </div>
+              <ChatModel />
+            </div>
           </div>
         </div>
 
