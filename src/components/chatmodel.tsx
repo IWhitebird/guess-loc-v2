@@ -81,7 +81,7 @@ const ChatModel: React.FC = () => {
     console.log("Broard", curChat)
 
     return (
-        <div className={`w-[500px] h-full border bg-[#ffffff2c] border-black backdrop-blur-md ${location.pathname.startsWith('/mpGame/') ? 'rounded-none' : 'rounded-xl'} flex justify-start flex-col `}>
+        <div className={`w-full border bg-[#ffffff2c] border-black backdrop-blur-md ${location.pathname.startsWith('/mpGame/') ? 'rounded-none' : 'rounded-xl'} flex justify-start flex-col `}>
             <div className="flex flex-col items-start h-full gap-5 overflow-y-auto " id="style-3" ref={containerRef}>
 
                 {curChat.map((chat, index) => (
@@ -93,7 +93,7 @@ const ChatModel: React.FC = () => {
                             chat.chatter_id !== user_id &&
                             <img
                                 className="w-8 h-8 rounded-full"
-                                src={chat.chatter_image}
+                                src={chat.chatter_image ? chat.chatter_image : `https://api.dicebear.com/6.x/personas/svg?seed=${chat.chatter_name}`}
                                 alt={`${chat.chatter_name} image`}
                             />
                         }
@@ -101,7 +101,10 @@ const ChatModel: React.FC = () => {
                         <div className={`flex flex-col w-full max-w-[420px] px-4 py-2 border-gray-200 bg-gray-100 rounded-lg dark:bg-gray-700 break-words`}>
                             <div className="flex items-center justify-between space-x-3 rtl:space-x-reverse">
                                 <span className="text-base font-semibold text-gray-900 dark:text-white">
-                                    {chat.chatter_name}
+                                    {chat.chatter_name.length > 15 ?
+                                        `${chat.chatter_name.slice(0, 15)}...` :
+                                        chat.chatter_name
+                                    }
                                 </span>
                             </div>
                             <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">
@@ -115,7 +118,7 @@ const ChatModel: React.FC = () => {
                             chat.chatter_id === user_id &&
                             <img
                                 className="w-8 h-8 rounded-full"
-                                src={chat.chatter_image}
+                                src={chat.chatter_image ? chat.chatter_image : `https://api.dicebear.com/6.x/personas/svg?seed=${chat.chatter_name}`}
                                 alt={`${chat.chatter_name} image`}
                             />
                         }
@@ -130,6 +133,11 @@ const ChatModel: React.FC = () => {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     style={{ resize: 'none' }}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            SendMessageHandle(newMessage)
+                        }
+                    }}
                 />
                 <button
                     id='fn_button'
