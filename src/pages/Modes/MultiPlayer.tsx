@@ -21,6 +21,8 @@ const MultiPlayer = () => {
   const user = useSelector((state: RootState) => state.user)
   const room = useSelector((state: RootState) => state.room)
 
+  console.log("game" , game)
+
   const [guessLat, setGuessLat] = useState<number>(0)
   const [guessLng, setGuessLng] = useState<number>(0)
   const [guessDistance, setGuessDistance] = useState<number>(0)

@@ -5,7 +5,7 @@ import logo from '../../assets/Untitled-1.png';
 import toast from "react-hot-toast";
 import { RootState } from "../../redux/store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { setRoom } from "../../redux/slices/roomSlice";
+import { setRoom , removeRoom } from "../../redux/slices/roomSlice";
 import { sendMessage } from "../../supabase/Routes/RoomRoutes";
 
 interface IRoom {
@@ -28,7 +28,7 @@ const CustomGame = () => {
   const dispatch = useDispatch()
 
   const { user_id , user_name , user_profile_pic  } = useSelector((state: RootState) => state.user)
-
+  const {room_id } = useSelector((state: RootState) => state.room)
   const [createRoomModal, setCreateRoomModal] = useState(false)
   const [roomDetails, setRoomDetails] = useState<IRoom>({
     name: "",
@@ -46,16 +46,19 @@ const CustomGame = () => {
   async function joinRoomHandle() {
     const loader = toast.loading("Joining room...")
     try {
-      const findRoom: any = await supabase
-        .from('custom_room')
-        .select()
-        .eq('room_id', joinRoomDetails.room_id)
-        .eq('room_pw', joinRoomDetails.room_password)
+      let findRoom : any
 
-      if (findRoom.error) {
-        toast.error("Room doesnt exist")
-        return;
-      }
+
+        findRoom = await supabase
+          .from('custom_room')
+          .select()
+          .eq('room_id', joinRoomDetails.room_id)
+          .eq('room_pw', joinRoomDetails.room_password)
+  
+        if (findRoom.error) {
+          toast.error("Room doesnt exist")
+          return;
+        }
 
       const updateRoom: any = await supabase
         .from('custom_room')
