@@ -1,18 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ChatModel from "../../components/chatmodel"
 import supabase from "../../supabase/init";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setRoom, removeRoom } from "../../redux/slices/roomSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import { IoSettingsSharp } from "react-icons/io5";
 import { RiDoorOpenFill } from "react-icons/ri";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { PiPlayFill } from "react-icons/pi";
 import randomStreetView from "../../scripts/index";
 import { toast } from "react-hot-toast";
-import { findUser } from "../../supabase/Routes/MainRoutes";
 
 const Room = () => {
   const dispatch: AppDispatch = useDispatch()
@@ -20,14 +19,13 @@ const Room = () => {
 
   const { user_id, user_name, user_profile_pic, } = useSelector((state: RootState) => state.user)
   const roomDetails = useSelector((state: RootState) => state.room)
-  const [gameMode, setGameMode] = useState(false)
-  const [roomParticipants, setRoomParticipants] = useState<any[]>([])
+  const [gameMode] = useState(false)
 
   const channel = supabase.channel(`${roomDetails.room_id}`)
 
   const [roomSettingsChange, setRoomSettingsChange] = useState({
-    game_rounds: roomDetails.room_settings.game_rounds,
-    round_duration: roomDetails.room_settings.round_duration
+    game_rounds: roomDetails?.room_settings?.game_rounds,
+    round_duration: roomDetails?.room_settings?.round_duration
   })
   const [changeSettingsModal, setChangeSettingsModal] = useState(false)
 
@@ -189,25 +187,7 @@ const Room = () => {
     }
   )
 
-  useEffect(() => {
-    filterParticipants()
-  }, [roomDetails])
-
-  async function filterParticipants() {
-    const participants = roomDetails?.room_participants;
-
-    if (!participants) {
-      return [];
-    }
-
-    const results = await Promise.all(participants.map(async (participant: any) => {
-      for (const [, value] of Object.entries(participant)) {
-        const res = await findUser(value);
-        return res;
-      }
-    }));
-    setRoomParticipants(results);
-  }
+  console.log("ruru" , roomDetails)
 
   return (
     <div className="bg-purple-950 w-full h-[100vh] ">
@@ -217,8 +197,8 @@ const Room = () => {
             <h1 className="flex text-2xl text-white">ROOM INFO</h1>
             <div className="flex flex-col items-center w-full h-20 mt-10 justify-left">
               <div className="text-lg text-white">Name : {roomDetails.room_name}</div>
-              <div className="text-lg text-white">Game Rounds : {roomDetails.room_settings.game_rounds}</div>
-              <div className="text-lg text-white">Round Duratio : {roomDetails.room_settings.round_duration}</div>
+              <div className="text-lg text-white">Game Rounds : {roomDetails.room_settings?.game_rounds}</div>
+              <div className="text-lg text-white">Round Duratio : {roomDetails.room_settings?.round_duration}</div>
             </div>
           </div>
           <div className="flex flex-col items-center justify-center w-full h-20 mt-9">
@@ -247,11 +227,11 @@ const Room = () => {
             <div className="w-full bg-[#ffffff2c] backdrop-blur-md h-full flex rounded-xl">
               <div className="flex flex-col  h-full px-4 w-[500px] border-r">
                 <h1 className="pt-6 pl-2 text-2xl text-white">Players</h1>
-                {roomParticipants.map((participant: any) => (
+                {roomDetails?.room_participants?.map((participant: any) => (
                   <>
                     <div className="flex flex-row items-center justify-start w-full h-20">
-                      <img className="w-14 h-14 rounded-full bg-[rgba(255,255,255,0.3)]" src={participant.user_pfp ? participant.user_pfp : `https://api.dicebear.com/6.x/personas/svg?seed=${participant.user_name}`} />
-                      <div className="text-xl ml-2 text-white">{participant.user_name.length > 15 ? `${participant.user_name.slice(0, 15)}...` : participant.user_name}</div>
+                      <img className="w-14 h-14 rounded-full bg-[rgba(255,255,255,0.3)]" src={participant.room_user_profile ? participant.room_user_profile : `https://api.dicebear.com/6.x/personas/svg?seed=${participant.room_user_name}`} />
+                      <div className="text-xl ml-2 text-white">{participant.room_user_name.length > 15 ? `${participant.room_user_name.slice(0, 15)}...` : participant.room_user_name}</div>
                     </div>
                     <hr className="w-full" />
                   </>

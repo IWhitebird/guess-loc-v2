@@ -35,6 +35,7 @@ const MultiPlayer = () => {
   const [readyUsers, setReadyUsers] = useState<Set<String>>(new Set())
   const channel1 = supabase.channel(`${game.game_id}_game`)
   const channel2 = supabase.channel(`${game.game_id}`)
+
   let marker: any;
 
   async function getGame() {
@@ -235,6 +236,7 @@ const MultiPlayer = () => {
 
   let timeRemaining = '00:12'
 
+  
   return (
     <div className="overflow-hidden">
       <Scoreboard />

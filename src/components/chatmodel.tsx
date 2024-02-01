@@ -3,7 +3,7 @@ import supabase from '../supabase/init';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
 import { IoSend } from "react-icons/io5";
-import { sendMessage, updateRoom } from '../supabase/Routes/RoomRoutes';
+import { sendMessage, updateRoomChat } from '../supabase/Routes/RoomRoutes';
 import { useLocation } from 'react-router-dom';
 import { setJoinedRoom, setLeftRoom, setRoom } from '../redux/slices/roomSlice';
 
@@ -17,6 +17,7 @@ const ChatModel: React.FC = () => {
     const [newMessage, setNewMessage] = useState<string>('');
     const channel = supabase.channel(`${roomDetails.room_id}_chat`)
     const [curChat, setCurChat] = useState<any[]>(roomDetails.room_chat)
+
     
     async function SendMessageHandle(myMsg: string) {
         setNewMessage('')
@@ -34,10 +35,8 @@ const ChatModel: React.FC = () => {
         }])
 
 
-        sendMessage(roomDetails.room_id as string, myMsg, user_id, user_name, user_profile_pic)
-        await updateRoom(roomDetails.room_id as string, myMsg, roomDetails, user_id, user_name, user_profile_pic)
-
-
+        sendMessage(roomDetails.room_id , myMsg, user_id, user_name)
+        await updateRoomChat(roomDetails.room_id , user_id, user_name ,myMsg)
         scrollToBottom();
     }
 
@@ -84,7 +83,6 @@ const ChatModel: React.FC = () => {
     return (
         <div className={`w-full h-full ${location.pathname.startsWith('/mpGame/') ? 'rounded-none' : 'rounded-xl'} flex justify-start flex-col `}>
             <div className="flex flex-col items-start h-full gap-5 overflow-y-auto " id="style-3" ref={containerRef}>
-
                 {curChat.map((chat, index) => (
                     <div
                         key={index}
@@ -94,8 +92,8 @@ const ChatModel: React.FC = () => {
                             chat.chatter_id !== user_id &&
                             <img
                                 className="w-8 h-8 rounded-full"
-                                src={chat.chatter_image ? chat.chatter_image : `https://api.dicebear.com/6.x/personas/svg?seed=${chat.chatter_name}`}
-                                alt={`${chat.chatter_name} image`}
+                                src={`${roomDetails.room_participants.find((user : any) => user.user_id === chat.chatter_id)?.room_user_profile || 
+                                        `https://api.dicebear.com/6.x/personas/svg?seed=${chat.chatter_name}`}`}
                             />
                         }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "../redux/reducers/reducers"
 import supabase from "../supabase/init"
@@ -75,7 +75,7 @@ const SendDashboard = ({ loggedIN, friendModal, audioSettings, setFriendModal, s
                     //@ts-ignore
                     onlineStatus = user[key].user_id;
                     if (onlineStatus === user_id) {
-                        dispatch(setJoinedRoom({ room_id: roomDetails.room_id, user_id: user_id, user_name: user_name, user_profile_pic: user_profile_pic }))
+                        dispatch(setJoinedRoom({ room_id: roomDetails.room_id, user_id: user_id , user_name: user_name, user_profile_pic: user_profile_pic}))
                     }
                 }
             }
