@@ -20,8 +20,6 @@ interface RoundDetails {
     user_points : number;
 }
 
-
-
 interface GameState {
     game_id: string;
     room_id: string;

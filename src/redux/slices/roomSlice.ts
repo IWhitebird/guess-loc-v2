@@ -16,8 +16,6 @@ interface RoomChat {
 
 interface RoomUsers {
     room_user_id: string;
-    room_user_name: string;
-    room_user_image: string;
 }
 
 interface RoomState {
@@ -58,11 +56,11 @@ if (localStorage.getItem('custom_room_details') === null) {
     }
 } else {
     const parsedToken = JSON.parse(localStorage.getItem('custom_room_details')!);
-    
-    const data : any = await updateRoom(parsedToken.room_id)
+
+    const data: any = await updateRoom(parsedToken.room_id)
 
     if (data) {
-        
+
         iState = {
             room_id: data[0].room_id!,
             room_owner: data[0].room_owner!,
@@ -92,16 +90,53 @@ if (localStorage.getItem('custom_room_details') === null) {
     }
 }
 
-async function updateRoom(room_id : string) {
-    const {data , error }  = await supabase.
-    from('custom_room').
-    select().
-    eq('room_id', room_id) 
-    
-    if(error) 
-        return "error" 
-    else 
+async function updateRoom(room_id: string) {
+    const { data, error } = await supabase.
+        from('custom_room').
+        select().
+        eq('room_id', room_id)
+
+    if (error)
+        return "error"
+    else
         return data;
+}
+
+async function joinedRoom(room_id: string, user_id: string) {
+    const { data: findData, error: errorData } = await supabase.
+        from('custom_room').
+        select('room_participants').
+        eq('room_id', room_id)
+
+    if (errorData) throw errorData
+
+    if (findData) {
+        const room_participants: any = findData[0].room_participants
+        if (room_participants.find((user: any) => user.room_user_id === user_id)) return console.log("Already joined")
+        const new_room_participants = [...room_participants, { room_user_id: user_id }]
+        await supabase.
+            from('custom_room').
+            update({ room_participants: new_room_participants }).
+            eq('room_id', room_id)
+    }
+}
+
+async function leftRoom(room_id: string, user_id: string) {
+    const { data: findData, error: errorData } = await supabase.
+        from('custom_room').
+        select('room_participants').
+        eq('room_id', room_id)
+
+    if (errorData) throw errorData
+
+    if (findData) {
+        const room_participants: any = findData[0].room_participants
+        const new_room_participants = [...room_participants.filter((user: any) => user.room_user_id !== user_id)]
+        await supabase.
+            from('custom_room').
+            update({ room_participants: new_room_participants }).
+            eq('room_id', room_id)
+    }
 }
 
 export const roomSlice = createSlice({
@@ -140,12 +175,19 @@ export const roomSlice = createSlice({
             state.room_chat = []
         },
 
+        setJoinedRoom: (state, action: PayloadAction<{ room_id: string, user_id: string }>) => {
+            joinedRoom(action.payload.room_id, action.payload.user_id)
+        },
+
+        setLeftRoom: (state, action: PayloadAction<{ room_id: string, user_id: string }>) => {
+            leftRoom(action.payload.room_id, action.payload.user_id)
+        },
     },
 
 })
 
 
-export const { setRoom, removeRoom, updateChat } = roomSlice.actions
+export const { setRoom, removeRoom, updateChat, setJoinedRoom, setLeftRoom } = roomSlice.actions
 
 export default roomSlice.reducer
 

@@ -230,7 +230,8 @@ const Room = () => {
                   roomDetails?.room_participants?.map((participant: any, index) => {
                     return (
                       <div key={index} className="flex flex-col w-full ">
-                        <div className="flex items-center justify-start p-3">
+                        <p>{}</p>
+                        {/* <div className="flex items-center justify-start p-3">
                           <img className="w-[50px] rounded-xl" src={participant.room_user_image} />
                           <div className="pl-1 text-lg text-white">
                             {participant.room_user_name.length > 20 ?
@@ -239,7 +240,7 @@ const Room = () => {
                             }
                           </div>
                         </div>
-                        <hr className="w-full"/>
+                        <hr className="w-full"/> */}
                       </div>
                     )
                   })

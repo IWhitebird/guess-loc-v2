@@ -67,8 +67,6 @@ const CustomGame = () => {
           findRoom.data[0].room_participants :
         [...findRoom.data[0].room_participants, {
                     room_user_id: user_id,
-                    room_user_name: user_name,
-                    room_user_image: user_profile_pic
                     }] , 
                   'room_chat': [...findRoom.data[0].room_chat, {
                     chatter_id: user_id,
@@ -126,8 +124,6 @@ const CustomGame = () => {
             },
             room_participants: [{
               room_user_id: user_id,
-              room_user_name: user_name,
-              room_user_image: user_profile_pic
             }],
             room_chat: [{
               chatter_id: user_id,

@@ -59,7 +59,7 @@ const SendDashboard = ({ loggedIN, friendModal, audioSettings, setFriendModal, s
         }
     }, [room_id])
 
-    console.log(existingRoom)
+    // console.log(existingRoom)
     return (
         <>
             <div className='absolute w-full'>

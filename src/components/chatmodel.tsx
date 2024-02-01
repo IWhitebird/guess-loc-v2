@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import supabase from '../supabase/init';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
 import { IoSend } from "react-icons/io5";
 import { sendMessage, updateRoom } from '../supabase/Routes/RoomRoutes';
 import { useLocation } from 'react-router-dom';
-
+import { setJoinedRoom, setLeftRoom, setRoom } from '../redux/slices/roomSlice';
 
 const ChatModel: React.FC = () => {
+    const dispatch = useDispatch()
     const location = useLocation()
     const { user_id, user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
     const roomDetails = useSelector((state: RootState) => state.room)
@@ -17,6 +18,34 @@ const ChatModel: React.FC = () => {
     const channel = supabase.channel(`${roomDetails.room_id}_chat`)
     const [curChat, setCurChat] = useState<any[]>(roomDetails.room_chat)
 
+    useEffect(() => {
+        const onlineChannel = supabase.channel(`active_inside_room_geoLocv2`);
+        let onlineStatus: string;
+
+        onlineChannel.on('presence', { event: 'sync' }, () => {
+            const newState = onlineChannel.presenceState();
+
+            for (const key in newState) {
+                const user = newState[key];
+                for (const key in user) {
+                    //@ts-ignore
+                    onlineStatus = user[key].user_id;
+                    if (onlineStatus === user_id) {
+                        dispatch(setJoinedRoom({ room_id:roomDetails.room_id,user_id:user_id}))
+                    }
+                }
+            }
+        }).subscribe(async (status) => {
+            if (status !== 'SUBSCRIBED') return;
+            await onlineChannel.track({ user_id, online_at: new Date().toISOString() });
+        });
+
+        return () => {
+            onlineChannel.unsubscribe();
+            dispatch(setLeftRoom({ room_id:roomDetails.room_id,user_id:user_id}))
+        }
+    }, []);
+    
     async function SendMessageHandle(myMsg: string) {
         setNewMessage('')
 
@@ -62,12 +91,12 @@ const ChatModel: React.FC = () => {
     //     };
     // }, []);
 
-    console.log(channel)
+    // console.log(channel)
     channel.on(
         'broadcast',
         { event: 'room_chatting' },
         ({ payload }) => {
-            console.log("paylod", payload)
+            // console.log("paylod", payload)
             setCurChat([...curChat, payload])
         }
     )
@@ -77,8 +106,8 @@ const ChatModel: React.FC = () => {
         scrollToBottom()
     }, [curChat]);
 
-    console.log("ROOM DETAILS", roomDetails)
-    console.log("Broard", curChat)
+    // console.log("ROOM DETAILS", roomDetails)
+    // console.log("Broard", curChat)
 
     return (
         <div className={`w-full h-full ${location.pathname.startsWith('/mpGame/') ? 'rounded-none' : 'rounded-xl'} flex justify-start flex-col `}>
