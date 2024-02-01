@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChatModel from "../../components/chatmodel"
 import supabase from "../../supabase/init";
 import { AppDispatch, RootState } from "../../redux/store/store";
@@ -12,6 +12,7 @@ import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { PiPlayFill } from "react-icons/pi";
 import randomStreetView from "../../scripts/index";
 import { toast } from "react-hot-toast";
+import { findUser } from "../../supabase/Routes/MainRoutes";
 
 const Room = () => {
   const dispatch: AppDispatch = useDispatch()
@@ -20,6 +21,7 @@ const Room = () => {
   const { user_id, user_name, user_profile_pic, } = useSelector((state: RootState) => state.user)
   const roomDetails = useSelector((state: RootState) => state.room)
   const [gameMode, setGameMode] = useState(false)
+  const [roomParticipants, setRoomParticipants] = useState<any[]>([])
 
   const channel = supabase.channel(`${roomDetails.room_id}`)
 
@@ -132,9 +134,9 @@ const Room = () => {
       throw error
     }
 
-    await supabase.from('custom_room').update({
-      cur_game_id: data[0].game_id
-    }).match({ room_id: roomDetails.room_id })
+    await supabase.from('custom_room')
+      .update({ cur_game_id: data[0].game_id })
+      .match({ room_id: roomDetails.room_id })
 
     dispatch(setRoom({
       ...roomDetails,
@@ -169,7 +171,7 @@ const Room = () => {
       filter: `room_id=eq.${roomDetails.room_id}`
     },
     payload => {
-      console.log("payload", payload)
+      // console.log("payload", payload)
       dispatch(setRoom(payload.new as any))
     }
   ).subscribe()
@@ -187,6 +189,25 @@ const Room = () => {
     }
   )
 
+  useEffect(() => {
+    filterParticipants()
+  }, [roomDetails])
+
+  async function filterParticipants() {
+    const participants = roomDetails?.room_participants;
+
+    if (!participants) {
+      return [];
+    }
+
+    const results = await Promise.all(participants.map(async (participant: any) => {
+      for (const [, value] of Object.entries(participant)) {
+        const res = await findUser(value);
+        return res;
+      }
+    }));
+    setRoomParticipants(results);
+  }
 
   return (
     <div className="bg-purple-950 w-full h-[100vh] ">
@@ -226,100 +247,90 @@ const Room = () => {
             <div className="w-full bg-[#ffffff2c] backdrop-blur-md h-full flex rounded-xl">
               <div className="flex flex-col  h-full px-4 w-[500px] border-r">
                 <h1 className="pt-6 pl-2 text-2xl text-white">Players</h1>
-                {
-                  roomDetails?.room_participants?.map((participant: any, index) => {
-                    return (
-                      <div key={index} className="flex flex-col w-full ">
-                        <p>{}</p>
-                        {/* <div className="flex items-center justify-start p-3">
-                          <img className="w-[50px] rounded-xl" src={participant.room_user_image} />
-                          <div className="pl-1 text-lg text-white">
-                            {participant.room_user_name.length > 20 ?
-                              `${participant.room_user_name.slice(0, 20)}...` :
-                              participant.room_user_name
-                            }
-                          </div>
-                        </div>
-                        <hr className="w-full"/> */}
-                      </div>
-                    )
-                  })
-                }
+                {roomParticipants.map((participant: any) => (
+                  <>
+                    <div className="flex flex-row items-center justify-start w-full h-20">
+                      <img className="w-14 h-14 rounded-full bg-[rgba(255,255,255,0.3)]" src={participant.user_pfp ? participant.user_pfp : `https://api.dicebear.com/6.x/personas/svg?seed=${participant.user_name}`} />
+                      <div className="text-xl ml-2 text-white">{participant.user_name.length > 15 ? `${participant.user_name.slice(0, 15)}...` : participant.user_name}</div>
+                    </div>
+                    <hr className="w-full" />
+                  </>
+                ))}
               </div>
               <ChatModel />
             </div>
           </div>
-        </div>
 
-        <div className={`absolute duration-200 top-0 left-0
+          <div className={`absolute duration-200 top-0 left-0
           ${changeSettingsModal ? 'opacity-100' : 'opacity-0 invisible'}
           z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-lg '}`}>
-          <div className={`relative w-[400px] duration-300 border text-white border-purple-900 rounded-lg flex flex-col p-10 ${changeSettingsModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
+            <div className={`relative w-[400px] duration-300 border text-white border-purple-900 rounded-lg flex flex-col p-10 ${changeSettingsModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
 
-            <div className="flex flex-col items-center justify-center">
-              <label className="w-full mx-auto mb-1">Game Rounds</label>
-              <div className="flex items-center">
+              <div className="flex flex-col items-center justify-center">
+                <label className="w-full mx-auto mb-1">Game Rounds</label>
+                <div className="flex items-center">
+                  <input
+                    type='number'
+                    value={roomSettingsChange.game_rounds}
+                    name="game_rounds"
+                    placeholder="Choose Game Rounds (1-5)"
+                    onChange={changeSettingsInput}
+                    className="w-full p-2 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
+                  />
+                  <div className="flex items-center justify-center gap-3 ml-5">
+                    <button
+                      onClick={() => setRoomSettingsChange({ ...roomSettingsChange, game_rounds: roomSettingsChange.game_rounds + 1 })}
+                      disabled={roomSettingsChange.game_rounds >= 5}
+                      id='fn_button'
+                      className={`${roomSettingsChange.game_rounds >= 5 && 'cursor-not-allowed'}`}
+                      style={{ fontSize: '1.4rem', padding: '0.6rem 1.5rem' }}
+                    >
+                      <FaPlusCircle /><span id='fnButtonSpan'></span>
+                    </button>
+                    <button
+                      onClick={() => setRoomSettingsChange({ ...roomSettingsChange, game_rounds: roomSettingsChange.game_rounds - 1 })}
+                      id='fn_button'
+                      disabled={roomSettingsChange.game_rounds <= 1}
+                      className={`${roomSettingsChange.game_rounds <= 1 && 'cursor-not-allowed'}`}
+                      style={{ fontSize: '1.4rem', padding: '0.6rem 1.5rem' }}
+                    >
+                      <FaMinusCircle /><span id='fnButtonSpan'></span>
+                    </button>
+                  </div>
+                </div>
+
+                <label className="w-full mx-auto my-2">Round Duration</label>
                 <input
-                  type='number'
-                  value={roomSettingsChange.game_rounds}
-                  name="game_rounds"
-                  placeholder="Choose Game Rounds (1-5)"
+                  type="text"
+                  placeholder="Enter Round Duration"
+                  value={roomSettingsChange.round_duration}
+                  name="round_duration"
                   onChange={changeSettingsInput}
-                  className="w-full p-2 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
+                  className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
                 />
-                <div className="flex items-center justify-center gap-3 ml-5">
+
+                <div className="flex flex-row-reverse justify-center gap-3 mt-5">
                   <button
-                    onClick={() => setRoomSettingsChange({ ...roomSettingsChange, game_rounds: roomSettingsChange.game_rounds + 1 })}
-                    disabled={roomSettingsChange.game_rounds >= 5}
+                    onClick={ChangeRoomSettings}
                     id='fn_button'
-                    className={`${roomSettingsChange.game_rounds >= 5 && 'cursor-not-allowed'}`}
-                    style={{ fontSize: '1.4rem', padding: '0.6rem 1.5rem' }}
+                    style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
                   >
-                    <FaPlusCircle /><span id='fnButtonSpan'></span>
+                    Done<span id='fnButtonSpan'></span>
                   </button>
                   <button
-                    onClick={() => setRoomSettingsChange({ ...roomSettingsChange, game_rounds: roomSettingsChange.game_rounds - 1 })}
+                    onClick={() => setChangeSettingsModal(false)}
                     id='fn_button'
-                    disabled={roomSettingsChange.game_rounds <= 1}
-                    className={`${roomSettingsChange.game_rounds <= 1 && 'cursor-not-allowed'}`}
-                    style={{ fontSize: '1.4rem', padding: '0.6rem 1.5rem' }}
+                    style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
                   >
-                    <FaMinusCircle /><span id='fnButtonSpan'></span>
+                    Close<span id='fnButtonSpan'></span>
                   </button>
                 </div>
+
               </div>
-
-              <label className="w-full mx-auto my-2">Round Duration</label>
-              <input
-                type="text"
-                placeholder="Enter Round Duration"
-                value={roomSettingsChange.round_duration}
-                name="round_duration"
-                onChange={changeSettingsInput}
-                className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
-              />
-
-              <div className="flex flex-row-reverse justify-center gap-3 mt-5">
-                <button
-                  onClick={ChangeRoomSettings}
-                  id='fn_button'
-                  style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
-                >
-                  Done<span id='fnButtonSpan'></span>
-                </button>
-                <button
-                  onClick={() => setChangeSettingsModal(false)}
-                  id='fn_button'
-                  style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
-                >
-                  Close<span id='fnButtonSpan'></span>
-                </button>
-              </div>
-
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   )

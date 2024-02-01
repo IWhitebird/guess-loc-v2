@@ -9,6 +9,7 @@ import Notification from "./notification"
 import AudioPlayer from "./AudioPlayer"
 import FriendsList from "./Friends/FriendsList"
 import { useLocation, useNavigate } from "react-router-dom"
+import { setJoinedRoom, setLeftRoom } from "../redux/slices/roomSlice"
 
 interface Props {
     loggedIN: any
@@ -20,9 +21,11 @@ interface Props {
 
 
 const SendDashboard = ({ loggedIN, friendModal, audioSettings, setFriendModal, setAudioSettings }: Props) => {
-
     const navigate = useNavigate()
     const location = useLocation()
+
+    const { user_id, user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
+    const roomDetails = useSelector((state: RootState) => state.room)
 
     const [handleState, setHandleState] = useState('list')
     const [notifModal, setNotifModal] = useState(false)
@@ -58,6 +61,34 @@ const SendDashboard = ({ loggedIN, friendModal, audioSettings, setFriendModal, s
             setExistingRoom(false)
         }
     }, [room_id])
+
+    useEffect(() => {
+        const onlineChannel = supabase.channel(`active_inside_room_geoLocv2`);
+        let onlineStatus: string;
+
+        onlineChannel.on('presence', { event: 'sync' }, () => {
+            const newState = onlineChannel.presenceState();
+
+            for (const key in newState) {
+                const user = newState[key];
+                for (const key in user) {
+                    //@ts-ignore
+                    onlineStatus = user[key].user_id;
+                    if (onlineStatus === user_id) {
+                        dispatch(setJoinedRoom({ room_id: roomDetails.room_id, user_id: user_id, user_name: user_name, user_profile_pic: user_profile_pic }))
+                    }
+                }
+            }
+        }).subscribe(async (status) => {
+            if (status !== 'SUBSCRIBED') return;
+            await onlineChannel.track({ user_id, user_name, user_profile_pic });
+        });
+
+        return () => {
+            onlineChannel.unsubscribe();
+            dispatch(setLeftRoom({ room_id: roomDetails.room_id, user_id: user_id }))
+        }
+    }, [user_id]);
 
     // console.log(existingRoom)
     return (

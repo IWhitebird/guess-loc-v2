@@ -5,7 +5,7 @@ import logo from '../../assets/Untitled-1.png';
 import toast from "react-hot-toast";
 import { RootState } from "../../redux/store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { setRoom , removeRoom } from "../../redux/slices/roomSlice";
+import { setRoom, removeRoom } from "../../redux/slices/roomSlice";
 import { sendMessage } from "../../supabase/Routes/RoomRoutes";
 
 interface IRoom {
@@ -27,8 +27,8 @@ const CustomGame = () => {
   const location = useNavigate()
   const dispatch = useDispatch()
 
-  const { user_id , user_name , user_profile_pic  } = useSelector((state: RootState) => state.user)
-  const {room_id } = useSelector((state: RootState) => state.room)
+  const { user_id, user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
+  const { room_id } = useSelector((state: RootState) => state.room)
   const [createRoomModal, setCreateRoomModal] = useState(false)
   const [roomDetails, setRoomDetails] = useState<IRoom>({
     name: "",
@@ -46,41 +46,43 @@ const CustomGame = () => {
   async function joinRoomHandle() {
     const loader = toast.loading("Joining room...")
     try {
-      let findRoom : any
+      let findRoom: any
 
 
-        findRoom = await supabase
-          .from('custom_room')
-          .select()
-          .eq('room_id', joinRoomDetails.room_id)
-          .eq('room_pw', joinRoomDetails.room_password)
-  
-        if (findRoom.error) {
-          toast.error("Room doesnt exist")
-          return;
-        }
+      findRoom = await supabase
+        .from('custom_room')
+        .select()
+        .eq('room_id', joinRoomDetails.room_id)
+        .eq('room_pw', joinRoomDetails.room_password)
+
+      if (findRoom.error) {
+        toast.error("Room doesnt exist")
+        return;
+      }
 
       const updateRoom: any = await supabase
         .from('custom_room')
-        .update({ 'room_participants': 
-        findRoom.data[0].room_participants.filter((participant : any) => participant.room_user_id === user_id).length > 0 ?
-          findRoom.data[0].room_participants :
-        [...findRoom.data[0].room_participants, {
-                    room_user_id: user_id,
-                    }] , 
-                  'room_chat': [...findRoom.data[0].room_chat, {
-                    chatter_id: user_id,
-                    chatter_name: user_name,
-                    chatter_image: user_profile_pic,
-                    chatter_message: `${user_name} joined the room`,
-                    chatter_time: new Date().toLocaleTimeString()
-                   }]})
+        .update({
+          'room_participants':
+            findRoom.data[0].room_participants.filter((participant: any) => participant.room_user_id === user_id).length > 0 ?
+              findRoom.data[0].room_participants :
+              [...findRoom.data[0].room_participants, {
+                room_user_id: user_id,
+              }],
+          'room_chat': [...findRoom.data[0].room_chat, {
+            chatter_id: user_id,
+            chatter_name: user_name,
+            chatter_image: user_profile_pic,
+            chatter_message: `${user_name} joined the room`,
+            chatter_time: new Date().toLocaleTimeString()
+          }]
+        })
         .eq('room_id', joinRoomDetails.room_id)
         .eq('room_pw', joinRoomDetails.room_password)
         .select()
 
-      sendMessage(joinRoomDetails.room_id as string, `${user_name} joined the room`, user_id, user_name, user_profile_pic)    
-        
+      sendMessage(joinRoomDetails.room_id as string, `${user_name} joined the room`, user_id, user_name, user_profile_pic)
+
       if (updateRoom.error) {
         toast.error("Error joining room")
         return;
@@ -140,7 +142,7 @@ const CustomGame = () => {
         return;
       }
 
-      sendMessage(data[0].room_id as string, `${user_name} joined the room`, user_id, user_name, user_profile_pic)    
+      sendMessage(data[0].room_id as string, `${user_name} joined the room`, user_id, user_name, user_profile_pic)
 
       toast.success("Room created")
       console.log(data)

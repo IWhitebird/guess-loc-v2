@@ -17,34 +17,6 @@ const ChatModel: React.FC = () => {
     const [newMessage, setNewMessage] = useState<string>('');
     const channel = supabase.channel(`${roomDetails.room_id}_chat`)
     const [curChat, setCurChat] = useState<any[]>(roomDetails.room_chat)
-
-    useEffect(() => {
-        const onlineChannel = supabase.channel(`active_inside_room_geoLocv2`);
-        let onlineStatus: string;
-
-        onlineChannel.on('presence', { event: 'sync' }, () => {
-            const newState = onlineChannel.presenceState();
-
-            for (const key in newState) {
-                const user = newState[key];
-                for (const key in user) {
-                    //@ts-ignore
-                    onlineStatus = user[key].user_id;
-                    if (onlineStatus === user_id) {
-                        dispatch(setJoinedRoom({ room_id:roomDetails.room_id,user_id:user_id}))
-                    }
-                }
-            }
-        }).subscribe(async (status) => {
-            if (status !== 'SUBSCRIBED') return;
-            await onlineChannel.track({ user_id, online_at: new Date().toISOString() });
-        });
-
-        return () => {
-            onlineChannel.unsubscribe();
-            dispatch(setLeftRoom({ room_id:roomDetails.room_id,user_id:user_id}))
-        }
-    }, []);
     
     async function SendMessageHandle(myMsg: string) {
         setNewMessage('')

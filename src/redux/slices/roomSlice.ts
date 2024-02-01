@@ -102,24 +102,24 @@ async function updateRoom(room_id: string) {
         return data;
 }
 
-async function joinedRoom(room_id: string, user_id: string) {
-    const { data: findData, error: errorData } = await supabase.
-        from('custom_room').
-        select('room_participants').
-        eq('room_id', room_id)
+// async function joinedRoom(room_id: string, user_id: string) {
+//     const { data: findData, error: errorData } = await supabase.
+//         from('custom_room').
+//         select('room_participants').
+//         eq('room_id', room_id)
 
-    if (errorData) throw errorData
+//     if (errorData) throw errorData
 
-    if (findData) {
-        const room_participants: any = findData[0].room_participants
-        if (room_participants.find((user: any) => user.room_user_id === user_id)) return console.log("Already joined")
-        const new_room_participants = [...room_participants, { room_user_id: user_id }]
-        await supabase.
-            from('custom_room').
-            update({ room_participants: new_room_participants }).
-            eq('room_id', room_id)
-    }
-}
+//     if (findData) {
+//         const room_participants: any = findData[0].room_participants
+//         if (room_participants.find((user: any) => user.room_user_id === user_id)) return console.log("Already joined")
+//         const new_room_participants = [...room_participants, { room_user_id: user_id }]
+//         await supabase.
+//             from('custom_room').
+//             update({ room_participants: new_room_participants }).
+//             eq('room_id', room_id)
+//     }
+// }
 
 async function leftRoom(room_id: string, user_id: string) {
     const { data: findData, error: errorData } = await supabase.
