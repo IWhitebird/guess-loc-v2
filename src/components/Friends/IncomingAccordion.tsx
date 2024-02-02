@@ -46,7 +46,7 @@ function IncomingAccordion({ request, index, loadingFetchFriends, setLoading, lo
     }, [dropdownRef])
 
     return (
-        <ul className='flex flex-col' id='style-3' key={index}>
+        <ul className='flex flex-col pr-[rem] pb-2' id='style-3' key={index}>
             <li className='flex items-center justify-between w-full'>
                 {!loading &&
                     <div className='relative flex items-center gap-3'>
