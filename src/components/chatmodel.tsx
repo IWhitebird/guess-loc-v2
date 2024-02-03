@@ -46,39 +46,17 @@ const ChatModel: React.FC = () => {
         }
     };
 
-    // useEffect(() => {
-    //     if (newMessage.trim()) return
-    //     const handleKeyPress = async (e: KeyboardEvent) => {
-    //         if (e.key === 'Enter') {
-    //             e.preventDefault();
-    //             SendMessage(newMessage);
-    //         }
-    //     };
-
-    //     window.addEventListener('keydown', handleKeyPress);
-
-    //     return () => {
-    //         window.removeEventListener('keydown', handleKeyPress);
-    //     };
-    // }, []);
-
-    // console.log(channel)
     channel.on(
         'broadcast',
         { event: 'room_chatting' },
         ({ payload }) => {
-            // console.log("paylod", payload)
             setCurChat([...curChat, payload])
         }
     )
 
-
     useEffect(() => {
         scrollToBottom()
     }, [curChat]);
-
-    // console.log("ROOM DETAILS", roomDetails)
-    // console.log("Broard", curChat)
 
     return (
         <div className={`w-full h-full ${location.pathname.startsWith('/mpGame/') ? 'rounded-none' : 'rounded-xl'} flex justify-start flex-col `}>

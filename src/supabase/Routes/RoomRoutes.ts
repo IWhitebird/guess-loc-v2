@@ -33,7 +33,7 @@ export async function updateRoomChat(roomId : string , ...args : any[])  {
     })
 }
 
-export async function updateRoomParticipants(roomId : string, existing_participants : any[] , ...args : any[])  {
+export async function joinRoomHandle(roomId : string, existing_participants : any[] , ...args : any[])  {
     const new_usr = {
         room_user_id: args[0],
         room_user_name: args[1],
@@ -48,5 +48,21 @@ export async function updateRoomParticipants(roomId : string, existing_participa
     
     const { data } : any = await supabase.from('custom_room').select().eq('room_id', roomId)
     return data[0]
+}
 
+export async function leaveRoomHandle(roomId : string, existing_participants : any[] , ...args : any[])  {
+    const remove_user = {
+        room_user_id: args[0],
+        room_user_name: args[1],
+        room_user_profile: args[2]
+    }
+    if(existing_participants.filter((usr) => usr.room_user_id === remove_user.room_user_id).length) {
+        await supabase.rpc('de_append_array_to_uuid_row_room_participants', {
+            row_id : roomId,
+            values_to_remove : [remove_user]
+        })
+    }
+    
+    const { data } : any = await supabase.from('custom_room').select().eq('room_id', roomId)
+    return data[0]
 }

@@ -12,12 +12,13 @@ import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { PiPlayFill } from "react-icons/pi";
 import randomStreetView from "../../scripts/index";
 import { toast } from "react-hot-toast";
+import { updateRoomChat , sendMessage } from "../../supabase/Routes/RoomRoutes";
 
 const Room = () => {
   const dispatch: AppDispatch = useDispatch()
   const navigate = useNavigate()
 
-  const { user_id, user_name, user_profile_pic, } = useSelector((state: RootState) => state.user)
+  const { user_id, user_name } = useSelector((state: RootState) => state.user)
   const roomDetails = useSelector((state: RootState) => state.room)
   const [gameMode] = useState(false)
 
@@ -49,40 +50,11 @@ const Room = () => {
   async function LeaveRoom() {
     try {
 
-      await supabase
-        .from('custom_room')
-        .update({
-          'room_participants': [...roomDetails.room_participants.filter((participant: any) => participant.room_user_id !== user_id)] as any
-        })
-        .match({ 'room_id': roomDetails.room_id })
+      // Send Message on Websocket
+      sendMessage(roomDetails.room_id as string, `${user_name} joined the room`, user_id, user_name)
 
-
-      let tempChanel = supabase.channel(`${roomDetails.room_id}_chat`)
-
-      tempChanel.subscribe((status) => {
-        if (status !== 'SUBSCRIBED') { return }
-        tempChanel.send({
-          type: 'broadcast',
-          event: 'room_chatting',
-          payload: {
-            chatter_id: user_id,
-            chatter_name: user_name,
-            chatter_image: user_profile_pic,
-            chatter_message: `${user_name} has left the room`,
-            chatter_time: new Date().toLocaleTimeString()
-          }
-        })
-      })
-
-      await supabase.from('custom_room').update({
-        room_chat: [...roomDetails.room_chat, {
-          chatter_id: user_id,
-          chatter_name: user_name,
-          chatter_image: user_profile_pic,
-          chatter_message: `${user_name} has left the room`,
-          chatter_time: new Date().toLocaleTimeString()
-        }] as any
-      }).match({ room_id: roomDetails.room_id })
+      // Update Room Chat 
+      await updateRoomChat(roomDetails.room_id as string, user_id, user_name,`${user_name} joined the room`, )
 
       localStorage.removeItem('custom_room_details')
       supabase.removeChannel(channel)
@@ -113,7 +85,7 @@ const Room = () => {
     }
 
 
-    const { data, error }: any = await supabase.from('game').insert({
+    const { data, error } : any = await supabase.from('game').insert({
       game_type: gameMode,
       room_id: roomDetails.room_id,
       total_rounds: roomDetails.room_settings.game_rounds,
@@ -133,7 +105,7 @@ const Room = () => {
     }
 
     await supabase.from('custom_room')
-      .update({ cur_game_id: data[0].game_id })
+      .update({ cur_game_id: data[0].game_id})
       .match({ room_id: roomDetails.room_id })
 
     dispatch(setRoom({
@@ -227,14 +199,14 @@ const Room = () => {
             <div className="w-full bg-[#ffffff2c] backdrop-blur-md h-full flex rounded-xl">
               <div className="flex flex-col  h-full px-4 w-[500px] border-r">
                 <h1 className="pt-6 pl-2 text-2xl text-white">Players</h1>
-                {roomDetails?.room_participants?.map((participant: any) => (
-                  <>
-                    <div className="flex flex-row items-center justify-start w-full h-20">
+                {roomDetails?.room_participants?.map((participant: any , index : number) => (
+                  <div key={index}>
+                    <div  className="flex flex-row items-center justify-start w-full h-20">
                       <img className="w-14 h-14 rounded-full bg-[rgba(255,255,255,0.3)]" src={participant.room_user_profile ? participant.room_user_profile : `https://api.dicebear.com/6.x/personas/svg?seed=${participant.room_user_name}`} />
                       <div className="text-xl ml-2 text-white">{participant.room_user_name.length > 15 ? `${participant.room_user_name.slice(0, 15)}...` : participant.room_user_name}</div>
                     </div>
                     <hr className="w-full" />
-                  </>
+                  </div>
                 ))}
               </div>
               <ChatModel />
@@ -251,7 +223,7 @@ const Room = () => {
                 <div className="flex items-center">
                   <input
                     type='number'
-                    value={roomSettingsChange.game_rounds}
+                    value={roomSettingsChange?.game_rounds}
                     name="game_rounds"
                     placeholder="Choose Game Rounds (1-5)"
                     onChange={changeSettingsInput}
@@ -259,8 +231,8 @@ const Room = () => {
                   />
                   <div className="flex items-center justify-center gap-3 ml-5">
                     <button
-                      onClick={() => setRoomSettingsChange({ ...roomSettingsChange, game_rounds: roomSettingsChange.game_rounds + 1 })}
-                      disabled={roomSettingsChange.game_rounds >= 5}
+                      onClick={() => setRoomSettingsChange({ ...roomSettingsChange, game_rounds: roomSettingsChange?.game_rounds + 1 })}
+                      disabled={roomSettingsChange?.game_rounds >= 5}
                       id='fn_button'
                       className={`${roomSettingsChange.game_rounds >= 5 && 'cursor-not-allowed'}`}
                       style={{ fontSize: '1.4rem', padding: '0.6rem 1.5rem' }}
@@ -268,10 +240,10 @@ const Room = () => {
                       <FaPlusCircle /><span id='fnButtonSpan'></span>
                     </button>
                     <button
-                      onClick={() => setRoomSettingsChange({ ...roomSettingsChange, game_rounds: roomSettingsChange.game_rounds - 1 })}
+                      onClick={() => setRoomSettingsChange({ ...roomSettingsChange, game_rounds: roomSettingsChange?.game_rounds - 1 })}
                       id='fn_button'
-                      disabled={roomSettingsChange.game_rounds <= 1}
-                      className={`${roomSettingsChange.game_rounds <= 1 && 'cursor-not-allowed'}`}
+                      disabled={roomSettingsChange?.game_rounds <= 1}
+                      className={`${roomSettingsChange?.game_rounds <= 1 && 'cursor-not-allowed'}`}
                       style={{ fontSize: '1.4rem', padding: '0.6rem 1.5rem' }}
                     >
                       <FaMinusCircle /><span id='fnButtonSpan'></span>
@@ -283,7 +255,7 @@ const Room = () => {
                 <input
                   type="text"
                   placeholder="Enter Round Duration"
-                  value={roomSettingsChange.round_duration}
+                  value={roomSettingsChange?.round_duration}
                   name="round_duration"
                   onChange={changeSettingsInput}
                   className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"

@@ -63,12 +63,12 @@ const SendDashboard = ({ loggedIN, friendModal, audioSettings, setFriendModal, s
     }, [room_id])
 
     useEffect(() => {
-        const onlineChannel = supabase.channel(`active_inside_room_geoLocv2`);
+        const onlineChannel = supabase.channel(`${roomDetails.room_id}_active`);
         let onlineStatus: string;
 
         onlineChannel.on('presence', { event: 'sync' }, () => {
             const newState = onlineChannel.presenceState();
-
+            console.log("fafafafafafaf" , newState)
             for (const key in newState) {
                 const user = newState[key];
                 for (const key in user) {
@@ -86,8 +86,9 @@ const SendDashboard = ({ loggedIN, friendModal, audioSettings, setFriendModal, s
 
         return () => {
             onlineChannel.unsubscribe();
-            dispatch(setLeftRoom({ room_id: roomDetails.room_id, user_id: user_id }))
+            dispatch(setLeftRoom({ room_id: roomDetails.room_id, user_id: user_id , user_name: user_name, user_profile_pic: user_profile_pic}))
         }
+        
     }, [user_id]);
 
     // console.log(existingRoom)

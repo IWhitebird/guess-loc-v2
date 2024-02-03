@@ -13,11 +13,17 @@ interface GameUsers {
 }
 
 interface RoundDetails {
-    user_id : string;
-    user_guess_lat : string;
-    user_guess_lng : string;
-    user_distance : string;
-    user_points : number;
+    round_lat : string,
+    round_lng : string,
+    user_details : RoundUserDetails[]
+}
+
+interface RoundUserDetails {
+    user_id: string,
+    guessLat: string,
+    guessLng: string,
+    guessDistance: number,
+    userPoints: number
 }
 
 interface GameState {

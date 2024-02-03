@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { RootState } from "../../redux/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setRoom, removeRoom } from "../../redux/slices/roomSlice";
-import { sendMessage ,updateRoomChat , updateRoomParticipants } from "../../supabase/Routes/RoomRoutes";
+import { sendMessage ,updateRoomChat , joinRoomHandle } from "../../supabase/Routes/RoomRoutes";
 
 interface IRoom {
   room_id?: string;
@@ -42,7 +42,7 @@ const CustomGame = () => {
     room_password: ""
   })
 
-  async function joinRoomHandle() {
+  async function joinRoomHandleBtn() {
     const loader = toast.loading("Joining room...")
     try {
       let {data , error} : any = await supabase
@@ -57,7 +57,7 @@ const CustomGame = () => {
       }
 
       // Update Room Participants
-      const updatedData = await updateRoomParticipants(joinRoomDetails.room_id as string, data[0].room_participants ,  user_id, user_name, user_profile_pic)
+      const updatedData = await joinRoomHandle(joinRoomDetails.room_id as string, data[0].room_participants ,  user_id, user_name, user_profile_pic)
 
       // Update Room Chat 
        await updateRoomChat(joinRoomDetails.room_id as string, user_id, user_name,`${user_name} joined the room`, )
@@ -125,7 +125,7 @@ const CustomGame = () => {
 
       toast.success("Room created")
       console.log(data)
-      localStorage.setItem('custom_room_details', JSON.stringify(data[0]))
+      localStorage.setItem('custom_room_details', JSON.stringify(data[0].room_id as string))
       dispatch(setRoom(data[0] as any))
       location(`/customroom/Room/${data[0].room_id}`)
     }
@@ -265,7 +265,7 @@ const CustomGame = () => {
 
             <div className="flex flex-row-reverse justify-center gap-3 mt-5">
               <button
-                onClick={joinRoomHandle}
+                onClick={joinRoomHandleBtn}
                 id='fn_button'
                 style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
               >
