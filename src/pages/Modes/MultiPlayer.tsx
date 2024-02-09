@@ -35,6 +35,8 @@ const MultiPlayer = () => {
   const user = useSelector((state: RootState) => state.user)
   const room = useSelector((state: RootState) => state.room)
 
+  console.log(game)
+
   const [readyUsers, setReadyUsers] = useState<Set<String>>(new Set())
 
   const channel1 = supabase.channel(`${game.game_id}_game`)
@@ -42,8 +44,8 @@ const MultiPlayer = () => {
   const channel3 = supabase.channel(`${game.game_id}_rounds`)
 
   const [userRoundDetails , setUserRoundDetails] = useState<IUserRoundDetails[]>([])
-  const [curLat , setCurLat] = useState<string>(game.lat_lng_arr[game.cur_round - 1].lat)
-  const [curLng , setCurLng] = useState<string>(game.lat_lng_arr[game.cur_round - 1].lng)
+  const [curLat , setCurLat] = useState<string>(game.lat_lng_arr.length > 0 ?  game.lat_lng_arr[game.cur_round].lat : "")
+  const [curLng , setCurLng] = useState<string>(game.lat_lng_arr.length > 0 ? game.lat_lng_arr[game.cur_round].lng : "")
   const [guessLat, setGuessLat] = useState<string>()
   const [guessLng, setGuessLng] = useState<string>()
   const [guessDistance, setGuessDistance] = useState<number>(0)

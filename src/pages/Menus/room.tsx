@@ -69,6 +69,7 @@ const Room = () => {
     const startingGame = toast.loading("Starting Game...")
 
     const randomLatLng = await randomStreetView.getRandomLocations(roomDetails.room_settings.game_rounds);
+    
     interface lat_lng {
       lat: string;
       lng: string;
@@ -83,7 +84,6 @@ const Room = () => {
       }
       lat_lng_arr.push(temp)
     }
-
 
     const { data, error } : any = await supabase.from('game').insert({
       game_type: gameMode,
