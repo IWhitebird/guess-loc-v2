@@ -14,9 +14,9 @@ import ChatModel from "../../components/chatmodel";
 import { FaChevronCircleUp } from "react-icons/fa";
 
 interface IRoundDetails {
-  round_lat : string,
-  round_lng : string,
-  user_details : IUserRoundDetails[]
+  round_lat: string,
+  round_lng: string,
+  user_details: IUserRoundDetails[]
 }
 
 interface IUserRoundDetails {
@@ -43,23 +43,25 @@ const MultiPlayer = () => {
   const channel2 = supabase.channel(`${game.game_id}`)
   const channel3 = supabase.channel(`${game.game_id}_rounds`)
 
-  const [userRoundDetails , setUserRoundDetails] = useState<IUserRoundDetails[]>([])
-  const [curLat , setCurLat] = useState<string>(game.lat_lng_arr.length > 0 ?  game.lat_lng_arr[game.cur_round].lat : "")
-  const [curLng , setCurLng] = useState<string>(game.lat_lng_arr.length > 0 ? game.lat_lng_arr[game.cur_round].lng : "")
-  const [guessLat, setGuessLat] = useState<string>()
-  const [guessLng, setGuessLng] = useState<string>()
+  const [userRoundDetails, setUserRoundDetails] = useState<IUserRoundDetails[]>([])
+  const [curLat, setCurLat] = useState<string>(game.lat_lng_arr.length > 0 ? game.lat_lng_arr[game.cur_round].lat : "")
+  const [curLng, setCurLng] = useState<string>(game.lat_lng_arr.length > 0 ? game.lat_lng_arr[game.cur_round].lng : "")
+  const [guessLat, setGuessLat] = useState<string>('')
+  const [guessLng, setGuessLng] = useState<string>('')
   const [guessDistance, setGuessDistance] = useState<number>(0)
   const [userPoints, setUserPoints] = useState<number>(0)
   const [chatModal, setChatModal] = useState<boolean>(false)
-  const [results , setResults] = useState<any>({})
-  
+  const [results, setResults] = useState<any>({})
+  const [waitingPlayers, setWaitingPlayers] = useState<boolean>(true)
+
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement | null>(null);
+  const streetViewContainerRef = useRef<HTMLDivElement>(null);
 
   let marker: any;
 
   //FUNCTION TO PLACE MARKER
-  function placeMarker (eventLat: string, eventLng: string) {
+  function placeMarker(eventLat: string, eventLng: string) {
     console.log(eventLat, eventLng)
     if (marker) {
       marker.setPosition({ lat: eventLat, lng: eventLng });
@@ -106,6 +108,7 @@ const MultiPlayer = () => {
   }
 
   async function startRound() {
+    console.log(readyUsers.size, room.room_participants.length, user.user_id, room.room_owner, readyUsers.size === room.room_participants.length)
     if (user.user_id === room.room_owner && readyUsers.size === room.room_participants.length) {
       const timeToAdd = game.round_duration + 10
       await supabase
@@ -115,11 +118,14 @@ const MultiPlayer = () => {
           cur_round_start_time: moment(new Date()).add(timeToAdd, 'seconds').toISOString()
         })
         .eq('game_id', game.game_id)
+
+      
+      setWaitingPlayers(false)
     }
   }
 
   async function endRound() {
-    if(user.user_id === room.room_owner && readyUsers.has(user.user_id)) {
+    if (user.user_id === room.room_owner && readyUsers.has(user.user_id)) {
       await supabase
         .from('game')
         .update({
@@ -136,28 +142,28 @@ const MultiPlayer = () => {
   //FUNCTION CALL AFTER ALL ROUDNS ARE OVER
   async function fetchResults() {
     //find game winner
-    const all_user_score : any = {}
+    const all_user_score: any = {}
 
-    for(let i = 0 ; i < game.round_details.length ; i++) {
-        const round_details : IRoundDetails = game.round_details[i]
+    for (let i = 0; i < game.round_details.length; i++) {
+      const round_details: IRoundDetails = game.round_details[i]
 
-        for(let j = 0 ; j < round_details.user_details.length ; j++) {
-          const user_details : IUserRoundDetails = round_details.user_details[j]
+      for (let j = 0; j < round_details.user_details.length; j++) {
+        const user_details: IUserRoundDetails = round_details.user_details[j]
 
-          if(all_user_score[user_details.user_id]) {
-            all_user_score[user_details.user_id].userPoints += user_details.userPoints
-          } else {
-            all_user_score[user_details.user_id] = {
-              userPoints: user_details.userPoints
-            }
+        if (all_user_score[user_details.user_id]) {
+          all_user_score[user_details.user_id].userPoints += user_details.userPoints
+        } else {
+          all_user_score[user_details.user_id] = {
+            userPoints: user_details.userPoints
           }
-
         }
+
+      }
     }
 
     all_user_score.sort((a: any, b: any) => { return b.userPoints - a.userPoints })
 
-    if(user.user_id === room.room_owner && readyUsers.has(user.user_id)) {
+    if (user.user_id === room.room_owner && readyUsers.has(user.user_id)) {
       await supabase
         .from('game')
         .update({
@@ -165,7 +171,7 @@ const MultiPlayer = () => {
         })
         .eq('game_id', game.game_id)
     }
-    
+
     setResults(all_user_score)
   }
 
@@ -178,7 +184,7 @@ const MultiPlayer = () => {
 
   //GUESS BUTTON AT EACH ROUND 
   async function guessLatLng(guessLat: string, guessLng: string) {
-    
+
     channel3.subscribe((status) => {
       if (status !== 'SUBSCRIBED') { return }
       channel3.send({
@@ -194,19 +200,24 @@ const MultiPlayer = () => {
       })
     })
 
-    setUserRoundDetails([...userRoundDetails , {
+    setUserRoundDetails([...userRoundDetails, {
       user_id: user.user_id,
       guessLat: guessLat,
       guessLng: guessLng,
       guessDistance: guessDistance,
       userPoints: userPoints
     }])
-
   }
 
   useEffect(() => {
     getGame();
   }, []);
+
+  useEffect(() => {
+    if (readyUsers.size === room.room_participants.length) {
+      startRound()
+    }
+  }, [readyUsers, room.room_participants.length])
 
   useEffect(() => {
     const loadGoogleMapScript = () => {
@@ -273,6 +284,28 @@ const MultiPlayer = () => {
 
       mapRef.current = map;
 
+      console.log(parseFloat(curLat), parseFloat(curLng))
+      const panoramaOptions = {
+        position: { lat: parseFloat(curLat), lng: parseFloat(curLng) },
+        pov: { heading: 0, pitch: 0 },
+        zoom: 1,
+        disableDefaultUI: true,
+        showRoadLabels: false,
+        linksControl: true,
+        panoProviderOptions: {
+          hideLogo: true,
+          disableCompass: true,
+          panoId: "gs_id:remove_labels",
+        },
+      };
+
+      const panorama = new window.google.maps.StreetViewPanorama(
+        streetViewContainerRef.current,
+        panoramaOptions
+      );
+
+      map.setStreetView(panorama);
+
       window.google.maps.event.addListener(map, "mousemove", function () {
         map.setOptions({ draggableCursor: "crosshair" });
       });
@@ -289,7 +322,6 @@ const MultiPlayer = () => {
     }
   }, []);
 
-
   channel2.on('postgres_changes',
     {
       event: 'UPDATE',
@@ -305,13 +337,14 @@ const MultiPlayer = () => {
   channel3.on('broadcast',
     { event: 'round_details' },
     ({ payload }) => {
-      setUserRoundDetails([...userRoundDetails , payload])
+      setUserRoundDetails([...userRoundDetails, payload])
     }
   ).subscribe()
- 
+
   return (
-    <div className="overflow-hidden">
+    <div>
       <Scoreboard />
+      <div className="w-full h-screen" ref={streetViewContainerRef}></div>
       <div className={`fixed duration-300 ${chatModal ? 'bottom-0' : 'bottom-[-31.2rem]'} left-0 z-50 h-[500px] backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] `}>
         <div className="flex absolute bottom-[31.25rem] backdrop-blur-3xl text-white bg-[rgba(0,0,0,0.5)] rounded-tr-xl flex-col
          w-full items-end p-2 text-2xl cursor-pointer"
@@ -320,43 +353,33 @@ const MultiPlayer = () => {
         </div>
         <ChatModel />
       </div>
-      <div className="absolute bottom-0 right-24 text-sm opacity-50"> {room.cur_game_id}</div>
-      <div className="absolute top-0 left-0 w-full h-full flex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
-        <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl bg-[rgba(0,0,0,0.3)]">
-          <span className="">Game starts in 02</span>
-          <div className="flex gap-3 items-center text-base">Waiting for players ({readyUsers.size}/{room.room_participants.length})</div>
-          <ImSpinner2 className="animate-spin" />
+      <div className="absolute bottom-0.5 bg-black z-50 text-white right-24 text-sm opacity-100"> {room.cur_game_id}</div>
+
+      <div className="absolute top-0 left-0 w-full h-screen flex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
+        <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl bg-[rgba(255,255,255,10)]">
+          {waitingPlayers ?
+            <>
+              <div className="flex gap-3 items-center text-xl">Waiting for players ({readyUsers.size}/{room.room_participants.length})</div>
+              <ImSpinner2 className="animate-spin" />
+            </>
+            :
+            <span className="flex">Game starts in
+              <Stopwatch
+                startTime={moment(game.cur_round_start_time).subtract(game.round_duration, 'seconds').toISOString()}
+                endTime={game.cur_round_start_time}
+                endRound={endRound}
+              />
+            </span>
+          }
         </div>
       </div>
 
-      {
-        // CLOCK IS HEREEEEEEEE
-        game.cur_round_start_time !== null &&
-        <Stopwatch
-          startTime={moment(game.cur_round_start_time).subtract(game.round_duration, 'seconds').toISOString()}
-          endTime={game.cur_round_start_time}
-          endRound={endRound}
-        />
-      }
-
-      <div className="absolute h-[200px] w-[300px] hover:w-[500px] hover:h-[300px] hover:opacity-100 border z-40 right-10 bottom-20 transition-all duration-200 ease-in-out opacity-50 cursor-crosshair" ref={mapContainerRef}></div>
+      <div className="absolute h-[200px] w-[300px] hover:w-[500px] hover:h-[300px] hover:opacity-100 border z-30 right-10 bottom-20 transition-all duration-200 ease-in-out opacity-50 cursor-crosshair" ref={mapContainerRef}></div>
       <div className="absolute bottom-6 right-32">
-        <button className="bg-red-500 px-5 py-2 rounded-xl">
+        <button className="bg-red-500 px-5 py-2 rounded-xl" onClick={() => guessLatLng(guessLat, guessLng)}>
           Guess
         </button>
       </div>
-
-      <button className="bg-black w-10" onClick={
-        () => {
-          if (game.cur_round === game.total_rounds) {
-            endGame()
-          } else {
-            startRound()
-          }
-        }}>
-          Start
-      </button>
-
     </div >
   )
 }

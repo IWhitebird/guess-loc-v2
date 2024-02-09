@@ -147,14 +147,14 @@ export const roomSlice = createSlice({
 
         setLeftRoom: (state, action: PayloadAction<{ room_id: string, user_id: string , user_name : string , user_profile_pic : string }>) => {
             setRoom(leaveRoomHandle(action.payload.room_id,state.room_participants, action.payload.user_id, action.payload.user_name, action.payload.user_profile_pic) as any)
-            if(state.room_owner === action.payload.user_id) {
-                for(let i = 0; i < state.room_participants.length; i++) {
-                    if(state.room_participants[i].room_user_id !== action.payload.user_id) {
-                        state.room_owner = state.room_participants[i].room_user_id
-                        break;
-                    }
-                }
-            }
+            // if(state.room_owner === action.payload.user_id) {
+            //     for(let i = 0; i < state.room_participants.length; i++) {
+            //         if(state.room_participants[i].room_user_id !== action.payload.user_id) {
+            //             state.room_owner = state.room_participants[i].room_user_id
+            //             break;
+            //         }
+            //     }
+            // }
         },
     },
 

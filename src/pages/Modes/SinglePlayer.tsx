@@ -230,7 +230,7 @@ export default function OnePlayer() {
                     <ImSpinner2 className="animate-spin text-white text-6xl" />
                 </div>
             }
-            <div className="w-full h-screen" ref={streetViewContainerRef}></div>
+            <div className="w-full h-screen" ref={streetViewContainerRef}/>
             {miniWindow === true ? (<>
             </>) : (
                 <>
