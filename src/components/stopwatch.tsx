@@ -4,6 +4,8 @@ import toast from 'react-hot-toast';
 
 const Stopwatch = ({ startTime, endTime, endRound }: any) => {
 
+  // console.log("INSIDE STOPWATCH", startTime, endTime)
+
   const [curTime, setCurTime] = useState<number>(
     moment(startTime).diff(new Date(), 'seconds') <= 0
       ? moment(endTime).diff(new Date(), 'seconds')
@@ -27,9 +29,12 @@ const Stopwatch = ({ startTime, endTime, endRound }: any) => {
       }
 
       if (timeDifference <= 0) {
-        1
+        setTimeout(() => {
+          toast.success("Round Ended!");
+        }, 1000);
         clearInterval(intervalId);
         endRound();
+        setCurTime(0);
       }
 
       setCurTime(timeDifference);
@@ -38,6 +43,8 @@ const Stopwatch = ({ startTime, endTime, endRound }: any) => {
 
     return () => clearInterval(intervalId);
   }, [startTime, endTime]);
+
+  console.log(curTime, "CURTIME")
 
   return (
     <div>

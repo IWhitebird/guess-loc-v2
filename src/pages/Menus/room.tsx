@@ -124,7 +124,8 @@ const Room = () => {
       }
     });
 
-    navigate(`/mpGame/${data[0].game_id}`)
+    // navigate(`/mpGame/${data[0].game_id}`)
+    window.location.href = `/mpGame/${data[0].game_id}`
   }
 
   function changeSettingsInput(e: any) {

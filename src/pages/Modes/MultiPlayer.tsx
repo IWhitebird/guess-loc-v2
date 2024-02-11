@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react"
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux"
 import { RootState } from "../../redux/store/store";
-import { setGame, removeGame, updateRoundDetails, updateRoundStartTime, updateCurRound } from "../../redux/slices/gameSlice";
+import { setGame, removeGame } from "../../redux/slices/gameSlice";
 import { useNavigate } from "react-router-dom";
 import supabase from "../../supabase/init";
 import { toast } from "react-hot-toast";
@@ -44,15 +44,16 @@ const MultiPlayer = () => {
   const channel3 = supabase.channel(`${game.game_id}_rounds`)
 
   const [userRoundDetails, setUserRoundDetails] = useState<IUserRoundDetails[]>([])
-  const [curLat, setCurLat] = useState<string>(game.lat_lng_arr.length > 0 ? game.lat_lng_arr[game.cur_round].lat : "")
-  const [curLng, setCurLng] = useState<string>(game.lat_lng_arr.length > 0 ? game.lat_lng_arr[game.cur_round].lng : "")
   const [guessLat, setGuessLat] = useState<string>('')
   const [guessLng, setGuessLng] = useState<string>('')
   const [guessDistance, setGuessDistance] = useState<number>(0)
   const [userPoints, setUserPoints] = useState<number>(0)
-  const [chatModal, setChatModal] = useState<boolean>(false)
   const [results, setResults] = useState<any>({})
+  
+  const [chatModal, setChatModal] = useState<boolean>(false)
   const [waitingPlayers, setWaitingPlayers] = useState<boolean>(true)
+  const [roundEnded , setRoundEnded] = useState<boolean>(false)
+  const [gameEndResult , setGameEndResult] = useState<boolean>(false)
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -107,36 +108,44 @@ const MultiPlayer = () => {
     return;
   }
 
+  //FUNCTION TO START EACH ROUND
   async function startRound() {
-    console.log(readyUsers.size, room.room_participants.length, user.user_id, room.room_owner, readyUsers.size === room.room_participants.length)
     if (user.user_id === room.room_owner && readyUsers.size === room.room_participants.length) {
       const timeToAdd = game.round_duration + 10
-      await supabase
-        .from('game')
-        .update({
-          cur_round: game.cur_round ? game.cur_round + 1 : 1,
-          cur_round_start_time: moment(new Date()).add(timeToAdd, 'seconds').toISOString()
-        })
-        .eq('game_id', game.game_id)
 
-      
-      setWaitingPlayers(false)
+      const new_round = game.cur_round ? game.cur_round === game.total_rounds - 1 ? game.cur_round : game.cur_round + 1 : 1
+
+      const {data , error} : any = await supabase
+      .from('game')
+      .update({
+        cur_round: new_round,
+        cur_round_start_time: moment(new Date()).add(timeToAdd, 'seconds').toISOString()
+      })
+      .eq('game_id', game.game_id)  
+      if(!error)
+        dispatch(setGame(data[0]))
     }
   }
 
+  //FUNCTION TO END EACH ROUND
   async function endRound() {
+    console.log("WHYYYYYYYYY I AM HEREE")
     if (user.user_id === room.room_owner && readyUsers.has(user.user_id)) {
-      await supabase
+      const {data , error} : any = await supabase
         .from('game')
         .update({
           round_details: [game.round_details, {
-            round_lat: curLat,
-            round_lng: curLng,
+            round_lat: game.lat_lng_arr[game.cur_round].lat,
+            round_lng: game.lat_lng_arr[game.cur_round].lng,
             user_details: userRoundDetails
           }],
         })
         .eq('game_id', game.game_id)
+
+        if(!error)
+          dispatch(setGame(data[0]))
     }
+    setRoundEnded(true)
   }
 
   //FUNCTION CALL AFTER ALL ROUDNS ARE OVER
@@ -185,19 +194,16 @@ const MultiPlayer = () => {
   //GUESS BUTTON AT EACH ROUND 
   async function guessLatLng(guessLat: string, guessLng: string) {
 
-    channel3.subscribe((status) => {
-      if (status !== 'SUBSCRIBED') { return }
-      channel3.send({
-        type: 'broadcast',
-        event: 'round_details',
-        payload: {
-          user_id: user.user_id,
-          guessLat: guessLat,
-          guessLng: guessLng,
-          guessDistance: guessDistance,
-          userPoints: userPoints
-        }
-      })
+    channel3.send({
+      type: 'broadcast',
+      event: 'round_details',
+      payload: {
+        user_id: user.user_id,
+        guessLat: guessLat,
+        guessLng: guessLng,
+        guessDistance: guessDistance,
+        userPoints: userPoints
+      }
     })
 
     setUserRoundDetails([...userRoundDetails, {
@@ -209,15 +215,6 @@ const MultiPlayer = () => {
     }])
   }
 
-  useEffect(() => {
-    getGame();
-  }, []);
-
-  useEffect(() => {
-    if (readyUsers.size === room.room_participants.length) {
-      startRound()
-    }
-  }, [readyUsers, room.room_participants.length])
 
   useEffect(() => {
     const loadGoogleMapScript = () => {
@@ -235,6 +232,8 @@ const MultiPlayer = () => {
     };
 
     const initMap = () => {
+
+
       const mapOptions = {
         center: { lat: 0, lng: 0 },
         zoom: 0.641,
@@ -284,9 +283,15 @@ const MultiPlayer = () => {
 
       mapRef.current = map;
 
-      console.log(parseFloat(curLat), parseFloat(curLng))
+      let lato = 0 , lago = 0
+      if(game.cur_round_start_time !== null){
+        console.log(game.lat_lng_arr[game.cur_round].lat , game.lat_lng_arr[game.cur_round].lng)
+        lato = parseFloat(game.lat_lng_arr[game.cur_round].lat)
+        lago = parseFloat(game.lat_lng_arr[game.cur_round].lng)
+      }
+      
       const panoramaOptions = {
-        position: { lat: parseFloat(curLat), lng: parseFloat(curLng) },
+        position: { lat: lato, lng: lago},
         pov: { heading: 0, pitch: 0 },
         zoom: 1,
         disableDefaultUI: true,
@@ -298,6 +303,7 @@ const MultiPlayer = () => {
           panoId: "gs_id:remove_labels",
         },
       };
+      
 
       const panorama = new window.google.maps.StreetViewPanorama(
         streetViewContainerRef.current,
@@ -314,13 +320,20 @@ const MultiPlayer = () => {
         placeMarker(event.latLng.lat(), event.latLng.lng());
       });
     };
-
     if (!window.google) {
       loadGoogleMapScript();
     } else {
       initMap();
     }
+
+  }, [game.cur_round]);
+
+  useEffect(() => {
+    getGame();
   }, []);
+  
+  useEffect(() => {
+  }, [game]);
 
   channel2.on('postgres_changes',
     {
@@ -330,6 +343,7 @@ const MultiPlayer = () => {
       filter: `game_id=eq.${game.game_id}`
     },
     payload => {
+      console.log("POSTGRES PAYLOAD :-" , payload)
       dispatch(setGame(payload.new as any))
     }
   ).subscribe()
@@ -337,9 +351,17 @@ const MultiPlayer = () => {
   channel3.on('broadcast',
     { event: 'round_details' },
     ({ payload }) => {
+      console.log("BROADCAST PAYLOAD :-" , payload)
       setUserRoundDetails([...userRoundDetails, payload])
     }
   ).subscribe()
+
+  console.log("USER ROUND DETAILS", userRoundDetails)
+  console.log("round ended", roundEnded)
+  console.log("waiting players", waitingPlayers)
+  console.log("ready users", readyUsers)
+  console.log("userRoundDetails" , userRoundDetails)
+  console.log("Game Details" , game)
 
   return (
     <div>
@@ -355,31 +377,82 @@ const MultiPlayer = () => {
       </div>
       <div className="absolute bottom-0.5 bg-black z-50 text-white right-24 text-sm opacity-100"> {room.cur_game_id}</div>
 
-      <div className="absolute top-0 left-0 w-full h-screen flex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
+      <div className="absolute top-0 left-0 w-fullflex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
         <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl bg-[rgba(255,255,255,10)]">
-          {waitingPlayers ?
-            <>
-              <div className="flex gap-3 items-center text-xl">Waiting for players ({readyUsers.size}/{room.room_participants.length})</div>
-              <ImSpinner2 className="animate-spin" />
-            </>
-            :
-            <span className="flex">Game starts in
-              <Stopwatch
-                startTime={moment(game.cur_round_start_time).subtract(game.round_duration, 'seconds').toISOString()}
-                endTime={game.cur_round_start_time}
-                endRound={endRound}
-              />
-            </span>
-          }
+        Game Starting in {
+          game?.cur_round_start_time !== null ?
+          <Stopwatch
+            startTime={moment(game.cur_round_start_time).subtract(game.round_duration, 'seconds').toISOString()}
+            endTime={game.cur_round_start_time}
+            endRound={endRound}
+          />
+          : 
+          <div>
+            <ImSpinner2 className="animate-spin" />
+          </div>
+        }
+
         </div>
+     
       </div>
 
+      {
+        waitingPlayers && 
+          <div className="absolute top-0 left-[20rem] w-fullflex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
+            <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl bg-pink-300] bg-[rgba(255,255,255,10)]">    
+              waiting Players { readyUsers.size } / { room.room_participants.length }
+              <button onClick={ 
+                () => { 
+                  startRound()
+                  setWaitingPlayers(false)
+                }}>Start Round</button>
+            </div>
+          </div>
+      }
+
+      {
+        roundEnded && 
+        <div className="absolute top-0 left-[30rem] w-fullflex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
+          <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl bg-pink-300] bg-[rgba(255,255,255,10)]">    
+            <p className="text-5xl">Round Ended</p>
+                <button 
+                disabled={user.user_id === room.room_owner && readyUsers.size !== room.room_participants.length} 
+                onClick={ 
+                  () => { 
+                    startRound()
+                    setRoundEnded(false)
+                  }}>Next Round</button>
+          </div>
+        </div>
+      }
+
+      {
+        gameEndResult && 
+        <div className="absolute top-[30rem] left-[30rem] w-fullflex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
+          <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl bg-pink-300] bg-[rgba(255,255,255,10)]">    
+            <p className="text-5xl">Game Ended</p>
+                <button 
+                disabled={user.user_id === room.room_owner && readyUsers.size !== room.room_participants.length} 
+                onClick={ 
+                  () => { 
+                    fetchResults()
+                    setGameEndResult(false)
+                  }}>Go back to room</button>
+          </div>
+        </div>
+      }
+
+
       <div className="absolute h-[200px] w-[300px] hover:w-[500px] hover:h-[300px] hover:opacity-100 border z-30 right-10 bottom-20 transition-all duration-200 ease-in-out opacity-50 cursor-crosshair" ref={mapContainerRef}></div>
-      <div className="absolute bottom-6 right-32">
+      
+      <div className="absolute bottom-6 right-32 z-20">
         <button className="bg-red-500 px-5 py-2 rounded-xl" onClick={() => guessLatLng(guessLat, guessLng)}>
           Guess
         </button>
       </div>
+
+
+
     </div >
   )
 }
