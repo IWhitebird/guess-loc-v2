@@ -151,7 +151,7 @@ const MultiPlayer = () => {
             round: game.cur_round
           }
         })
-        
+
         if(!error)
           dispatch(setGame(data[0]))
     }
@@ -372,9 +372,7 @@ const MultiPlayer = () => {
 
   channel3.on('broadcast',
   { event: 'round_start' },
-  ({ payload }) => {
-    console.log(payload)
-    console.log("HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEeee")
+  () => {
     if(waitingPlayers) {
       setWaitingPlayers(false)
     }
@@ -384,7 +382,6 @@ const MultiPlayer = () => {
   channel3.on('broadcast',
   { event: 'round_details' },
   ({ payload }) => {
-    console.log("BROADCAST PAYLOAD :-" , payload)
     setUserRoundDetails([...userRoundDetails, payload])
   }).subscribe()
 
