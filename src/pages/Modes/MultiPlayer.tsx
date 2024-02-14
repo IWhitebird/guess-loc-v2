@@ -28,6 +28,8 @@ interface IUserRoundDetails {
 }
 
 const MultiPlayer = () => {
+
+
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -35,13 +37,12 @@ const MultiPlayer = () => {
   const user = useSelector((state: RootState) => state.user)
   const room = useSelector((state: RootState) => state.room)
 
-  console.log(game)
-
-  const [readyUsers, setReadyUsers] = useState<Set<String>>(new Set())
-
   const channel1 = supabase.channel(`${game.game_id}_game`)
   const channel2 = supabase.channel(`${game.game_id}`)
   const channel3 = supabase.channel(`${game.game_id}_rounds`)
+
+  const [readyUsers, setReadyUsers] = useState<Set<String>>(new Set())
+
 
   const [userRoundDetails, setUserRoundDetails] = useState<IUserRoundDetails[]>([])
   const [guessLat, setGuessLat] = useState<string>('')
@@ -89,47 +90,47 @@ const MultiPlayer = () => {
     localStorage.setItem('custom_game_details', JSON.stringify(data[0]))
     dispatch(setGame(data[0]))
 
-    channel1
-      .on('presence', { event: 'sync' }, () => {
-        const newState: any = channel1.presenceState()
-
-        let ready = new Set<String>()
-
-        for (const key in newState) {
-          ready.add(newState[key][0].userId)
-        }
-        setReadyUsers(ready)
-      })
-      .subscribe((status) => {
-        if (status !== 'SUBSCRIBED') return;
-        channel1.track({ userId: user.user_id })
-      })
-
+    channel1.subscribe((status) => {
+      if (status !== 'SUBSCRIBED') return;
+      channel1.track({ userId: user.user_id })
+    })
+    
     return;
   }
 
   //FUNCTION TO START EACH ROUND
   async function startRound() {
     if (user.user_id === room.room_owner && readyUsers.size === room.room_participants.length) {
-      const timeToAdd = game.round_duration + 10
+      const timeToAdd = game.round_duration + 5
 
       const new_round = game.cur_round ? game.cur_round === game.total_rounds - 1 ? game.cur_round : game.cur_round + 1 : 1
 
-      const {data , error} : any = await supabase
+      const { data , error } : any = await supabase
       .from('game')
       .update({
         cur_round: new_round,
         cur_round_start_time: moment(new Date()).add(timeToAdd, 'seconds').toISOString()
       })
-      .eq('game_id', game.game_id)  
-      if(!error)
-        dispatch(setGame(data[0]))
+      .eq('game_id', game.game_id) 
+      .select()
+
+      channel3.send({
+        type: 'broadcast',
+        event: 'round_start',
+        payload: {
+          round: new_round
+        }
+      })
+
+      if(!error) {
+        dispatch(setGame(data[0] as any))
+      }
+      
     }
   }
 
   //FUNCTION TO END EACH ROUND
   async function endRound() {
-    console.log("WHYYYYYYYYY I AM HEREE")
     if (user.user_id === room.room_owner && readyUsers.has(user.user_id)) {
       const {data , error} : any = await supabase
         .from('game')
@@ -141,7 +142,16 @@ const MultiPlayer = () => {
           }],
         })
         .eq('game_id', game.game_id)
+        .select()
 
+        channel3.send({
+          type: 'broadcast',
+          event: 'round_end',
+          payload: {
+            round: game.cur_round
+          }
+        })
+        
         if(!error)
           dispatch(setGame(data[0]))
     }
@@ -326,7 +336,7 @@ const MultiPlayer = () => {
       initMap();
     }
 
-  }, [game.cur_round]);
+  }, [game.cur_round  , waitingPlayers]);
 
   useEffect(() => {
     getGame();
@@ -334,6 +344,18 @@ const MultiPlayer = () => {
   
   useEffect(() => {
   }, [game]);
+
+  channel1.on('presence', { event: 'sync' }, () => {
+    const newState: any = channel1.presenceState()
+
+    let ready = new Set<String>()
+
+    for (const key in newState) {
+      ready.add(newState[key][0].userId)
+    }
+    setReadyUsers(ready)
+  })
+
 
   channel2.on('postgres_changes',
     {
@@ -349,13 +371,25 @@ const MultiPlayer = () => {
   ).subscribe()
 
   channel3.on('broadcast',
-    { event: 'round_details' },
-    ({ payload }) => {
-      console.log("BROADCAST PAYLOAD :-" , payload)
-      setUserRoundDetails([...userRoundDetails, payload])
+  { event: 'round_start' },
+  ({ payload }) => {
+    console.log(payload)
+    console.log("HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEeee")
+    if(waitingPlayers) {
+      setWaitingPlayers(false)
     }
-  ).subscribe()
+    setRoundEnded(false)
+  })
 
+  channel3.on('broadcast',
+  { event: 'round_details' },
+  ({ payload }) => {
+    console.log("BROADCAST PAYLOAD :-" , payload)
+    setUserRoundDetails([...userRoundDetails, payload])
+  }).subscribe()
+
+
+1
   console.log("USER ROUND DETAILS", userRoundDetails)
   console.log("round ended", roundEnded)
   console.log("waiting players", waitingPlayers)
@@ -401,11 +435,15 @@ const MultiPlayer = () => {
           <div className="absolute top-0 left-[20rem] w-fullflex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
             <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl bg-pink-300] bg-[rgba(255,255,255,10)]">    
               waiting Players { readyUsers.size } / { room.room_participants.length }
-              <button onClick={ 
-                () => { 
-                  startRound()
-                  setWaitingPlayers(false)
-                }}>Start Round</button>
+              {
+                (user.user_id === room.room_owner && readyUsers.has(user.user_id)) && 
+                  <button onClick={ 
+                    () => { 
+                      startRound()
+                      setWaitingPlayers(false)
+                    }}>Start Round</button>
+              }
+
             </div>
           </div>
       }
@@ -415,6 +453,8 @@ const MultiPlayer = () => {
         <div className="absolute top-0 left-[30rem] w-fullflex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
           <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl bg-pink-300] bg-[rgba(255,255,255,10)]">    
             <p className="text-5xl">Round Ended</p>
+            {
+                (user.user_id === room.room_owner && readyUsers.has(user.user_id)) &&  
                 <button 
                 disabled={user.user_id === room.room_owner && readyUsers.size !== room.room_participants.length} 
                 onClick={ 
@@ -422,6 +462,7 @@ const MultiPlayer = () => {
                     startRound()
                     setRoundEnded(false)
                   }}>Next Round</button>
+            }
           </div>
         </div>
       }
