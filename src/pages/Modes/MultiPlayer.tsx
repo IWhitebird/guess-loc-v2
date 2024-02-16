@@ -89,14 +89,15 @@ const MultiPlayer = () => {
       toast.error("Failed to start game")
       navigate('/dashboard')
     }
-    localStorage.setItem('custom_game_details', JSON.stringify(data[0]))
-    dispatch(setGame(data[0]))
-
+    
     channel1.subscribe((status) => {
       if (status !== 'SUBSCRIBED') return;
       channel1.track({ userId: user.user_id })
     })
     
+    localStorage.setItem('custom_game_details', JSON.stringify(data[0]))
+    dispatch(setGame(data[0]))
+
     return;
   }
 
