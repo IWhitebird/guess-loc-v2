@@ -80,29 +80,26 @@ const MultiPlayer = () => {
     setGuessLng(eventLng);
   }
 
+  async function getGame() {
 
-  useEffect(() => {
-    async function getGame() {
-      const { data, error }: any = await supabase.from('game')
-        .select()
-        .eq('game_id', room.cur_game_id)
+    const { data, error }: any = await supabase.from('game')
+      .select()
+      .eq('game_id', room.cur_game_id)
 
-      if (error) {
-        toast.error("Failed to start game")
-        navigate('/dashboard')
-      }
-
-      localStorage.setItem('custom_game_details', JSON.stringify(data[0]))
-      dispatch(setGame(data[0]))
-
-      channel1.subscribe((status) => {
-        if (status !== 'SUBSCRIBED') return;
-        channel1.track({ userId: user.user_id })
-      })
+    if (error) {
+      toast.error("Failed to start game")
+      navigate('/dashboard')
     }
+    localStorage.setItem('custom_game_details', JSON.stringify(data[0]))
+    dispatch(setGame(data[0]))
 
-    getGame();
-  }, []);
+    channel1.subscribe((status) => {
+      if (status !== 'SUBSCRIBED') return;
+      channel1.track({ userId: user.user_id })
+    })
+    
+    return;
+  }
 
   //FUNCTION TO START EACH ROUND
   async function startRound() {
@@ -344,17 +341,23 @@ const MultiPlayer = () => {
   }, [game.cur_round, waitingPlayers, game]);
 
   useEffect(() => {
-    channel1.on('presence', { event: 'sync' }, () => {
-      const newState: any = channel1.presenceState()
+    console.log('called', room.cur_game_id)
+    getGame();
+  }, []);
 
-      let ready = new Set<String>()
-
-      for (const key in newState) {
-        ready.add(newState[key][0].userId)
-      }
-      setReadyUsers(ready)
-    })
+  useEffect(() => {
   }, [game]);
+
+  channel1.on('presence', { event: 'sync' }, () => {
+    const newState: any = channel1.presenceState()
+
+    let ready = new Set<String>()
+
+    for (const key in newState) {
+      ready.add(newState[key][0].userId)
+    }
+    setReadyUsers(ready)
+  })
 
   channel2.on('postgres_changes',
     {
