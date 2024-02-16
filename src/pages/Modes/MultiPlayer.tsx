@@ -447,7 +447,7 @@ const MultiPlayer = () => {
 
       {
         roundEnded && 
-        <div className="absolute top-0 left-[30rem] w-fullflex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
+        <div className="absolute top-0 left-[30rem] w-fullflex justify-center z-50 items-center bg-[rgba(0,0,0,0.2)]">
           <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl bg-pink-300] bg-[rgba(255,255,255,10)]">    
             <p className="text-5xl">Round Ended</p>
             {
