@@ -216,6 +216,7 @@ const MultiPlayer = () => {
       type: 'broadcast',
       event: 'round_details',
       payload: {
+        round_no: game.cur_round,
         user_id: user.user_id,
         user_name: user.user_name,
         guessLat: guessLat,
