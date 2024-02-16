@@ -129,6 +129,8 @@ const MultiPlayer = () => {
       if(!error) {
         dispatch(setGame(data[0] as any))
       }
+
+      setGuessed(false)
       
     }
   }
