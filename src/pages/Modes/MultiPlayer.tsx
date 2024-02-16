@@ -130,8 +130,6 @@ const MultiPlayer = () => {
       if(!error) {
         dispatch(setGame(data[0] as any))
       }
-
-      setGuessed(false)
       
     }
   }
@@ -163,6 +161,7 @@ const MultiPlayer = () => {
           dispatch(setGame(data[0]))
     }
     setRoundEnded(true)
+    setGuessed(false)
   }
 
   //FUNCTION CALL AFTER ALL ROUDNS ARE OVER
