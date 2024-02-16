@@ -47,6 +47,7 @@ const MultiPlayer = () => {
 
 
   const [userRoundDetails, setUserRoundDetails] = useState<IUserRoundDetails[]>([])
+  const [guessed, setGuessed] = useState<boolean>(false)
   const [guessLat, setGuessLat] = useState<string>('')
   const [guessLng, setGuessLng] = useState<string>('')
   const [guessDistance, setGuessDistance] = useState<number>(0)
@@ -77,6 +78,7 @@ const MultiPlayer = () => {
     }
     setGuessLat(eventLat);
     setGuessLng(eventLng);
+    setGuessed(true);
   }
 
   async function getGame() {
@@ -89,7 +91,7 @@ const MultiPlayer = () => {
       toast.error("Failed to start game")
       navigate('/dashboard')
     }
-    
+
     channel1.subscribe((status) => {
       if (status !== 'SUBSCRIBED') return;
       channel1.track({ userId: user.user_id })
@@ -495,7 +497,8 @@ const MultiPlayer = () => {
       <div className="absolute h-[200px] w-[300px] hover:w-[500px] hover:h-[300px] hover:opacity-100 border z-30 right-10 bottom-20 transition-all duration-200 ease-in-out opacity-50 cursor-crosshair" ref={mapContainerRef}></div>
       
       <div className="absolute bottom-6 right-32 z-20">
-        <button className="bg-red-500 px-5 py-2 rounded-xl" onClick={() => guessLatLng(guessLat, guessLng)}>
+        <button className={`${guessed ? 'bg-gray-500' : 'bg-red-500'} px-5 py-2 rounded-xl`} onClick={() => guessLatLng(guessLat, guessLng)}
+          disabled={guessed}>
           Guess
         </button>
       </div>
