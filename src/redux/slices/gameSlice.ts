@@ -19,6 +19,7 @@ interface RoundDetails {
 }
 
 interface RoundUserDetails {
+    round_no : number,
     user_name: string,
     user_id: string,
     guessLat: string,

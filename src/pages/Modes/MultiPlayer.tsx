@@ -21,6 +21,7 @@ interface IRoundDetails {
 }
 
 interface IUserRoundDetails {
+  round_no : number,
   user_name : string,
   user_id: string,
   guessLat: string,
@@ -225,6 +226,7 @@ const MultiPlayer = () => {
     })
 
     setUserRoundDetails([...userRoundDetails, {
+      round_no: game.cur_round,
       user_id: user.user_id,
       user_name: user.user_name,
       guessLat: guessLat,
@@ -462,6 +464,7 @@ const MultiPlayer = () => {
           <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl w-full bg-[rgba(255,255,255,10)]">
             <p className="text-5xl">Round Ended</p>
             <Results 
+              round_no={game.cur_round}
               lat1={parseFloat(game.lat_lng_arr[game.cur_round].lat)} 
               lng1={parseFloat(game.lat_lng_arr[game.cur_round].lng)} 
               guessLat={parseFloat(guessLat)} 
