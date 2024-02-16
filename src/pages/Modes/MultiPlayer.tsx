@@ -216,6 +216,7 @@ const MultiPlayer = () => {
       event: 'round_details',
       payload: {
         user_id: user.user_id,
+        user_name: user.user_name,
         guessLat: guessLat,
         guessLng: guessLng,
         guessDistance: guessDistance,
