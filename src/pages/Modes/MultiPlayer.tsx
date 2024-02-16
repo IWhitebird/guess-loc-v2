@@ -12,6 +12,7 @@ import Scoreboard from "../../components/Multiplayer Components/Scoreboard";
 import { ImSpinner2 } from "react-icons/im";
 import ChatModel from "../../components/chatmodel";
 import { FaChevronCircleUp } from "react-icons/fa";
+import Results from "../../components/Multiplayer Components/Results";
 
 interface IRoundDetails {
   round_lat: string,
@@ -20,6 +21,7 @@ interface IRoundDetails {
 }
 
 interface IUserRoundDetails {
+  user_name : string,
   user_id: string,
   guessLat: string,
   guessLng: string,
@@ -218,6 +220,7 @@ const MultiPlayer = () => {
 
     setUserRoundDetails([...userRoundDetails, {
       user_id: user.user_id,
+      user_name: user.user_name,
       guessLat: guessLat,
       guessLng: guessLng,
       guessDistance: guessDistance,
@@ -445,17 +448,24 @@ const MultiPlayer = () => {
           </div>
       }
 
-      {
-        roundEnded && 
-        <div className="absolute top-0 left-[30rem] w-fullflex justify-center z-50 items-center bg-[rgba(0,0,0,0.2)]">
-          <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl bg-pink-300] bg-[rgba(255,255,255,10)]">    
+    {
+        roundEnded &&
+        <div className="absolute top-0 h-screen w-full flex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
+          <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl w-full bg-[rgba(255,255,255,10)]">
             <p className="text-5xl">Round Ended</p>
+            <Results 
+              lat1={parseFloat(game.lat_lng_arr[game.cur_round].lat)} 
+              lng1={parseFloat(game.lat_lng_arr[game.cur_round].lng)} 
+              guessLat={parseFloat(guessLat)} 
+              guessLng={parseFloat(guessLng)} 
+              userRoundDetails={userRoundDetails} 
+            />
             {
-                (user.user_id === room.room_owner && readyUsers.has(user.user_id)) &&  
-                <button 
-                disabled={user.user_id === room.room_owner && readyUsers.size !== room.room_participants.length} 
-                onClick={ 
-                  () => { 
+              (user.user_id === room.room_owner && readyUsers.has(user.user_id)) &&
+              <button
+                disabled={user.user_id === room.room_owner && readyUsers.size !== room.room_participants.length}
+                onClick={
+                  () => {
                     startRound()
                     setRoundEnded(false)
                   }}>Next Round</button>
