@@ -78,7 +78,6 @@ const MultiPlayer = () => {
     }
     setGuessLat(eventLat);
     setGuessLng(eventLng);
-    setGuessed(true);
   }
 
   async function getGame() {
@@ -208,7 +207,8 @@ const MultiPlayer = () => {
 
   //GUESS BUTTON AT EACH ROUND 
   async function guessLatLng(guessLat: string, guessLng: string) {
-
+    setGuessed(true);
+    
     channel3.send({
       type: 'broadcast',
       event: 'round_details',
@@ -229,6 +229,8 @@ const MultiPlayer = () => {
       guessDistance: guessDistance,
       userPoints: userPoints
     }])
+
+
   }
 
 
