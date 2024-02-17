@@ -110,6 +110,21 @@ const MultiPlayer = () => {
 
       const new_round = game.cur_round ? game.cur_round === game.total_rounds - 1 ? game.cur_round : game.cur_round + 1 : 1
 
+      if(new_round === game.total_rounds - 1) {
+        setGameEndResult(true)
+        
+        channel3.send({
+          type: 'broadcast',
+          event: 'round_end',
+          payload: {
+            round: new_round
+          }
+        })
+
+        return;
+  
+      }
+
       const { data , error } : any = await supabase
       .from('game')
       .update({
@@ -140,7 +155,7 @@ const MultiPlayer = () => {
       const {data , error} : any = await supabase
         .from('game')
         .update({
-          round_details: [game.round_details, {
+          round_details: [...game.round_details , {
             round_lat: game.lat_lng_arr[game.cur_round].lat,
             round_lng: game.lat_lng_arr[game.cur_round].lng,
             user_details: userRoundDetails
