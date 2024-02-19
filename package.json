@@ -15,7 +15,6 @@
     "@react-three/fiber": "^8.15.14",
     "@reduxjs/toolkit": "^2.0.1",
     "@supabase/supabase-js": "^2.39.3",
-    "@types/googlemaps": "^3.43.3",
     "events": "^3.3.0",
     "load-google-maps-api": "^2.0.2",
     "moment": "^2.30.1",
