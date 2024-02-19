@@ -9,7 +9,6 @@ import Notification from "./notification"
 import AudioPlayer from "./AudioPlayer"
 import FriendsList from "./Friends/FriendsList"
 import { useLocation, useNavigate } from "react-router-dom"
-import { setJoinedRoom, setLeftRoom } from "../redux/slices/roomSlice"
 
 interface Props {
     loggedIN: any
@@ -74,9 +73,6 @@ const SendDashboard = ({ loggedIN, friendModal, audioSettings, setFriendModal, s
                 for (const key in user) {
                     //@ts-ignore
                     onlineStatus = user[key].user_id;
-                    if (onlineStatus === user_id) {
-                        dispatch(setJoinedRoom({ room_id: roomDetails.room_id, user_id: user_id , user_name: user_name, user_profile_pic: user_profile_pic}))
-                    }
                 }
             }
         }).subscribe(async (status) => {
@@ -86,7 +82,6 @@ const SendDashboard = ({ loggedIN, friendModal, audioSettings, setFriendModal, s
 
         return () => {
             onlineChannel.unsubscribe();
-            dispatch(setLeftRoom({ room_id: roomDetails.room_id, user_id: user_id , user_name: user_name, user_profile_pic: user_profile_pic}))
         }
         
     }, [user_id]);

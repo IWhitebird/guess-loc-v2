@@ -21,11 +21,12 @@ interface IRoundDetails {
 }
 
 interface IUserRoundDetails {
-  user_id: string
-  user_name: string
-  guessLat: number
-  guessLng: number
-  guessDistance: number
+  round_no : number,
+  user_name : string,
+  user_id: string,
+  guessLat: string,
+  guessLng: string,
+  guessDistance: number,
   userPoints: number
 }
 
@@ -47,9 +48,10 @@ const MultiPlayer = () => {
 
 
   const [userRoundDetails, setUserRoundDetails] = useState<IUserRoundDetails[]>([])
-  const [guessLat, setGuessLat] = useState<number>(0)
-  const [guessLng, setGuessLng] = useState<number>(0)
+
   const [guessed, setGuessed] = useState<boolean>(false)
+  const [guessLat, setGuessLat] = useState<string>('')
+  const [guessLng, setGuessLng] = useState<string>('')
   const [guessDistance, setGuessDistance] = useState<number>(0)
   const [userPoints, setUserPoints] = useState<number>(0)
   const [results, setResults] = useState<any>({})
@@ -98,6 +100,9 @@ const MultiPlayer = () => {
       channel1.track({ userId: user.user_id })
     })
     
+    localStorage.setItem('custom_game_details', JSON.stringify(data[0]))
+    dispatch(setGame(data[0]))
+
     return;
   }
 
@@ -108,14 +113,29 @@ const MultiPlayer = () => {
 
       const new_round = game.cur_round ? game.cur_round === game.total_rounds - 1 ? game.cur_round : game.cur_round + 1 : 1
 
-      const { data, error }: any = await supabase
-        .from('game')
-        .update({
-          cur_round: new_round,
-          cur_round_start_time: moment(new Date()).add(timeToAdd, 'seconds').toISOString()
+      if(new_round === game.total_rounds - 1) {
+        setGameEndResult(true)
+        
+        channel3.send({
+          type: 'broadcast',
+          event: 'round_end',
+          payload: {
+            round: new_round
+          }
         })
-        .eq('game_id', game.game_id)
-        .select()
+
+        return;
+  
+      }
+
+      const { data , error } : any = await supabase
+      .from('game')
+      .update({
+        cur_round: new_round,
+        cur_round_start_time: moment(new Date()).add(timeToAdd, 'seconds').toISOString()
+      })
+      .eq('game_id', game.game_id) 
+      .select()
 
       channel3.send({
         type: 'broadcast',
@@ -138,7 +158,7 @@ const MultiPlayer = () => {
       const { data, error }: any = await supabase
         .from('game')
         .update({
-          round_details: [game.round_details, {
+          round_details: [...game.round_details , {
             round_lat: game.lat_lng_arr[game.cur_round].lat,
             round_lng: game.lat_lng_arr[game.cur_round].lng,
             user_details: userRoundDetails
@@ -159,6 +179,7 @@ const MultiPlayer = () => {
         dispatch(setGame(data[0]))
     }
     setRoundEnded(true)
+    setGuessed(false)
   }
 
   //FUNCTION CALL AFTER ALL ROUDNS ARE OVER
@@ -205,12 +226,14 @@ const MultiPlayer = () => {
   }
 
   //GUESS BUTTON AT EACH ROUND 
-  async function guessLatLng(guessLat: number, guessLng: number) {
-    setGuessed(true)
+  async function guessLatLng(guessLat: string, guessLng: string) {
+    setGuessed(true);
+    
     channel3.send({
       type: 'broadcast',
       event: 'round_details',
       payload: {
+        round_no: game.cur_round,
         user_id: user.user_id,
         user_name: user.user_name,
         guessLat: guessLat,
@@ -221,6 +244,7 @@ const MultiPlayer = () => {
     })
 
     setUserRoundDetails([...userRoundDetails, {
+      round_no: game.cur_round,
       user_id: user.user_id,
       user_name: user.user_name,
       guessLat: guessLat,
@@ -228,6 +252,8 @@ const MultiPlayer = () => {
       guessDistance: guessDistance,
       userPoints: userPoints
     }])
+
+
   }
 
   useEffect(() => {
@@ -450,12 +476,20 @@ const MultiPlayer = () => {
         </div>
       }
 
-      {
+    {
         roundEnded &&
         <div className="absolute top-0 h-screen w-full flex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
           <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl w-full bg-[rgba(255,255,255,10)]">
             <p className="text-5xl">Round Ended</p>
-            <Results lat1={lat1} lng1={lng1} guessLat={guessLat} guessLng={guessLng} userRoundDetails={userRoundDetails} />
+            
+            <Results 
+              round_no={game.cur_round}
+              lat1={parseFloat(game.lat_lng_arr[game.cur_round].lat)} 
+              lng1={parseFloat(game.lat_lng_arr[game.cur_round].lng)} 
+              guessLat={parseFloat(guessLat)} 
+              guessLng={parseFloat(guessLng)} 
+              userRoundDetails={userRoundDetails} 
+            />
             {
               (user.user_id === room.room_owner && readyUsers.has(user.user_id)) &&
               <button
@@ -490,8 +524,7 @@ const MultiPlayer = () => {
 
       <div className="absolute bottom-6 right-32 z-20">
         <button className={`${guessed ? 'bg-gray-500' : 'bg-red-500'} px-5 py-2 rounded-xl`} onClick={() => guessLatLng(guessLat, guessLng)}
-          disabled={guessed}
-        >
+          disabled={guessed}>
           Guess
         </button>
       </div>
