@@ -13,7 +13,7 @@ interface props {
     userRoundDetails: any;
 }
 
-function Results({ round_no , lat1, lng1, guessLat, guessLng, userRoundDetails }: props) {
+function Results({ round_no, lat1, lng1, guessLat, guessLng, userRoundDetails }: props) {
     const [midLat, setMidLat] = useState(0);
     const [midLng, setMidLng] = useState(0);
     const user = useSelector((state: RootState) => state.user)
@@ -70,16 +70,15 @@ function Results({ round_no , lat1, lng1, guessLat, guessLng, userRoundDetails }
             infoWindowRef1.current?.setContent('Actual Location');
             infoWindowRef1.current?.open(map, marker1);
 
-            userRoundDetails.filter((detail : any) => detail.round_no === round_no).forEach((userDetails: any, index: number) => {
+            userRoundDetails.filter((detail: any) => detail.round_no === round_no).forEach((userDetails: any, index: number) => {
                 const marker2 = new window.google.maps.Marker({
                     position: { lat: userDetails.guessLat, lng: userDetails.guessLng },
                     map: map,
-                    title: userDetails.user_name || `User ${index + 1}`,
                     icon: `https://maps.google.com/mapfiles/ms/icons/${user.user_id === userDetails.user_id ? 'red' : getMarkerColor(index)}.png`,
                 });
 
                 const infoWindow = new window.google.maps.InfoWindow();
-                infoWindow.setContent(`Guessed by ${userDetails.user_name}`);
+                infoWindow.setContent(`Guessed by ${user.user_id === userDetails.user_id ? 'You' : userDetails.user_name}`);
                 infoWindow.open(map, marker2);
 
                 const lineCoordinates = [
