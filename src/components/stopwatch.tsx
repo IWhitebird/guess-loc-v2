@@ -44,7 +44,7 @@ const Stopwatch = ({ startTime, endTime, endRound }: any) => {
     return () => clearInterval(intervalId);
   }, [startTime, endTime]);
 
-  // console.log(curTime, "CURTIME")
+  console.log(curTime, "CURTIME")
 
   return (
     <div>
