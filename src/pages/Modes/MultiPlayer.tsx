@@ -255,7 +255,6 @@ const MultiPlayer = () => {
 
   }
 
-
   useEffect(() => {
     const loadGoogleMapScript = () => {
       try {
@@ -375,15 +374,16 @@ const MultiPlayer = () => {
   useEffect(() => {
     channel1.on('presence', { event: 'sync' }, () => {
       const newState: any = channel1.presenceState()
-
       let ready = new Set<String>()
 
       for (const key in newState) {
-        ready.add(newState[key][0].userId)
+        ready.add(newState[key][0])
       }
       setReadyUsers(ready)
     })
   }, [game]);
+
+  console.log(readyUsers)
 
   channel2.on('postgres_changes',
     {
@@ -423,7 +423,7 @@ const MultiPlayer = () => {
 
   return (
     <div>
-      <Scoreboard userRoundDetails={userRoundDetails} />
+      <Scoreboard userRoundDetails={userRoundDetails} readyUsers={readyUsers}/>
       <div className="w-full h-screen" ref={streetViewContainerRef}></div>
       <div className={`fixed duration-300 ${chatModal ? 'bottom-0' : 'bottom-[-31.2rem]'} left-0 z-50 h-[500px] backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] `}>
         <div className="flex absolute bottom-[31.25rem] backdrop-blur-3xl text-white bg-[rgba(0,0,0,0.5)] rounded-tr-xl flex-col
