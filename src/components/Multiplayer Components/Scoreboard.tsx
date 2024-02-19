@@ -2,7 +2,7 @@
 
 export default function Scoreboard() {
     return (
-        <div className="absolute w-auto p-5 py-3 z-50 text-black rounded-3xl bg-[rgba(50,50,50,0.1)] backdrop-blur-lg border-gray-300 border flex flex-col gap-3 left-3 top-3">
+        <div className="absolute w-auto p-5 py-3 text-black rounded-3xl bg-[rgba(50,50,50,0.1)] backdrop-blur-lg border-gray-300 border flex flex-col gap-3 left-3 top-3">
 
             <div className="flex w-full justify-center text-lg items-center">
                 <p>Round 1/5</p>

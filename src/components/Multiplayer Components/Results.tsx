@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/reducers/reducers';
 
+
 interface props {
     round_no: number;
     lat1: number;
@@ -70,7 +71,6 @@ function Results({ round_no , lat1, lng1, guessLat, guessLng, userRoundDetails }
             infoWindowRef1.current?.open(map, marker1);
 
             userRoundDetails.filter((detail : any) => detail.round_no === round_no).forEach((userDetails: any, index: number) => {
-
                 const marker2 = new window.google.maps.Marker({
                     position: { lat: userDetails.guessLat, lng: userDetails.guessLng },
                     map: map,
@@ -122,4 +122,3 @@ function Results({ round_no , lat1, lng1, guessLat, guessLng, userRoundDetails }
 }
 
 export default Results
-
