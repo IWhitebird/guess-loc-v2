@@ -19,6 +19,8 @@ interface RoundDetails {
 }
 
 interface RoundUserDetails {
+    round_no : number,
+    user_name: string,
     user_id: string,
     guessLat: string,
     guessLng: string,
@@ -119,7 +121,7 @@ export const gameSlice = createSlice({
             state.cur_round = action.payload.cur_round
             state.game_winner = action.payload.game_winner
             state.game_participants = action.payload.game_participants
-            state.round_details = action.payload.round_details
+            state.round_details = action.payload.round_details ? action.payload.round_details : []
             state.cur_round_start_time = action.payload.cur_round_start_time
         },
 

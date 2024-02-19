@@ -233,9 +233,9 @@ const Room = () => {
                   <div className="flex items-center justify-center gap-3 ml-5">
                     <button
                       onClick={() => setRoomSettingsChange({ ...roomSettingsChange, game_rounds: roomSettingsChange?.game_rounds + 1 })}
-                      disabled={roomSettingsChange?.game_rounds >= 5}
+                      disabled={roomSettingsChange?.game_rounds >= 15}
                       id='fn_button'
-                      className={`${roomSettingsChange.game_rounds >= 5 && 'cursor-not-allowed'}`}
+                      className={`${roomSettingsChange.game_rounds >= 15 && 'cursor-not-allowed'}`}
                       style={{ fontSize: '1.4rem', padding: '0.6rem 1.5rem' }}
                     >
                       <FaPlusCircle /><span id='fnButtonSpan'></span>

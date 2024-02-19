@@ -1,8 +1,10 @@
+
 import { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/reducers/reducers';
 
 interface props {
+    round_no: number;
     lat1: number;
     lng1: number;
     guessLat: number
@@ -10,7 +12,7 @@ interface props {
     userRoundDetails: any;
 }
 
-function Results({ lat1, lng1, guessLat, guessLng, userRoundDetails }: props) {
+function Results({ round_no , lat1, lng1, guessLat, guessLng, userRoundDetails }: props) {
     const [midLat, setMidLat] = useState(0);
     const [midLng, setMidLng] = useState(0);
     const user = useSelector((state: RootState) => state.user)
@@ -67,7 +69,8 @@ function Results({ lat1, lng1, guessLat, guessLng, userRoundDetails }: props) {
             infoWindowRef1.current?.setContent('Actual Location');
             infoWindowRef1.current?.open(map, marker1);
 
-            userRoundDetails.forEach((userDetails: any, index: number) => {
+            userRoundDetails.filter((detail : any) => detail.round_no === round_no).forEach((userDetails: any, index: number) => {
+
                 const marker2 = new window.google.maps.Marker({
                     position: { lat: userDetails.guessLat, lng: userDetails.guessLng },
                     map: map,
@@ -119,3 +122,4 @@ function Results({ lat1, lng1, guessLat, guessLng, userRoundDetails }: props) {
 }
 
 export default Results
+
