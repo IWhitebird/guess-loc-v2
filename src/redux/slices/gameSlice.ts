@@ -95,7 +95,7 @@ async function updateGame(game_id : string) {
         .select()
         .eq('game_id', game_id)
 
-    if (error) {
+    if (error || data.length === 0) {
         return "error"
     }
     else {

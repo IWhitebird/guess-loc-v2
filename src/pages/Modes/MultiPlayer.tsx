@@ -108,22 +108,21 @@ const MultiPlayer = () => {
     if (user.user_id === room.room_owner && readyUsers.size === room.room_participants.length) {
       const timeToAdd = game.round_duration + 5
 
-      const new_round = game.cur_round ? game.cur_round === game.total_rounds - 1 ? game.cur_round : game.cur_round + 1 : 1
-
-      if(new_round === game.total_rounds - 1) {
+      if(game.total_rounds === game.cur_round) {
         setGameEndResult(true)
-        
+
         channel3.send({
           type: 'broadcast',
           event: 'round_end',
           payload: {
-            round: new_round
+            round: game.cur_round
           }
         })
-
         return;
-  
       }
+
+      const new_round = game.cur_round ? game.cur_round === game.total_rounds ? game.cur_round : game.cur_round + 1 : 1
+
 
       const { data , error } : any = await supabase
       .from('game')
@@ -156,8 +155,8 @@ const MultiPlayer = () => {
         .from('game')
         .update({
           round_details: [...game.round_details , {
-            round_lat: game.lat_lng_arr[game.cur_round].lat,
-            round_lng: game.lat_lng_arr[game.cur_round].lng,
+            round_lat: game.lat_lng_arr[game.cur_round-1].lat,
+            round_lng: game.lat_lng_arr[game.cur_round-1].lng,
             user_details: userRoundDetails
           }],
         })
@@ -214,6 +213,7 @@ const MultiPlayer = () => {
 
     setResults(all_user_score)
   }
+
 
   //BUTTON IN THE FINAL RESULTS TO GO BACK TO ROOm
   async function endGame() {
@@ -322,10 +322,11 @@ const MultiPlayer = () => {
       mapRef.current = map;
 
       let lato = 0 , lago = 0
-      if(game.cur_round_start_time !== null){
-        console.log(game.lat_lng_arr[game.cur_round].lat , game.lat_lng_arr[game.cur_round].lng)
-        lato = parseFloat(game.lat_lng_arr[game.cur_round].lat)
-        lago = parseFloat(game.lat_lng_arr[game.cur_round].lng)
+      if(game.cur_round_start_time !== null && game.cur_round !== 0){
+        console.log("LAT 43634643" , game.lat_lng_arr)
+        console.log("CUR ROUND 43634643" , game.cur_round)
+        lato = parseFloat(game.lat_lng_arr[game.cur_round-1].lat)
+        lago = parseFloat(game.lat_lng_arr[game.cur_round-1].lng)
       }
       
       const panoramaOptions = {
@@ -440,11 +441,15 @@ const MultiPlayer = () => {
         <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl bg-[rgba(255,255,255,10)]">
         Game Starting in {
           game?.cur_round_start_time !== null ?
-          <Stopwatch
-            startTime={moment(game.cur_round_start_time).subtract(game.round_duration, 'seconds').toISOString()}
-            endTime={game.cur_round_start_time}
-            endRound={endRound}
-          />
+          <div>
+            <Stopwatch
+              startTime={moment(game.cur_round_start_time).subtract(game.round_duration, 'seconds').toISOString()}
+              endTime={game.cur_round_start_time}
+              endRound={endRound}
+            />
+
+            [ {game.cur_round} / {game.total_rounds}]
+          </div>
           : 
           <div>
             <ImSpinner2 className="animate-spin" />
@@ -480,8 +485,8 @@ const MultiPlayer = () => {
             <p className="text-5xl">Round Ended</p>
             <Results 
               round_no={game.cur_round}
-              lat1={parseFloat(game.lat_lng_arr[game.cur_round].lat)} 
-              lng1={parseFloat(game.lat_lng_arr[game.cur_round].lng)} 
+              lat1={parseFloat(game.lat_lng_arr[game.cur_round-1].lat)} 
+              lng1={parseFloat(game.lat_lng_arr[game.cur_round-1].lng)} 
               guessLat={parseFloat(guessLat)} 
               guessLng={parseFloat(guessLng)} 
               userRoundDetails={userRoundDetails} 

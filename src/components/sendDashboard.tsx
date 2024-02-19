@@ -67,7 +67,7 @@ const SendDashboard = ({ loggedIN, friendModal, audioSettings, setFriendModal, s
 
         onlineChannel.on('presence', { event: 'sync' }, () => {
             const newState = onlineChannel.presenceState();
-            console.log("fafafafafafaf" , newState)
+     
             for (const key in newState) {
                 const user = newState[key];
                 for (const key in user) {
