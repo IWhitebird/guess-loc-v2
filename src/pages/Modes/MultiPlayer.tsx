@@ -13,6 +13,7 @@ import { ImSpinner2 } from "react-icons/im";
 import ChatModel from "../../components/chatmodel";
 import { FaChevronCircleUp } from "react-icons/fa";
 import Results from "../../components/Multiplayer Components/Results";
+import { CalcDistance , CalcPoints } from "../../utils/game";
 
 interface IRoundDetails {
   round_lat: string,
@@ -224,6 +225,8 @@ const MultiPlayer = () => {
   //GUESS BUTTON AT EACH ROUND 
   async function guessLatLng(guessLat: string, guessLng: string) {
     setGuessed(true);
+    const distance = CalcDistance(parseFloat(game.lat_lng_arr[game.cur_round-1].lat), parseFloat(guessLat), parseFloat(game.lat_lng_arr[game.cur_round-1].lng), parseFloat(guessLng))
+    const userPoints = CalcPoints(distance)
 
     channel3.send({
       type: 'broadcast',
