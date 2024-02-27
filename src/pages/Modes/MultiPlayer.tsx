@@ -256,7 +256,6 @@ const MultiPlayer = () => {
       userPoints: userPoints
     }])
 
-
   }
 
   useEffect(() => {
@@ -522,8 +521,10 @@ const MultiPlayer = () => {
       <div className="absolute h-[200px] w-[300px] hover:w-[500px] hover:h-[300px] hover:opacity-100 border z-30 right-10 bottom-20 transition-all duration-200 ease-in-out opacity-50 cursor-crosshair" ref={mapContainerRef}></div>
 
       <div className="absolute bottom-6 right-32 z-20">
-        <button className={`${guessed ? 'bg-gray-500' : 'bg-red-500'} px-5 py-2 rounded-xl`} onClick={() => guessLatLng(guessLat, guessLng)}
-          disabled={guessed}>
+        <button className={`${guessed ? 'bg-gray-500' : 'bg-red-500'} px-5 py-2 rounded-xl`} 
+          onClick={() => guessLatLng(guessLat, guessLng)}
+          disabled={guessed}
+          >
           Guess
         </button>
       </div>

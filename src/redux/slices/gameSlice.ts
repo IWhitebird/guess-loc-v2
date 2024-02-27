@@ -83,19 +83,37 @@ if (localStorage.getItem('custom_game_details') === null) {
     const parsedToken = JSON.parse(localStorage.getItem('custom_game_details')!);
     const data : any = await updateGame(parsedToken.game_id)
 
-    iState = {
-        game_id: data[0].game_id,
-        room_id: data[0].room_id,
-        game_type: data[0].game_type,
-        total_rounds: data[0].total_rounds,
-        round_duration: data[0].round_duration,
-        lat_lng_arr : data[0].lat_lng_arr,
-        cur_round : data[0].cur_round,
-        game_winner : data[0].game_winner,
-        game_participants: data[0].game_participants,
-        round_details : data[0].round_details,
-        game_results : data[0].game_results,
-        cur_round_start_time : data[0].cur_round_start_time,
+    if(data !== "error") {
+        iState = {
+            game_id: data[0].game_id,
+            room_id: data[0].room_id,
+            game_type: data[0].game_type,
+            total_rounds: data[0].total_rounds,
+            round_duration: data[0].round_duration,
+            lat_lng_arr : data[0].lat_lng_arr,
+            cur_round : data[0].cur_round,
+            game_winner : data[0].game_winner,
+            game_participants: data[0].game_participants,
+            round_details : data[0].round_details,
+            game_results : data[0].game_results,
+            cur_round_start_time : data[0].cur_round_start_time,
+        }
+    }
+    else if (data === "error") {
+        iState = {
+            game_id: '',
+            room_id: '',
+            game_type: '',
+            total_rounds: 0,
+            round_duration: 0,
+            lat_lng_arr : [],
+            cur_round : 0,
+            game_winner : null,
+            game_participants: [],
+            round_details : [],
+            game_results : [],
+            cur_round_start_time : null,
+        }
     }
 }
 

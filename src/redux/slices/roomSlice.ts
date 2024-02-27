@@ -61,13 +61,13 @@ if (localStorage.getItem('custom_room_details') === null) {
     const parsedToken = JSON.parse(localStorage.getItem('custom_room_details')!);
 
     const data: any = await updateRoom(parsedToken)
-    console.log("DOOOTAAA" , data)
-    if (data) {
-        console.log("DOOOTAAA" , data)
+
+    if (data !== "error") {
+        console.log(data)
         iState = {
-            room_id: data[0].room_id!,
-            room_owner: data[0].room_owner!,
-            room_name: data[0].room_name!,
+            room_id: data[0].room_id,
+            room_owner: data[0].room_owner,
+            room_name: data[0].room_name,
             room_settings: {
                 game_rounds: data[0].room_settings.game_rounds,
                 round_duration: data[0].room_settings.round_duration
@@ -99,10 +99,12 @@ async function updateRoom(room_id: string) {
         select().
         eq('room_id', room_id)
 
-    if (error)
+    if (error || data.length === 0) {
         return "error"
-    else
-        return data;
+    }
+    else {
+        return data
+    }
 }
 
 export const roomSlice = createSlice({
