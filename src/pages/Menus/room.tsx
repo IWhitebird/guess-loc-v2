@@ -200,7 +200,7 @@ const Room = () => {
             <div className="w-full bg-[#ffffff2c] backdrop-blur-md h-full flex rounded-xl">
               <div className="flex flex-col  h-full px-4 w-[500px] border-r">
                 <h1 className="pt-6 pl-2 text-2xl text-white">Players</h1>
-                {roomDetails?.room_participants?.map((participant: any , index : number) => (
+                {roomDetails?.room_participants?.map((participant , index : number) => (
                   <div key={index}>
                     <div  className="flex flex-row items-center justify-start w-full h-20">
                       <img className="w-14 h-14 rounded-full bg-[rgba(255,255,255,0.3)]" src={participant.room_user_profile ? participant.room_user_profile : `https://api.dicebear.com/6.x/personas/svg?seed=${participant.room_user_name}`} />

@@ -7,21 +7,21 @@ import { useNavigate } from "react-router-dom";
 import supabase from "../../supabase/init";
 import { toast } from "react-hot-toast";
 import moment from 'moment';
-import Stopwatch from "../../components/stopwatch";
-import Scoreboard from "../../components/Multiplayer Components/Scoreboard";
+import Stopwatch from "../../components/Multi_Comp/stopwatch";
+import Scoreboard from "../../components/Multi_Comp/Scoreboard";
 import { ImSpinner2 } from "react-icons/im";
 import ChatModel from "../../components/chatmodel";
 import { FaChevronCircleUp } from "react-icons/fa";
-import Results from "../../components/Multiplayer Components/Results";
+import Results from "../../components/Multi_Comp/Results";
 import { CalcDistance , CalcPoints } from "../../utils/game";
 
-interface IRoundDetails {
+export interface IRoundDetails {
   round_lat: string,
   round_lng: string,
   user_details: IUserRoundDetails[]
 }
 
-interface IUserRoundDetails {
+export interface IUserRoundDetails {
   round_no: number,
   user_name: string,
   user_id: string,
@@ -43,7 +43,7 @@ const MultiPlayer = () => {
 
   const channel1 = supabase.channel(`${game.game_id}_game`)
   const channel2 = supabase.channel(`${game.game_id}`)
-  const channel3 = supabase.channel(`${game.game_id}_rounds`)
+  const channel3 = supabase.channel(`${game.game_id}_rounds`).subscribe()
 
   const [readyUsers, setReadyUsers] = useState<Set<String>>(new Set())
 
@@ -52,8 +52,6 @@ const MultiPlayer = () => {
   const [guessed, setGuessed] = useState<boolean>(false)
   const [guessLat, setGuessLat] = useState<string>('')
   const [guessLng, setGuessLng] = useState<string>('')
-  const [guessDistance, setGuessDistance] = useState<number>(0)
-  const [userPoints, setUserPoints] = useState<number>(0)
   const [results, setResults] = useState<any>({})
 
   const [chatModal, setChatModal] = useState<boolean>(false)
@@ -124,8 +122,7 @@ const MultiPlayer = () => {
 
       const new_round = game.cur_round ? game.cur_round === game.total_rounds ? game.cur_round : game.cur_round + 1 : 1
 
-
-      const { data, error }: any = await supabase
+      const { data, error } : any = await supabase
         .from('game')
         .update({
           cur_round: new_round,
@@ -151,6 +148,7 @@ const MultiPlayer = () => {
 
   //FUNCTION TO END EACH ROUND
   async function endRound() {
+    toast.success("Round Ended!")
     if (user.user_id === room.room_owner && readyUsers.has(user.user_id)) {
       const { data, error }: any = await supabase
         .from('game')
@@ -194,6 +192,8 @@ const MultiPlayer = () => {
           all_user_score[user_details.user_id].userPoints += user_details.userPoints
         } else {
           all_user_score[user_details.user_id] = {
+            user_id: user_details.user_id,
+            user_name : user_details.user_name,
             userPoints: user_details.userPoints
           }
         }
@@ -201,17 +201,21 @@ const MultiPlayer = () => {
       }
     }
 
-    all_user_score.sort((a: any, b: any) => { return b.userPoints - a.userPoints })
+    const all_user_score_array : any[] = Object.values(all_user_score)
+
+    all_user_score_array.sort((a: any, b: any) => { return b.userPoints - a.userPoints })
 
     if (user.user_id === room.room_owner && readyUsers.has(user.user_id)) {
       await supabase
         .from('game')
         .update({
-          game_winner: all_user_score[0].user_id
+          game_winner: all_user_score_array[0].user_id ,
+          game_results : all_user_score_array
         })
         .eq('game_id', game.game_id)
-    }
 
+    }
+    console.log("Here")
     setResults(all_user_score)
   }
 
@@ -237,7 +241,7 @@ const MultiPlayer = () => {
         user_name: user.user_name,
         guessLat: guessLat,
         guessLng: guessLng,
-        guessDistance: guessDistance,
+        guessDistance: distance,
         userPoints: userPoints
       }
     })
@@ -248,7 +252,7 @@ const MultiPlayer = () => {
       user_name: user.user_name,
       guessLat: guessLat,
       guessLng: guessLng,
-      guessDistance: guessDistance,
+      guessDistance: distance,
       userPoints: userPoints
     }])
 
@@ -370,20 +374,17 @@ const MultiPlayer = () => {
     getGame();
   }, []);
 
-  useEffect(() => {
-    channel1.on('presence', { event: 'sync' }, () => {
-      const newState: any = channel1.presenceState()
 
-      let ready = new Set<String>()
+  channel1.on('presence', { event: 'sync' }, () => {
+    const newState: any = channel1.presenceState()
 
-      for (const key in newState) {
-        ready.add(newState[key][0].userId)
-      }
-      setReadyUsers(ready)
-    })
-  }, [game]);
+    let ready = new Set<String>()
 
-  console.log(readyUsers)
+    for (const key in newState) {
+      ready.add(newState[key][0].userId)
+    }
+    setReadyUsers(ready)
+  })
 
   channel2.on('postgres_changes',
     {
@@ -393,10 +394,9 @@ const MultiPlayer = () => {
       filter: `game_id=eq.${game.game_id}`
     },
     payload => {
-      console.log("POSTGRES PAYLOAD :-", payload)
+      console.log("PG CHANGE : ", payload)
       dispatch(setGame(payload.new as any))
-    }
-  ).subscribe()
+    }).subscribe()
 
   channel3.on('broadcast',
     { event: 'round_start' },
@@ -411,29 +411,31 @@ const MultiPlayer = () => {
     { event: 'round_details' },
     ({ payload }) => {
       setUserRoundDetails([...userRoundDetails, payload])
-    }).subscribe()
+  })
 
 
-  1
-  console.log("USER ROUND DETAILS", userRoundDetails)
-  console.log("round ended", roundEnded)
-  console.log("waiting players", waitingPlayers)
-  console.log("ready users", readyUsers)
-  console.log("userRoundDetails", userRoundDetails)
-  console.log("Game Details", game)
+  console.log("======================================")
+  console.log({userRoundDetails})
+  console.log({roundEnded})
+  console.log({waitingPlayers})
+  console.log({readyUsers})
+  console.log({userRoundDetails})
+  console.log({game})
+  console.log("======================================")
 
   return (
     <div>
       <Scoreboard userRoundDetails={userRoundDetails} />
+      
       <div className="w-full h-screen" ref={streetViewContainerRef}></div>
-      <div className={`fixed duration-300 ${chatModal ? 'bottom-0' : 'bottom-[-31.2rem]'} left-0 z-50 h-[500px] backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] `}>
-        <div className="flex absolute bottom-[31.25rem] backdrop-blur-3xl text-white bg-[rgba(0,0,0,0.5)] rounded-tr-xl flex-col
-         w-full items-end p-2 text-2xl cursor-pointer"
-          onClick={() => setChatModal(!chatModal)}>
-          <p className={`flex justify-between w-full items-center px-3`}>Chat <span className={`${chatModal ? 'rotate-180' : ''} `}><FaChevronCircleUp /></span></p>
+        <div className={`fixed duration-300 ${chatModal ? 'bottom-0' : 'bottom-[-31.2rem]'} left-0 z-50 h-[500px] backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] `}>
+          <div className="flex absolute bottom-[31.25rem] backdrop-blur-3xl text-white bg-[rgba(0,0,0,0.5)] rounded-tr-xl flex-col
+          w-full items-end p-2 text-2xl cursor-pointer"
+            onClick={() => setChatModal(!chatModal)}>
+            <p className={`flex justify-between w-full items-center px-3`}>Chat <span className={`${chatModal ? 'rotate-180' : ''} `}><FaChevronCircleUp /></span></p>
+          </div>
+          <ChatModel />
         </div>
-        <ChatModel />
-      </div>
       <div className="absolute bottom-0.5 bg-black z-50 text-white right-24 text-sm opacity-100"> {room.cur_game_id}</div>
 
       <div className={`absolute left-0 w-full flex justify-center z-40 items-center ${game.cur_round === 0 ? 'bg-[rgba(0,0,0,0.2)] backdrop-blur-sm h-screen top-0' : 'top-6'} `}>
@@ -456,7 +458,7 @@ const MultiPlayer = () => {
       </div>
 
       {
-        waitingPlayers &&
+        waitingPlayers && game.cur_round === 0 &&
         <div className="absolute top-0 left-[20rem] w-fullflex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
           <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl bg-pink-300] bg-[rgba(255,255,255,10)]">
             waiting Players {readyUsers.size} / {room.room_participants.length}
@@ -495,7 +497,7 @@ const MultiPlayer = () => {
                     startRound()
                     setRoundEnded(false)
                   }}>Next Round</button>
-            }
+                }
           </div>
         </div>
       }
@@ -508,8 +510,8 @@ const MultiPlayer = () => {
             <button
               disabled={user.user_id === room.room_owner && readyUsers.size !== room.room_participants.length}
               onClick={
-                () => {
-                  fetchResults()
+                async () => {
+                  await fetchResults()
                   setGameEndResult(false)
                 }}>Go back to room</button>
           </div>
@@ -525,8 +527,6 @@ const MultiPlayer = () => {
           Guess
         </button>
       </div>
-
-
 
     </div >
   )

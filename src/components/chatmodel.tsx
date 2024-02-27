@@ -11,11 +11,12 @@ const ChatModel: React.FC = () => {
     const dispatch = useDispatch()
     const location = useLocation()
     const { user_id, user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
+    console.log({user_profile_pic})
     const roomDetails = useSelector((state: RootState) => state.room)
     const containerRef = useRef<HTMLDivElement>(null);
     const enterRef = useRef<HTMLButtonElement>(null);
     const [newMessage, setNewMessage] = useState<string>('');
-    const channel = supabase.channel(`${roomDetails.room_id}_chat`)
+    const channel = supabase.channel(`${roomDetails.room_id}_chat`).subscribe()
     const [curChat, setCurChat] = useState<any[]>(roomDetails.room_chat)
 
     
@@ -26,17 +27,8 @@ const ChatModel: React.FC = () => {
             return;
         }
 
-        setCurChat([...curChat, {
-            chatter_id: user_id,
-            chatter_name: user_name,
-            chatter_image: user_profile_pic,
-            chatter_message: myMsg,
-            chatter_time: new Date().toLocaleTimeString()
-        }])
-
-
-        sendMessage(roomDetails.room_id , myMsg, user_id, user_name)
-        await updateRoomChat(roomDetails.room_id , user_id, user_name ,myMsg)
+        sendMessage(`${roomDetails.room_id}_chat` , myMsg, user_id, user_name ,user_profile_pic)
+        await updateRoomChat(roomDetails.room_id ,myMsg , user_id, user_name ,user_profile_pic)
         scrollToBottom();
     }
 
@@ -70,7 +62,7 @@ const ChatModel: React.FC = () => {
                             chat.chatter_id !== user_id &&
                             <img
                                 className="w-8 h-8 rounded-full"
-                                src={`${roomDetails.room_participants.find((user : any) => user.user_id === chat.chatter_id)?.room_user_profile || 
+                                src={`${roomDetails.room_participants.find((user : any) => user.room_user_id === chat.chatter_id)?.room_user_profile || 
                                         `https://api.dicebear.com/6.x/personas/svg?seed=${chat.chatter_name}`}`}
                             />
                         }

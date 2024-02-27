@@ -14,6 +14,6 @@ export function CalcDistance(lat1: number, lat2: number, lon1: number, lon2: num
 }
 
 export function CalcPoints(distance: number) {
-    return Math.max(0, 5000 - distance);
+    return Math.ceil(Math.max(0, 10000 - distance));
 }
 

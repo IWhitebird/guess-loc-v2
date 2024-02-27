@@ -12,6 +12,12 @@ interface GameUsers {
     room_user_image: string;
 }
 
+interface GameResult {
+    user_id: string;
+    user_name : string;
+    userPoints: number;
+}
+
 interface RoundDetails {
     round_lat : string,
     round_lng : string,
@@ -38,6 +44,7 @@ interface GameState {
     cur_round : number;
     game_winner : string | null;
     game_participants: GameUsers[],
+    game_results : GameResult[],
     round_details : RoundDetails[],
     cur_round_start_time : Date | null,
 }
@@ -53,6 +60,7 @@ let iState: GameState = {
     game_winner : null,
     game_participants: [],
     round_details : [],
+    game_results : [],
     cur_round_start_time : null,
 };
 
@@ -68,6 +76,7 @@ if (localStorage.getItem('custom_game_details') === null) {
         game_winner : null,
         game_participants: [],
         round_details : [],
+        game_results : [],
         cur_round_start_time : null,
     }
 } else {
@@ -85,6 +94,7 @@ if (localStorage.getItem('custom_game_details') === null) {
         game_winner : data[0].game_winner,
         game_participants: data[0].game_participants,
         round_details : data[0].round_details,
+        game_results : data[0].game_results,
         cur_round_start_time : data[0].cur_round_start_time,
     }
 }
@@ -122,6 +132,7 @@ export const gameSlice = createSlice({
             state.game_winner = action.payload.game_winner
             state.game_participants = action.payload.game_participants
             state.round_details = action.payload.round_details ? action.payload.round_details : []
+            state.game_results = action.payload.game_results ? action.payload.game_results : []
             state.cur_round_start_time = action.payload.cur_round_start_time
         },
 
@@ -148,6 +159,7 @@ export const gameSlice = createSlice({
             state.game_winner = null
             state.game_participants = []
             state.round_details = []
+            state.game_results = []
             state.cur_round_start_time = null   
         },
 

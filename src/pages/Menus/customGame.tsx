@@ -63,7 +63,7 @@ const CustomGame = () => {
        await updateRoomChat(joinRoomDetails.room_id as string, user_id, user_name,`${user_name} joined the room`, )
 
       // Send Message on Websocket
-      sendMessage(joinRoomDetails.room_id as string, `${user_name} joined the room`, user_id, user_name)
+      sendMessage(joinRoomDetails.room_id as string, `${user_name} joined the room`, user_id, user_name ,user_profile_pic)
 
       toast.success("Room joined")
       localStorage.setItem('custom_room_details', JSON.stringify(joinRoomDetails.room_id))
@@ -104,7 +104,7 @@ const CustomGame = () => {
             room_participants: [{
               room_user_id: user_id,
               room_user_name: user_name,
-              room_user_image: user_profile_pic,
+              room_user_profile: user_profile_pic,
             }],
             room_chat: [{
               chatter_id: user_id,
@@ -121,7 +121,7 @@ const CustomGame = () => {
         return;
       }
 
-      sendMessage(data[0].room_id as string, `${user_name} joined the room`, user_id, user_name, user_profile_pic)
+      await sendMessage(data[0].room_id as string, `${user_name} joined the room`, user_id, user_name, user_profile_pic)
 
       toast.success("Room created")
       console.log(data)

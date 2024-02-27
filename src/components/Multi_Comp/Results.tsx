@@ -79,7 +79,13 @@ function Results({ round_no, lat1, lng1, guessLat, guessLng, userRoundDetails }:
                 });
 
                 const infoWindow = new window.google.maps.InfoWindow();
-                infoWindow.setContent(`Guessed by ${user.user_id === userDetails.user_id ? 'You' : userDetails.user_name}`);
+                let content = `
+                    <div>
+                        <p>Guessed by ${user.user_id === userDetails.user_id ? 'You' : userDetails.user_name}</p>
+                        <p>Distance: ${userDetails.userPoints} km</p>
+                    </div>
+                    `
+                infoWindow.setContent(content);
                 infoWindow.open(map, marker2);
                 const lineCoordinates = [
                     { lat: lat1, lng: lng1 },

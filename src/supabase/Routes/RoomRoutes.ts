@@ -1,29 +1,27 @@
 import supabase from "../init";
 
-export async function sendMessage(roomId : string , message : string , ...args : any[]) {
-    let tempChanel = supabase.channel(`${roomId}_chat`) 
-    tempChanel.subscribe((status) => {
-      if (status !== 'SUBSCRIBED') { return } 
-      tempChanel.send({
-          type: 'broadcast',
-          event: 'room_chatting',
-          payload : {
-              chatter_id: args[0],
-              chatter_name: args[1],
-              chatter_image: args[2],
-              chatter_message: message,
-              chatter_time: new Date().toLocaleTimeString()
-          }
-        })
+export async function sendMessage(channel_id : string , message : string , ...args : any[]) {
+    await supabase.channel(channel_id).
+    send({
+        type: 'broadcast',
+        event: 'room_chatting',
+        payload : {
+            chatter_id: args[0],
+            chatter_name: args[1],
+            chatter_image: args[2],
+            chatter_message: message,
+            chatter_time: new Date().toLocaleTimeString()
+        }
     })
 }
 
-export async function updateRoomChat(roomId : string , ...args : any[])  {
+export async function updateRoomChat(roomId : string , message : string , ...args : any[])  {
 
     const msg = {
         chatter_id: args[0],
         chatter_name: args[1],
-        chatter_message: args[2],
+        chatter_image: args[2],
+        chatter_message: message,
         chatter_time: new Date().toLocaleTimeString()
     }
 
