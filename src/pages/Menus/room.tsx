@@ -11,6 +11,7 @@ import { RiDoorOpenFill } from "react-icons/ri";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { PiPlayFill } from "react-icons/pi";
 import randomStreetView from "../../scripts/index";
+import { IoGameController } from "react-icons/io5";
 import { toast } from "react-hot-toast";
 import { updateRoomChat , sendMessage } from "../../supabase/Routes/RoomRoutes";
 
@@ -166,30 +167,39 @@ const Room = () => {
     <div className="bg-purple-950 w-full h-[100vh] ">
       <div className="flex justify-start items-center p-6 h-[100vh] w-[100%] bg-gradient-to-r from-gray-950 to-transparent">
         <div className="flex flex-row w-full h-full">
-          <div className="flex flex-col items-center justify-center w-full h-20 pt-24">
+          <div className="flex flex-col items-center justify-center w-full h-20 pt-40">
             <h1 className="flex text-2xl text-white">ROOM INFO</h1>
             <div className="flex flex-col items-center w-full h-20 mt-10 justify-left">
               <div className="text-lg text-white">Name : {roomDetails.room_name}</div>
               <div className="text-lg text-white">Game Rounds : {roomDetails.room_settings?.game_rounds}</div>
               <div className="text-lg text-white">Round Duratio : {roomDetails.room_settings?.round_duration}</div>
+              <div className="" style={{paddingTop:'200px'}}>
+                <div className="pt-4">
+                <button id='fn_button' style={{ fontSize: '1.4rem', padding: '1.4rem 1.4rem 1.4rem 1.9rem' }} onClick={() => setChangeSettingsModal(true)}>
+                  <IoGameController className="mr-2" /> Game Modes
+                  <span id='fnButtonSpan'></span>
+                </button>
+              </div>
+              </div>
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center w-full h-20 mt-9">
-            <div className="pt-4">
+
+          <div className="flex flex-col items-start justify-start w-full h-20 mt-9">
+            <div className="pt-4 ml-6">
               <button id='fn_button' style={{ fontSize: '1.1rem', padding: '1rem 1rem 1rem 1.5rem' }} onClick={() => setChangeSettingsModal(true)}>
                 <IoSettingsSharp className="mr-2" /> CHANGE SETTINGS
                 <span id='fnButtonSpan'></span>
               </button>
             </div>
-            <div className="pt-4">
+            <div className="pt-4 ml-12">
               <button id='fn_button' style={{ fontSize: '1.1rem', padding: '1rem 1rem 1rem 1.5rem' }} onClick={LeaveRoom}>
                 <RiDoorOpenFill className="mr-2" />LEAVE ROOM
                 <span id='fnButtonSpan'></span>
               </button>
             </div>
-            <div className="pt-4">
-              <button onClick={startGameHandle} id='fn_button' style={{ fontSize: '1.1rem', padding: '1rem 1rem 1rem 1.5rem' }}>
-                <PiPlayFill className="mr-2" />START GAME
+            <div className="" style={{paddingTop:'450px'}}>
+              <button onClick={startGameHandle} id='fn_button' style={{ fontSize: '1.5rem', padding: '2rem 2rem 2rem 2.5rem' }}>
+                <PiPlayFill className="mr-4" />START GAME
                 <span id='fnButtonSpan'></span>
               </button>
             </div>
@@ -204,7 +214,7 @@ const Room = () => {
                   <div key={index}>
                     <div  className="flex flex-row items-center justify-start w-full h-20">
                       <img className="w-14 h-14 rounded-full bg-[rgba(255,255,255,0.3)]" src={participant.room_user_profile ? participant.room_user_profile : `https://api.dicebear.com/6.x/personas/svg?seed=${participant.room_user_name}`} />
-                      <div className="text-xl ml-2 text-white">{participant.room_user_name.length > 15 ? `${participant.room_user_name.slice(0, 15)}...` : participant.room_user_name}</div>
+                      <div className="ml-2 text-xl text-white">{participant.room_user_name.length > 15 ? `${participant.room_user_name.slice(0, 15)}...` : participant.room_user_name}</div>
                     </div>
                     <hr className="w-full" />
                   </div>
@@ -261,6 +271,8 @@ const Room = () => {
                   onChange={changeSettingsInput}
                   className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
                 />
+
+                
 
                 <div className="flex flex-row-reverse justify-center gap-3 mt-5">
                   <button
