@@ -13,7 +13,7 @@ import { ImSpinner2 } from "react-icons/im";
 import ChatModel from "../../components/chatmodel";
 import { FaChevronCircleUp } from "react-icons/fa";
 import Results from "../../components/Multi_Comp/Results";
-import { CalcDistance , CalcPoints } from "../../utils/game";
+import { CalcDistance, CalcPoints } from "../../utils/game";
 
 export interface IRoundDetails {
   round_lat: string,
@@ -107,7 +107,7 @@ const MultiPlayer = () => {
     if (user.user_id === room.room_owner && readyUsers.size === room.room_participants.length) {
       const timeToAdd = game.round_duration + 5
 
-      if(game.total_rounds === game.cur_round) {
+      if (game.total_rounds === game.cur_round) {
         setGameEndResult(true)
 
         channel3.send({
@@ -122,7 +122,7 @@ const MultiPlayer = () => {
 
       const new_round = game.cur_round ? game.cur_round === game.total_rounds ? game.cur_round : game.cur_round + 1 : 1
 
-      const { data, error } : any = await supabase
+      const { data, error }: any = await supabase
         .from('game')
         .update({
           cur_round: new_round,
@@ -154,8 +154,8 @@ const MultiPlayer = () => {
         .from('game')
         .update({
           round_details: [...game.round_details, {
-            round_lat: game.lat_lng_arr[game.cur_round-1].lat,
-            round_lng: game.lat_lng_arr[game.cur_round-1].lng,
+            round_lat: game.lat_lng_arr[game.cur_round - 1].lat,
+            round_lng: game.lat_lng_arr[game.cur_round - 1].lng,
             user_details: userRoundDetails
           }],
         })
@@ -193,7 +193,7 @@ const MultiPlayer = () => {
         } else {
           all_user_score[user_details.user_id] = {
             user_id: user_details.user_id,
-            user_name : user_details.user_name,
+            user_name: user_details.user_name,
             userPoints: user_details.userPoints
           }
         }
@@ -201,7 +201,7 @@ const MultiPlayer = () => {
       }
     }
 
-    const all_user_score_array : any[] = Object.values(all_user_score)
+    const all_user_score_array: any[] = Object.values(all_user_score)
 
     all_user_score_array.sort((a: any, b: any) => { return b.userPoints - a.userPoints })
 
@@ -209,8 +209,8 @@ const MultiPlayer = () => {
       await supabase
         .from('game')
         .update({
-          game_winner: all_user_score_array[0].user_id ,
-          game_results : all_user_score_array
+          game_winner: all_user_score_array[0].user_id,
+          game_results: all_user_score_array
         })
         .eq('game_id', game.game_id)
 
@@ -229,7 +229,7 @@ const MultiPlayer = () => {
   //GUESS BUTTON AT EACH ROUND 
   async function guessLatLng(guessLat: string, guessLng: string) {
     setGuessed(true);
-    const distance = CalcDistance(parseFloat(game.lat_lng_arr[game.cur_round-1].lat), parseFloat(guessLat), parseFloat(game.lat_lng_arr[game.cur_round-1].lng), parseFloat(guessLng))
+    const distance = CalcDistance(parseFloat(game.lat_lng_arr[game.cur_round - 1].lat), parseFloat(guessLat), parseFloat(game.lat_lng_arr[game.cur_round - 1].lng), parseFloat(guessLng))
     const userPoints = CalcPoints(distance)
 
     channel3.send({
@@ -326,9 +326,9 @@ const MultiPlayer = () => {
       mapRef.current = map;
 
       let lato = 0, lago = 0
-      if(game.cur_round_start_time !== null && game.cur_round !== 0){
-        lato = parseFloat(game.lat_lng_arr[game.cur_round-1].lat)
-        lago = parseFloat(game.lat_lng_arr[game.cur_round-1].lng)
+      if (game.cur_round_start_time !== null && game.cur_round !== 0) {
+        lato = parseFloat(game.lat_lng_arr[game.cur_round - 1].lat)
+        lago = parseFloat(game.lat_lng_arr[game.cur_round - 1].lng)
       }
 
       const panoramaOptions = {
@@ -410,31 +410,31 @@ const MultiPlayer = () => {
     { event: 'round_details' },
     ({ payload }) => {
       setUserRoundDetails([...userRoundDetails, payload])
-  })
+    })
 
 
   console.log("======================================")
-  console.log({userRoundDetails})
-  console.log({roundEnded})
-  console.log({waitingPlayers})
-  console.log({readyUsers})
-  console.log({userRoundDetails})
-  console.log({game})
+  console.log({ userRoundDetails })
+  console.log({ roundEnded })
+  console.log({ waitingPlayers })
+  console.log({ readyUsers })
+  console.log({ userRoundDetails })
+  console.log({ game })
   console.log("======================================")
 
   return (
     <div>
       <Scoreboard userRoundDetails={userRoundDetails} />
-      
+
       <div className="w-full h-screen" ref={streetViewContainerRef}></div>
-        <div className={`fixed duration-300 ${chatModal ? 'bottom-0' : 'bottom-[-31.2rem]'} left-0 z-50 h-[500px] backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] `}>
-          <div className="flex absolute bottom-[31.25rem] backdrop-blur-3xl text-white bg-[rgba(0,0,0,0.5)] rounded-tr-xl flex-col
+      <div className={`fixed duration-300 ${chatModal ? 'bottom-0' : 'bottom-[-31.2rem]'} left-0 z-50 h-[500px] backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] `}>
+        <div className="flex absolute bottom-[31.25rem] backdrop-blur-3xl text-white bg-[rgba(0,0,0,0.5)] rounded-tr-xl flex-col
           w-full items-end p-2 text-2xl cursor-pointer"
-            onClick={() => setChatModal(!chatModal)}>
-            <p className={`flex justify-between w-full items-center px-3`}>Chat <span className={`${chatModal ? 'rotate-180' : ''} `}><FaChevronCircleUp /></span></p>
-          </div>
-          <ChatModel />
+          onClick={() => setChatModal(!chatModal)}>
+          <p className={`flex justify-between w-full items-center px-3`}>Chat <span className={`${chatModal ? 'rotate-180' : ''} `}><FaChevronCircleUp /></span></p>
         </div>
+        <ChatModel />
+      </div>
       <div className="absolute bottom-0.5 bg-black z-50 text-white right-24 text-sm opacity-100"> {room.cur_game_id}</div>
 
       <div className={`absolute left-0 w-full flex justify-center z-40 items-center ${game.cur_round === 0 ? 'bg-[rgba(0,0,0,0.2)] backdrop-blur-sm h-screen top-0' : 'top-6'} `}>
@@ -453,14 +453,13 @@ const MultiPlayer = () => {
               </div>
           }
         </div>
-
       </div>
 
       {
         waitingPlayers && game.cur_round === 0 &&
-        <div className="absolute top-0 left-[20rem] w-fullflex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
+        <div className="absolute top-0 w-full h-full flex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
           <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl bg-pink-300] bg-[rgba(255,255,255,10)]">
-            waiting Players {readyUsers.size} / {room.room_participants.length}
+            Waiting for players {readyUsers.size} / {room.room_participants.length}
             {
               (user.user_id === room.room_owner && readyUsers.has(user.user_id)) &&
               <button onClick={
@@ -481,8 +480,8 @@ const MultiPlayer = () => {
             <p className="text-5xl">Round Ended</p>
             <Results
               round_no={game.cur_round}
-              lat1={parseFloat(game.lat_lng_arr[game.cur_round-1].lat)}
-              lng1={parseFloat(game.lat_lng_arr[game.cur_round-1].lng)}
+              lat1={parseFloat(game.lat_lng_arr[game.cur_round - 1].lat)}
+              lng1={parseFloat(game.lat_lng_arr[game.cur_round - 1].lng)}
               guessLat={parseFloat(guessLat)}
               guessLng={parseFloat(guessLng)}
               userRoundDetails={userRoundDetails}
@@ -496,7 +495,7 @@ const MultiPlayer = () => {
                     startRound()
                     setRoundEnded(false)
                   }}>Next Round</button>
-                }
+            }
           </div>
         </div>
       }
@@ -521,10 +520,10 @@ const MultiPlayer = () => {
       <div className="absolute h-[200px] w-[300px] hover:w-[500px] hover:h-[300px] hover:opacity-100 border z-30 right-10 bottom-20 transition-all duration-200 ease-in-out opacity-50 cursor-crosshair" ref={mapContainerRef}></div>
 
       <div className="absolute bottom-6 right-32 z-20">
-        <button className={`${guessed ? 'bg-gray-500' : 'bg-red-500'} px-5 py-2 rounded-xl`} 
+        <button className={`${guessed ? 'bg-gray-500' : 'bg-red-500'} px-5 py-2 rounded-xl`}
           onClick={() => guessLatLng(guessLat, guessLng)}
           disabled={guessed}
-          >
+        >
           Guess
         </button>
       </div>

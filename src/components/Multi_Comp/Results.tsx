@@ -82,7 +82,7 @@ function Results({ round_no, lat1, lng1, guessLat, guessLng, userRoundDetails }:
                 let content = `
                     <div>
                         <p>Guessed by ${user.user_id === userDetails.user_id ? 'You' : userDetails.user_name}</p>
-                        <p>Distance: ${userDetails.userPoints} km</p>
+                        <p>Distance: ${Math.round(userDetails.guessDistance)} km</p>
                     </div>
                     `
                 infoWindow.setContent(content);
@@ -119,9 +119,19 @@ function Results({ round_no, lat1, lng1, guessLat, guessLng, userRoundDetails }:
 
         initializeMap2();
     }, [])
+
+    console.log(userRoundDetails)
+
     return (
         <div className='flex w-full'>
             <div className='h-[500px] w-full opacity-95' ref={submitMapContainerRef}></div>
+            <div className='absolute top-50 z-40 flex justify-start left-10 items-center'>
+                <div className='bg-[rgba(0,0,0,0.5)] backdrop-blur-2xl shadow-2xl rounded-xl flex items-center flex-col p-5'>
+                    <div className=' text-white text-3xl'>
+                        <p>Points earned: {userRoundDetails.filter((detail: any) => detail.round_no === round_no && detail.user_id === user.user_id)[0].userPoints}</p>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

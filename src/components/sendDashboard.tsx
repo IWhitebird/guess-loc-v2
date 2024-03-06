@@ -82,27 +82,15 @@ const SendDashboard = ({ loggedIN, friendModal, audioSettings, setFriendModal, s
         return () => {
             onlineChannel.unsubscribe();
         }
-        
+
     }, [user_id]);
 
     // console.log(existingRoom)
     return (
         <>
             <div className='absolute w-full'>
-                {
-                    existingRoom && !location.pathname.includes('spGame') && !location.pathname.includes('mpGame')
-                    &&
-                    <div className="aboslute w-full">
-                        <button
-                            id='fn_button'
-                            className={`absolute right z-50`}
-                            onClick={AlreadyInRoomHandle}>
-                            Return to Room
-                        </button>
-                    </div>
-                }
                 <Dashboard setFriendModal={setFriendModal} visible={friendModal} audioSettings={audioSettings} setAudioSettings={setAudioSettings} setNotifModal={setNotifModal}
-                    receivedNotif={receivedNotif} setReceivedNotif={setReceivedNotif} />
+                    receivedNotif={receivedNotif} setReceivedNotif={setReceivedNotif} existingRoom={existingRoom} AlreadyInRoomHandle={AlreadyInRoomHandle} />
                 <Notification handleState={handleState} setHandleState={setHandleState} friendModal={friendModal}
                     setFriendModal={setFriendModal} visible={notifModal} setVisible={setNotifModal} receivedNotif={receivedNotif} setReceivedNotif={setReceivedNotif} />
                 <AudioPlayer audioSettings={audioSettings} setAudioSettings={setAudioSettings} />

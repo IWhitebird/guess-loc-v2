@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { RootState } from "../../redux/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setRoom, removeRoom } from "../../redux/slices/roomSlice";
-import { sendMessage ,updateRoomChat , joinRoomHandle } from "../../supabase/Routes/RoomRoutes";
+import { sendMessage, updateRoomChat, joinRoomHandle } from "../../supabase/Routes/RoomRoutes";
 
 interface IRoom {
   room_id?: string;
@@ -45,7 +45,7 @@ const CustomGame = () => {
   async function joinRoomHandleBtn() {
     const loader = toast.loading("Joining room...")
     try {
-      let {data , error} : any = await supabase
+      let { data, error }: any = await supabase
         .from('custom_room')
         .select()
         .eq('room_id', joinRoomDetails.room_id)
@@ -53,17 +53,18 @@ const CustomGame = () => {
 
       if (error || data[0].room_pw !== joinRoomDetails.room_password) {
         toast.error("Room doesnt exist")
+        toast.dismiss(loader)
         return;
       }
 
       // Update Room Participants
-      const updatedData = await joinRoomHandle(joinRoomDetails.room_id as string, data[0].room_participants ,  user_id, user_name, user_profile_pic)
+      const updatedData = await joinRoomHandle(joinRoomDetails.room_id as string, data[0].room_participants, user_id, user_name, user_profile_pic)
 
       // Update Room Chat 
-       await updateRoomChat(joinRoomDetails.room_id as string, user_id, user_name,`${user_name} joined the room`, )
+      await updateRoomChat(joinRoomDetails.room_id as string, user_id, user_name, `${user_name} joined the room`,)
 
       // Send Message on Websocket
-      sendMessage(joinRoomDetails.room_id as string, `${user_name} joined the room`, user_id, user_name ,user_profile_pic)
+      sendMessage(joinRoomDetails.room_id as string, `${user_name} joined the room`, user_id, user_name, user_profile_pic)
 
       toast.success("Room joined")
       localStorage.setItem('custom_room_details', JSON.stringify(joinRoomDetails.room_id))
@@ -80,14 +81,9 @@ const CustomGame = () => {
   }
 
   async function createRoomHandle() {
-    if (roomDetails.name === "") {
-      toast.error("Room name is required")
-      return;
-    }
-    if (roomDetails.room_password === "") {
-      toast.error("Room password is required")
-      return;
-    }
+    if (roomDetails.name === "") return toast.error("Room name is required")
+    if (roomDetails.room_password === "") return toast.error("Room password is required")
+
     const loader = toast.loading("Creating room...")
     try {
       const { data, error } = await supabase
@@ -176,29 +172,29 @@ const CustomGame = () => {
 
       {/* Create Modal */}
       <div className={`absolute duration-200 top-0 left-0 ${createRoomModal ? 'opacity-100' : 'opacity-0 invisible'} z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-lg '}`}>
-        <div className={`relative w-[400px] border duration-300 text-white border-purple-900 rounded-lg flex flex-col p-10 ${createRoomModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
+        <div className={`relative w-[400px] border duration-300 text-white border-purple-900 rounded-3xl flex flex-col px-6 py-8 ${createRoomModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
           <div className="flex flex-col">
-            <label className="w-full mx-auto mb-1">Room Name</label>
+            <label className="mb-5 text-xl text-center">Join Room</label>
+            <label className="w-full pl-2 mb-1 text-lg">Room Name</label>
             <input
               type="text"
-              placeholder="Type Your Message"
               value={roomDetails.name}
               name="name"
               onChange={changeCreateModel}
               className="mx-auto w-full rounded-lg border border-purple-800 duration-300 bg-transparent p-2 mb-4 focus:outline-none focus:border-purple-400"
             />
 
-            <label className="w-full mx-auto mb-1">Room Password</label>
+            <label className="w-full pl-2 mb-1 text-lg">Room Passkey</label>
             <input
               type="number"
-              placeholder="Enter round duration"
+              placeholder="Enter desired passkey"
               value={roomDetails.room_password}
               name="room_password"
               onChange={changeCreateModel}
               className=" mx-auto rounded-lg border border-purple-800 bg-transparent duration-300 w-full p-2 mb-4 focus:outline-none focus:border-purple-400"
             />
 
-            <label className="w-full mx-auto mb-1">Number of Rounds</label>
+            <label className="w-full pl-2 mb-1 text-lg">Number of Rounds</label>
             <input
               type="number"
               placeholder="Enter number of rounds"
@@ -208,7 +204,7 @@ const CustomGame = () => {
               className="mx-auto w-full rounded-lg border border-purple-800 bg-transparent duration-300 p-2 mb-4 focus:outline-none focus:border-purple-400"
             />
 
-            <label className="w-full mx-auto mb-1">Round Duration (in seconds)</label>
+            <label className="w-full pl-2 mb-1 text-lg">Round Duration (in seconds)</label>
             <input
               type="number"
               placeholder="Enter round duration"
@@ -222,14 +218,14 @@ const CustomGame = () => {
               <button
                 onClick={createRoomHandle}
                 id='fn_button'
-                style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
+                style={{ fontSize: '1.2rem', padding: '1rem 1.2rem' }}
               >
                 Create<span id='fnButtonSpan'></span>
               </button>
               <button
                 onClick={() => setCreateRoomModal(false)}
                 id='fn_button'
-                style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
+                style={{ fontSize: '1.2rem', padding: '1rem 1.2rem' }}
               >
                 Close<span id='fnButtonSpan'></span>
               </button>
@@ -240,23 +236,23 @@ const CustomGame = () => {
 
       {/* Join Modal */}
       <div className={`absolute duration-200 top-0 left-0 ${joinRoomModal ? 'opacity-100' : 'opacity-0 invisible'} z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-lg '}`}>
-        <div className={`relative w-[400px] duration-300 border text-white border-purple-900 rounded-lg flex flex-col p-10 ${joinRoomModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
-
+        <div className={`relative w-[400px] duration-300 border text-white border-purple-900 rounded-3xl flex flex-col px-6 py-8 ${joinRoomModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
+          <label className="mb-5 text-xl text-center">Join Room</label>
           <div className="flex flex-col">
-            <label className="w-full mx-auto mb-1">Room Id</label>
+            <label className="w-full pl-2 mb-1 text-lg">Room ID</label>
             <input
               type="text"
-              placeholder="Enter room name"
+              placeholder="Enter room's ID"
               value={joinRoomDetails.room_id}
               name="room_id"
               onChange={changeJoinModel}
               className="w-full p-2 mx-auto mb-4 duration-300 bg-transparent border border-purple-800 rounded-lg focus:outline-none focus:border-purple-400"
             />
 
-            <label className="w-full mx-auto mb-1">Room Password</label>
+            <label className="w-full pl-2 mb-1 text-lg">Room Passkey</label>
             <input
               type="text"
-              placeholder="Enter number of rounds"
+              placeholder="Enter room's passkey"
               value={joinRoomDetails.room_password}
               name="room_password"
               onChange={changeJoinModel}
@@ -267,14 +263,14 @@ const CustomGame = () => {
               <button
                 onClick={joinRoomHandleBtn}
                 id='fn_button'
-                style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
+                style={{ fontSize: '1.2rem', padding: '1rem 1.2rem' }}
               >
                 Join<span id='fnButtonSpan'></span>
               </button>
               <button
                 onClick={() => setJoinRoomModal(false)}
                 id='fn_button'
-                style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
+                style={{ fontSize: '1.2rem', padding: '1rem 1.2rem' }}
               >
                 Close<span id='fnButtonSpan'></span>
               </button>

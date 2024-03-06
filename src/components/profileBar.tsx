@@ -5,11 +5,9 @@ import { IoMdArrowDropdown, IoMdNotifications } from "react-icons/io";
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
-import { IoNotificationsCircleOutline, IoNotificationsSharp } from "react-icons/io5";
 import { FaUserFriends } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
-import { BiNotification } from 'react-icons/bi';
-import { CgNotifications } from 'react-icons/cg';
+import { BsArrowReturnLeft } from 'react-icons/bs';
 
 interface Props {
   setFriendModal: (visible: boolean) => void;
@@ -19,9 +17,11 @@ interface Props {
   setNotifModal: (visible: boolean) => void;
   receivedNotif: boolean
   setReceivedNotif: (receivedNotif: boolean) => void
+  existingRoom: boolean
+  AlreadyInRoomHandle: () => void
 }
 
-const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, setNotifModal, receivedNotif, setReceivedNotif }: Props) => {
+const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, setNotifModal, receivedNotif, setReceivedNotif, existingRoom, AlreadyInRoomHandle }: Props) => {
   const location = useNavigate()
   const location2 = useLocation()
   const { user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
@@ -86,10 +86,25 @@ const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, s
       </p>
 
       <div className='absolute flex items-center right-0 z-50 p-5 transition-all duration-300 ease-in-out' ref={menubar}>
-        <div className='flex relative gap-1'>
+        <div className='flex relative gap-2'>
+
+          {
+            existingRoom && !location2.pathname.includes('spGame') && !location2.pathname.includes('mpGame') && !location2.pathname.includes('customroom/Room/')
+            &&
+            !location2.pathname.includes('customroom/Room/') &&
+            <button
+              style={{ padding: '0rem 0.75rem', border: 'none', backgroundColor: 'rgba(50,50,50,0.5)',fontSize:'1.5rem' }}
+              className='text-center flex items-center gap-3 justify-center text-xl'
+              id='fn_button'
+              onClick={AlreadyInRoomHandle}>
+              <BsArrowReturnLeft className='text-4xl' /> Room
+            </button>
+          }
+
           <button id='fn_button' className='relative z-50' style={{ padding: '0rem 0.75rem', border: 'none', backgroundColor: 'rgba(50,50,50,0.5)' }} onClick={() => setFriendModal(!visible)}>
             <FaUserFriends className='text-4xl' />
           </button>
+
           <button id='fn_button' className='relative z-50' style={{ padding: '0.3rem 0.75rem', border: 'none', backgroundColor: 'rgba(50,50,50,0.5)' }} onClick={() => handleClick()}>
             <IoMdNotifications className='text-4xl' />
           </button>

@@ -67,7 +67,7 @@ const Notification = ({ visible, setHandleState, setVisible, setFriendModal, set
     <div>
       <div className={`fixed duration-300 text-white shadow-3xl ease-in-out top-0 right-0 flex text-2xl h-screen w-[550px] z-50 items-center backdrop-blur-3xl bg-[rgba(0,0,0,0.5)] ${visible ? 'opacity-100' : 'opacity-0 invisible right-[-500px]'}`} >
         <p className='fixed flex items-center justify-end w-full text-base text-gray-500 bottom-2 right-3'>Press <span className='border text-base border-gray-500 rounded-lg p-0.5 mx-1'>Esc</span> to close</p>
-        <div className='flex absolute px-7 py-9 justify-between items-center w-full top-0 bg-[rgba(176,80,255,0.1)] backdrop-blur-3xl '>
+        <div className='flex absolute px-7 py-4 justify-between items-center w-full z-50 top-0 bg-[rgba(176,80,255,0.1)] backdrop-blur-3xl '>
           <p className='text-3xl'>Notifications</p>
           <div className='flex items-center gap-3'>
             <button className='w-[20px] h-[20px]' id='fn_button'
