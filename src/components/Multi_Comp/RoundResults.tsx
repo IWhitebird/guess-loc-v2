@@ -127,7 +127,7 @@ function Results({ round_no, lat1, lng1, guessLat, guessLng, userRoundDetails }:
             <div className='absolute top-50 z-40 flex justify-start left-10 items-center'>
                 <div className='bg-[rgba(0,0,0,0.5)] backdrop-blur-2xl shadow-2xl rounded-xl flex items-center flex-col p-5'>
                     <div className=' text-white text-3xl'>
-                        <p>Points earned: {userRoundDetails.filter((detail: any) => detail.round_no === round_no && detail.user_id === user.user_id)[0].userPoints}</p>
+                        <p>Points earned : {userRoundDetails.filter((detail: any) => detail.round_no === round_no && detail.user_id === user.user_id)[0]?.userPoints || 0}</p>
                     </div>
                 </div>
             </div>

@@ -167,13 +167,13 @@ const Room = () => {
     <div className="flex bg-purple-950  justify-start items-center p-6 h-screen w-full bg-gradient-to-r from-gray-950 to-transparent">
       <div className="flex w-full h-full">
         
-        <div className="flex flex-col items-center justify-center w-full h-20 pt-40">
+        <div className="flex flex-col items-center justify-center w-full mt-40 h-20">
           <h1 className="text-2xl text-white">ROOM INFO</h1>
-          <div className="flex flex-col items-center w-full h-20 mt-10 justify-left">
+          <div className="flex flex-col items-center w-full h-20 mt-5 justify-left">
             <div className="text-lg text-white">Name : {roomDetails.room_name}</div>
             <div className="text-lg text-white">Game Rounds : {roomDetails.room_settings?.game_rounds}</div>
             <div className="text-lg text-white">Round Duratio : {roomDetails.room_settings?.round_duration}</div>
-            <div className="" style={{ paddingTop: '200px' }}>
+            <div className="mt-10">
               <div className="pt-4">
                 <button id='fn_button' style={{ fontSize: '1.4rem', padding: '1.4rem 1.4rem 1.4rem 1.9rem' }} onClick={() => setChangeSettingsModal(true)}>
                   <IoGameController className="mr-2 text-2xl" /> Game Modes
@@ -191,8 +191,8 @@ const Room = () => {
           </button>
         </div>
 
-        <div className="flex flex-col items-start justify-start w-full h-20 mt-9">
-          <div className="pt-4 ml-6">
+        <div className="flex flex-col items-center justify-start w-full mt-10 p-10">
+          <div className="">
             <button id='fn_button' style={{ fontSize: '1.1rem', padding: '1rem 1rem 1rem 1.5rem' }} onClick={() => setChangeSettingsModal(true)}>
               <IoSettingsSharp className="mr-2" /> CHANGE SETTINGS
               <span id='fnButtonSpan'></span>
@@ -208,21 +208,23 @@ const Room = () => {
         </div>
 
 
-        <div className="w-[50%] pt-20 flex justify-end  ">
+        <div className="w-[600px] pt-20 flex justify-end  ">
           <div className="w-full bg-[#ffffff2c] backdrop-blur-md h-full flex rounded-xl">
-            <div className="flex flex-col  h-full px-4 w-[500px] border-r">
+            <div className="flex flex-col  h-full px-4 w-[400px] border-r">
               <h1 className="pt-6 pl-2 text-2xl text-white">Players</h1>
               {roomDetails?.room_participants?.map((participant, index: number) => (
                 <div key={index}>
                   <div className="flex flex-row items-center justify-start w-full h-20">
-                    <img className="w-14 h-14 rounded-full bg-[rgba(255,255,255,0.3)]" src={participant.room_user_profile ? participant.room_user_profile : `https://api.dicebear.com/6.x/personas/svg?seed=${participant.room_user_name}`} />
-                    <div className="ml-2 text-xl text-white">{participant.room_user_name.length > 15 ? `${participant.room_user_name.slice(0, 15)}...` : participant.room_user_name}</div>
+                    <img className="w-10 h-10 rounded-full bg-[rgba(255,255,255,0.3)]" src={participant.room_user_profile ? participant.room_user_profile : `https://api.dicebear.com/6.x/personas/svg?seed=${participant.room_user_name}`} />
+                    <div className="ml-2 text-md text-white">{participant.room_user_name.length > 15 ? `${participant.room_user_name.slice(0, 15)}...` : participant.room_user_name}</div>
                   </div>
                   <hr className="w-full" />
                 </div>
               ))}
             </div>
-            <ChatModel />
+            <div className="w-[600px]">
+              <ChatModel />
+            </div>
           </div>
         </div>
 

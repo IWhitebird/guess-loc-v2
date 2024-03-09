@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react"
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux"
 import { RootState } from "../../redux/store/store";
-import { setGame } from "../../redux/slices/gameSlice";
+import { removeGame, setGame } from "../../redux/slices/gameSlice";
 import { useNavigate } from "react-router-dom";
 import supabase from "../../supabase/init";
 import { toast } from "react-hot-toast";
@@ -12,7 +12,8 @@ import Scoreboard from "../../components/Multi_Comp/Scoreboard";
 import { ImSpinner2 } from "react-icons/im";
 import ChatModel from "../../components/chatmodel";
 import { FaChevronCircleUp } from "react-icons/fa";
-import Results from "../../components/Multi_Comp/Results";
+import RoundResults from "../../components/Multi_Comp/RoundResults";
+import FinalResults from "../../components/Multi_Comp/FinalResults"
 import { CalcDistance, CalcPoints } from "../../utils/game";
 
 export interface IRoundDetails {
@@ -52,7 +53,7 @@ const MultiPlayer = () => {
   const [guessed, setGuessed] = useState<boolean>(false)
   const [guessLat, setGuessLat] = useState<string>('')
   const [guessLng, setGuessLng] = useState<string>('')
-  const [, setResults] = useState<any>({})
+  const [results, setResults] = useState<any>({})
 
   const [chatModal, setChatModal] = useState<boolean>(false)
   const [waitingPlayers, setWaitingPlayers] = useState<boolean>(true)
@@ -109,6 +110,7 @@ const MultiPlayer = () => {
 
       if (game.total_rounds === game.cur_round) {
         setGameEndResult(true)
+        await fetchResults()
 
         channel3.send({
           type: 'broadcast',
@@ -169,6 +171,7 @@ const MultiPlayer = () => {
           round: game.cur_round
         }
       })
+      
 
       if (!error)
         dispatch(setGame(data[0]))
@@ -220,11 +223,11 @@ const MultiPlayer = () => {
   }
 
   //BUTTON IN THE FINAL RESULTS TO GO BACK TO ROOm
-  // async function endGame() {
-  //   localStorage.removeItem('custom_game_details')
-  //   dispatch(removeGame())
-  //   navigate(`/customroom/Room/${room.room_id}`)
-  // }
+  async function endGame() {
+    localStorage.removeItem('custom_game_details')
+    dispatch(removeGame())
+    navigate(`/customroom/Room/${room.room_id}`)
+  }
 
   //GUESS BUTTON AT EACH ROUND 
   async function guessLatLng(guessLat: string, guessLng: string) {
@@ -414,12 +417,13 @@ const MultiPlayer = () => {
 
 
   console.log("======================================")
-  console.log({ userRoundDetails })
-  console.log({ roundEnded })
-  console.log({ waitingPlayers })
-  console.log({ readyUsers })
-  console.log({ userRoundDetails })
-  console.log({ game })
+  console.log( userRoundDetails)
+  console.log( roundEnded)
+  console.log( waitingPlayers)
+  console.log( readyUsers)
+  console.log( userRoundDetails)
+  console.log( game)
+  console.log( results)
   console.log("======================================")
 
   return (
@@ -478,7 +482,7 @@ const MultiPlayer = () => {
         <div className="absolute top-0 h-screen w-full flex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
           <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl w-full bg-[rgba(255,255,255,10)]">
             <p className="text-5xl">Round Ended</p>
-            <Results
+            <RoundResults
               round_no={game.cur_round}
               lat1={parseFloat(game.lat_lng_arr[game.cur_round - 1].lat)}
               lng1={parseFloat(game.lat_lng_arr[game.cur_round - 1].lng)}
@@ -502,16 +506,21 @@ const MultiPlayer = () => {
 
       {
         gameEndResult &&
-        <div className="absolute top-[30rem] left-[30rem] w-fullflex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
-          <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl bg-pink-300] bg-[rgba(255,255,255,10)]">
-            <p className="text-5xl">Game Ended</p>
+        <div className="absolute top-0 w-full h-full flex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
+          <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl w-[800px] h-[600px] bg-[rgba(255,255,255,10)]">
+            <p className="text-4xl">Game Ended</p>
+
+            <FinalResults results={results} />
+
             <button
               disabled={user.user_id === room.room_owner && readyUsers.size !== room.room_participants.length}
+              className="justify-self-end"
               onClick={
                 async () => {
-                  await fetchResults()
+                  endGame()
                   setGameEndResult(false)
-                }}>Go back to room</button>
+                }}>Go back</button>
+                
           </div>
         </div>
       }
