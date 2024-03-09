@@ -54,7 +54,7 @@ const ChatModel: React.FC = () => {
                 {curChat.map((chat, index) => (
                     <div
                         key={index}
-                        className={`flex items-start gap-5 m-3  ${chat.chatter_id === user_id ? 'self-end' : 'self-start'}`}
+                        className={`flex items-start gap-2 m-2  ${chat.chatter_id === user_id ? 'self-end' : 'self-start'}`}
                     >
                         {
                             chat.chatter_id !== user_id &&
@@ -74,7 +74,7 @@ const ChatModel: React.FC = () => {
                                     }
                                 </span>
                             </div>
-                            <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">
+                            <p className="text-sm font-thin py-1 text-gray-900 dark:text-white">
                                 {chat.chatter_message}
                             </p>
                             <span className="flex justify-end w-full text-sm font-normal text-gray-500 dark:text-gray-400">
@@ -108,7 +108,7 @@ const ChatModel: React.FC = () => {
                 />
                 <button
                     id='fn_button'
-                    style={{ fontSize: '1.2rem', padding: '1rem 1rem 1rem 1.5rem' }}
+                    style={{ fontSize: '1.2rem', padding: '0.8rem' }}
                     onClick={() => { SendMessageHandle(newMessage) }}
                     ref={enterRef}
                 >

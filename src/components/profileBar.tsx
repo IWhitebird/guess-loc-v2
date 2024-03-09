@@ -101,11 +101,11 @@ const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, s
             </button>
           }
 
-          <button id='fn_button' className='relative z-50' style={{ padding: '0rem 0.75rem', border: 'none', backgroundColor: 'rgba(50,50,50,0.5)' }} onClick={() => setFriendModal(!visible)}>
+          <button id='fn_button' className='relative z-50' style={{ padding: '0rem 0.75rem', backgroundColor: 'rgba(50,50,50,0.5)' }} onClick={() => setFriendModal(!visible)}>
             <FaUserFriends className='text-4xl' />
           </button>
 
-          <button id='fn_button' className='relative z-50' style={{ padding: '0.3rem 0.75rem', border: 'none', backgroundColor: 'rgba(50,50,50,0.5)' }} onClick={() => handleClick()}>
+          <button id='fn_button' className='relative z-50' style={{ padding: '0.3rem 0.75rem', backgroundColor: 'rgba(50,50,50,0.5)' }} onClick={() => handleClick()}>
             <IoMdNotifications className='text-4xl' />
           </button>
           <p className={`absolute right-3 z-50 px-2 text-sm shadow-xl text-white ${receivedNotif ? 'opacity-100' : 'opacity-0 invisible'} 
