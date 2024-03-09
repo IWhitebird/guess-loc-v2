@@ -75,8 +75,7 @@ export async function EmailSignUpNewUser(email: string, password: string, name: 
                 data: {
                     full_name: name
                 },
-                emailRedirectTo: 'http://localhost:5173/verify',
-                // emailRedirectTo: 'https://guess-loc-v2.vercel.app/verify',
+                emailRedirectTo: import.meta.env.VITE_MODE === 'dev' ? 'http://localhost:5173/verify' : 'https://guess-loc-v2.vercel.app/verify',
             },
         });
 
@@ -97,7 +96,7 @@ export async function OAuthLogin(provider: Provider) {
             {
                 provider,
                 options: {
-                    redirectTo: 'http://localhost:5173/verify',
+                    redirectTo: import.meta.env.VITE_MODE === 'dev' ? 'http://localhost:5173/verify' : 'https://guess-loc-v2.vercel.app/verify',
                     // redirectTo: 'https://guess-loc-v2.vercel.app/verify',
                 }
             });
