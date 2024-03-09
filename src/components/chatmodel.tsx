@@ -1,14 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import supabase from '../supabase/init';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
 import { IoSend } from "react-icons/io5";
 import { sendMessage, updateRoomChat } from '../supabase/Routes/RoomRoutes';
 import { useLocation } from 'react-router-dom';
-import { setJoinedRoom, setLeftRoom, setRoom } from '../redux/slices/roomSlice';
 
 const ChatModel: React.FC = () => {
-    const dispatch = useDispatch()
     const location = useLocation()
     const { user_id, user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
     console.log({user_profile_pic})

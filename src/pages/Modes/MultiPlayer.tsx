@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react"
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux"
 import { RootState } from "../../redux/store/store";
-import { setGame, removeGame } from "../../redux/slices/gameSlice";
+import { setGame } from "../../redux/slices/gameSlice";
 import { useNavigate } from "react-router-dom";
 import supabase from "../../supabase/init";
 import { toast } from "react-hot-toast";
@@ -52,7 +52,7 @@ const MultiPlayer = () => {
   const [guessed, setGuessed] = useState<boolean>(false)
   const [guessLat, setGuessLat] = useState<string>('')
   const [guessLng, setGuessLng] = useState<string>('')
-  const [results, setResults] = useState<any>({})
+  const [, setResults] = useState<any>({})
 
   const [chatModal, setChatModal] = useState<boolean>(false)
   const [waitingPlayers, setWaitingPlayers] = useState<boolean>(true)
@@ -220,11 +220,11 @@ const MultiPlayer = () => {
   }
 
   //BUTTON IN THE FINAL RESULTS TO GO BACK TO ROOm
-  async function endGame() {
-    localStorage.removeItem('custom_game_details')
-    dispatch(removeGame())
-    navigate(`/customroom/Room/${room.room_id}`)
-  }
+  // async function endGame() {
+  //   localStorage.removeItem('custom_game_details')
+  //   dispatch(removeGame())
+  //   navigate(`/customroom/Room/${room.room_id}`)
+  // }
 
   //GUESS BUTTON AT EACH ROUND 
   async function guessLatLng(guessLat: string, guessLng: string) {

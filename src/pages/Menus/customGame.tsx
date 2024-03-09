@@ -5,7 +5,7 @@ import logo from '../../assets/Untitled-1.png';
 import toast from "react-hot-toast";
 import { RootState } from "../../redux/store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { setRoom, removeRoom } from "../../redux/slices/roomSlice";
+import { setRoom } from "../../redux/slices/roomSlice";
 import { sendMessage, updateRoomChat, joinRoomHandle } from "../../supabase/Routes/RoomRoutes";
 
 interface IRoom {

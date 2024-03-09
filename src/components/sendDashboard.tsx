@@ -8,7 +8,7 @@ import Dashboard from "./profileBar"
 import Notification from "./notification"
 import AudioPlayer from "./AudioPlayer"
 import FriendsList from "./Friends/FriendsList"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 interface Props {
     loggedIN: any
@@ -21,7 +21,6 @@ interface Props {
 
 const SendDashboard = ({ loggedIN, friendModal, audioSettings, setFriendModal, setAudioSettings }: Props) => {
     const navigate = useNavigate()
-    const location = useLocation()
 
     const { user_id, user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
     const roomDetails = useSelector((state: RootState) => state.room)
@@ -63,7 +62,6 @@ const SendDashboard = ({ loggedIN, friendModal, audioSettings, setFriendModal, s
 
     useEffect(() => {
         const onlineChannel = supabase.channel(`${roomDetails.room_id}_active`);
-        let onlineStatus: string;
 
         onlineChannel.on('presence', { event: 'sync' }, () => {
             const newState = onlineChannel.presenceState();

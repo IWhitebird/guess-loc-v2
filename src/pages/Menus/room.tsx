@@ -199,9 +199,9 @@ const Room = () => {
             </button>
           </div>
 
-          <div className="">
+          <div className="mt-5">
             <button onClick={startGameHandle} id='fn_button' style={{ fontSize: '1.5rem', padding: '2rem 2rem 2rem 2.5rem' }}>
-              <PiPlayFill className="mr-4" />START GAME
+              <PiPlayFill className="mr-4" /> START GAME
               <span id='fnButtonSpan'></span>
             </button>
           </div>

@@ -22,7 +22,6 @@ function Results({ round_no, lat1, lng1, guessLat, guessLng, userRoundDetails }:
 
     const submitMapContainerRef = useRef<HTMLDivElement | null>(null);
     const infoWindowRef1 = useRef(new window.google.maps.InfoWindow());
-    const infoWindowRef2 = useRef(new window.google.maps.InfoWindow());
 
     const midFunc = (lat1: number, lng1: number, guessLat: number, guessLng: number) => {
         const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
