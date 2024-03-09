@@ -15,7 +15,7 @@ interface FriendSearchProps {
 
 function FriendSearch({ visible, setVisible }: FriendSearchProps) {
     const [friends, setFriends] = useState<any[]>([]);
-    const [search, setSearch] = useState('')
+    const [search, setSearch] = useState<string>("")
     const { user_id } = useSelector((state: RootState) => state.user)
     const [alreadyFriends, setAlreadyFriends] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
         const data = await searchFriends(search);
         if (data) {
             getFriendss();
-            setFriends(data.filter((friend) => friend.id !== user_id));
+            setFriends(data.filter((friend : any) => friend.id !== user_id));
             setLoading2(false);
             return data;
         }
@@ -46,6 +46,7 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
     useEffect(() => {
         getFriendss();
     }, [])
+    
 
     useEffect(() => {
         if (visible === false) {
@@ -94,11 +95,17 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
     return (
         <div className={`fixed duration-300 ${visible ? 'opacity-100 ' : 'opacity-0 invisible'} backdrop-blur-3xl top-0 right-0 z-50 items-start flex w-[951px] h-full  '}`}>
             <div className={`transition-all ease-in-out duration-300 absolute bg-[rgba(0,0,0,0.5)] text-white p-5 ${visible ? ' opacity-100 right-[31.2rem]' : 'opacity-0 right-0 invisible'}`}>
-                {/* <p className='absolute bottom-[6.5rem] right-5 text-sm text-gray-500'>You can use <span className='border rounded-lg border-gray-500 p-1'>↵ Enter</span> to search.</p> */}
+                {/* <p className='absolute bottom-[6.5rem] right-5 text-sm text-gray-500'>You can use <span className='p-1 border border-gray-500 rounded-lg'>↵ Enter</span> to search.</p> */}
                 <div className='flex items-center'>
                     <input type="text" placeholder='Search using name or email'
                         className='bg-[rgba(30,30,30,0.5)] relative duration-300 mr-1 w-[260px] text-white border border-purple-800 p-2 pl-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-700 focus:border-transparent'
                         value={search}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handlesearch();
+                            }
+                        }}
                         onChange={(e) => setSearch(e.target.value)} />
                     <button className='w-[20px] h-[20px]' id='fn_button' onClick={() => handlesearch()} ref={listenKey}
                         style={{ fontSize: '1.5rem', padding: '1.2rem 2rem', margin: '0rem 0.5rem' }}
@@ -114,7 +121,7 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
                                 <div className='flex items-center gap-3'>
                                     <img src={friend.user_pfp ? friend?.user_pfp : `https://api.dicebear.com/6.x/personas/svg?seed=${friend.user_name}`} alt="" className='w-[50px] h-[50px] bg-gray-700 rounded-full' />
                                     <div className='flex flex-col'>
-                                        <p className='text-lg font-semibold'>{friend.user_name}</p>
+                                        <p className='text-lg font-semibold'>{(friend.user_name.length > 15) ? friend.user_name.slice(0, 20) + '...' : friend.user_name}</p>
                                         <p className='text-sm text-gray-400'>View Profile</p>
                                     </div>
                                 </div>
@@ -122,7 +129,7 @@ function FriendSearch({ visible, setVisible }: FriendSearchProps) {
                                     style={{ fontSize: '1.1rem', padding: `${alreadyFriends.some((existingFriend) => existingFriend.id === friend.id) ? '1.2rem 3.2rem' : '1.2rem 2.5rem'}` }}
                                     disabled={loading}
                                 >
-                                    <p> {!loading ? alreadyFriends.some((existingFriend) => existingFriend.id === friend.id) ? 'Remove' : 'Add' : <span><ImSpinner2 className='animate-spin text-2xl' /></span>}</p><span id='fnButtonSpan'></span>
+                                    <p> {!loading ? alreadyFriends.some((existingFriend) => existingFriend.id === friend.id) ? 'Remove' : 'Add' : <span><ImSpinner2 className='text-2xl animate-spin' /></span>}</p><span id='fnButtonSpan'></span>
                                 </button>
                             </li>
                             <hr className='w-full border-white' />

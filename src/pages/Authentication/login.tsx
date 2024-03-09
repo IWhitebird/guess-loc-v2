@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import StarsComp from "../../components/stars";
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/reducers/reducers";
 
 function Auth() {
     const location = useNavigate()
@@ -16,10 +18,10 @@ function Auth() {
     })
     const [formState, setFormState] = useState("login")
     const [loading, setLoading] = useState(true)
-    let localToken = localStorage.getItem('sb-pdnogztwriouxeskllgm-auth-token')
+    const user = useSelector((state: RootState) => state.user)
 
     useEffect(() => {
-        if (localToken && JSON.parse(localToken).user.role) {
+        if (user.user_id) {
             location('/mode')
             setLoading(false)
         }else {

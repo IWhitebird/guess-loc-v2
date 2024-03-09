@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { EmailLogout } from '../supabase/Auth';
-import { IoMdArrowDropdown } from "react-icons/io";
+import { IoMdArrowDropdown, IoMdNotifications } from "react-icons/io";
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
-import { IoNotificationsCircleOutline } from "react-icons/io5";
+import { FaUserFriends } from "react-icons/fa";
+import { IoSettings } from "react-icons/io5";
+import { BsArrowReturnLeft } from 'react-icons/bs';
 
 interface Props {
   setFriendModal: (visible: boolean) => void;
@@ -15,9 +17,11 @@ interface Props {
   setNotifModal: (visible: boolean) => void;
   receivedNotif: boolean
   setReceivedNotif: (receivedNotif: boolean) => void
+  existingRoom: boolean
+  AlreadyInRoomHandle: () => void
 }
 
-const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, setNotifModal, receivedNotif, setReceivedNotif }: Props) => {
+const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, setNotifModal, receivedNotif, setReceivedNotif, existingRoom, AlreadyInRoomHandle }: Props) => {
   const location = useNavigate()
   const location2 = useLocation()
   const { user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
@@ -77,13 +81,38 @@ const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, s
         </div>
       </div>
 
+      <p className='fixed bottom-5 left-5 z-50 text-white p-2'>
+        <IoSettings className='cursor-pointer duration-500 hover:rotate-180 hover:bg-[rgba(30,30,30,0.2)] z-50 border-2 border-gray-600 w-12 h-12 p-2 text-white backdrop-blur-sm rounded-full' onClick={() => setAudioSettings(!audioSettings)} />
+      </p>
+
       <div className='absolute flex items-center right-0 z-50 p-5 transition-all duration-300 ease-in-out' ref={menubar}>
-        <div className='flex relative'>
-          <IoNotificationsCircleOutline className='cursor-pointer duration-300 hover:scale-105 
-      hover:bg-[rgba(30,30,30,0.2)] z-50 border-2 border-purple-600 w-16 h-16 p-2 text-white backdrop-blur-sm rounded-lg' onClick={handleClick} />
-          <p className={`absolute top-7 right-2 z-50 px-3 shadow-xl text-white ${receivedNotif ? 'opacity-100' : 'opacity-0 invisible'} cursor-pointer bg-[rgba(255,0,0,0.8)] animate-pulse rounded-full py-1`}
+        <div className='flex relative gap-2'>
+
+          {
+            existingRoom && !location2.pathname.includes('spGame') && !location2.pathname.includes('mpGame') && !location2.pathname.includes('customroom/Room/')
+            &&
+            !location2.pathname.includes('customroom/Room/') &&
+            <button
+              style={{ padding: '0rem 0.75rem', border: 'none', backgroundColor: 'rgba(50,50,50,0.5)',fontSize:'1.5rem' }}
+              className='text-center flex items-center gap-3 justify-center text-xl'
+              id='fn_button'
+              onClick={AlreadyInRoomHandle}>
+              <BsArrowReturnLeft className='text-4xl' /> Room
+            </button>
+          }
+
+          <button id='fn_button' className='relative z-50' style={{ padding: '0rem 0.75rem', border: 'none', backgroundColor: 'rgba(50,50,50,0.5)' }} onClick={() => setFriendModal(!visible)}>
+            <FaUserFriends className='text-4xl' />
+          </button>
+
+          <button id='fn_button' className='relative z-50' style={{ padding: '0.3rem 0.75rem', border: 'none', backgroundColor: 'rgba(50,50,50,0.5)' }} onClick={() => handleClick()}>
+            <IoMdNotifications className='text-4xl' />
+          </button>
+          <p className={`absolute right-3 z-50 px-2 text-sm shadow-xl text-white ${receivedNotif ? 'opacity-100' : 'opacity-0 invisible'} 
+          cursor-pointer bg-[rgba(255,0,0,0.8)] animate-pulse rounded-full`}
             onClick={handleClick}>{receivedNotif ? '!' : ''}</p>
         </div>
+
         <div className='flex items-center justify-center mr-6'>
         </div>
         <div className={style} onClick={dropdownHandle}>
@@ -94,7 +123,7 @@ const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, s
             width="60"
           />
           <div className='flex items-center justify-center'>
-            <p className='text-xl font-bold'>{user_name.split(' ')[0]}</p>
+            <p className='text-xl font-bold'>{user_name.length > 15 ? (user_name.split(' ')[0]).slice(0, 10) + '...' : user_name.split(' ')[0]}</p>
             <IoMdArrowDropdown className={`duration-200 text-3xl mt-1`}
               style={{ transform: dropdown ? 'rotate(180deg)' : 'rotate(0deg)' }}
             />
@@ -106,7 +135,6 @@ const Dashboard = ({ setFriendModal, visible, audioSettings, setAudioSettings, s
                 {location2.pathname === "/spGame" ? <p onClick={() => setModal(true)}>Main Menu</p> : <p onClick={() => location('/mode')}>Main Menu</p>}
               </div>
               <p className='cursor-pointer' onClick={() => location('/profile')}>Profile</p>
-              <p className='cursor-pointer' onClick={() => setFriendModal(!visible)}>Friends</p>
               <p className='cursor-pointer' onClick={() => setAudioSettings(!audioSettings)}>Settings</p>
               <hr className='border-gray-200 ' />
               <p

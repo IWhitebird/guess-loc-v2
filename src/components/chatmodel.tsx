@@ -3,63 +3,30 @@ import supabase from '../supabase/init';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
 import { IoSend } from "react-icons/io5";
-import { sendMessage , updateRoom } from '../supabase/Routes/RoomRoutes';
+import { sendMessage, updateRoomChat } from '../supabase/Routes/RoomRoutes';
+import { useLocation } from 'react-router-dom';
 
 const ChatModel: React.FC = () => {
-
+    const location = useLocation()
     const { user_id, user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
+    console.log({user_profile_pic})
     const roomDetails = useSelector((state: RootState) => state.room)
     const containerRef = useRef<HTMLDivElement>(null);
     const enterRef = useRef<HTMLButtonElement>(null);
     const [newMessage, setNewMessage] = useState<string>('');
-    const channel = supabase.channel(`${roomDetails.room_id}_chat`)
+    const channel = supabase.channel(`${roomDetails.room_id}_chat`).subscribe()
     const [curChat, setCurChat] = useState<any[]>(roomDetails.room_chat)
 
-    async function SendMessage(myMsg: string) {
+    
+    async function SendMessageHandle(myMsg: string) {
         setNewMessage('')
 
         if (!newMessage.trim()) {
             return;
         }
 
-        setCurChat([...curChat, {
-            chatter_id: user_id,
-            chatter_name: user_name,
-            chatter_image: user_profile_pic,
-            chatter_message: myMsg,
-            chatter_time: new Date().toLocaleTimeString()
-        }])
-
-        
-        sendMessage(roomDetails.room_id as string, myMsg, user_id, user_name, user_profile_pic)    
-        await updateRoom(roomDetails.room_id as string, myMsg, roomDetails, user_id, user_name, user_profile_pic)
-        
-
-        // channel.subscribe((status) => {
-        //     if (status !== 'SUBSCRIBED') { return }
-        //     channel.send({
-        //         type: 'broadcast',
-        //         event: 'room_chatting',
-        //         payload: {
-        //             chatter_id: user_id,
-        //             chatter_name: user_name,
-        //             chatter_image: user_profile_pic,
-        //             chatter_message: myMsg,
-        //             chatter_time: new Date().toLocaleTimeString()
-        //         }
-        //     })
-        // })
-
-        // await supabase.from('custom_room').update({
-        //     room_chat: [...roomDetails.room_chat, {
-        //         chatter_id: user_id,
-        //         chatter_name: user_name,
-        //         chatter_image: user_profile_pic,
-        //         chatter_message: myMsg,
-        //         chatter_time: new Date().toLocaleTimeString()
-        //     }] as any
-        // }).match({ room_id: roomDetails.room_id })
-
+        sendMessage(`${roomDetails.room_id}_chat` , myMsg, user_id, user_name ,user_profile_pic)
+        await updateRoomChat(roomDetails.room_id ,myMsg , user_id, user_name ,user_profile_pic)
         scrollToBottom();
     }
 
@@ -69,27 +36,10 @@ const ChatModel: React.FC = () => {
         }
     };
 
-    // useEffect(() => {
-    //     if (newMessage.trim()) return
-    //     const handleKeyPress = async (e: KeyboardEvent) => {
-    //         if (e.key === 'Enter') {
-    //             e.preventDefault();
-    //             SendMessage(newMessage);
-    //         }
-    //     };
-
-    //     window.addEventListener('keydown', handleKeyPress);
-
-    //     return () => {
-    //         window.removeEventListener('keydown', handleKeyPress);
-    //     };
-    // }, []);
-
     channel.on(
         'broadcast',
         { event: 'room_chatting' },
         ({ payload }) => {
-            console.log("paylod", payload)
             setCurChat([...curChat, payload])
         }
     )
@@ -98,13 +48,9 @@ const ChatModel: React.FC = () => {
         scrollToBottom()
     }, [curChat]);
 
-    console.log("ROOM DETAILS", roomDetails)
-    console.log("Broad", curChat)
-
     return (
-        <div className='w-[500px] h-full border bg-[#ffffff2c] border-black backdrop-blur-md rounded-xl flex justify-start flex-col '>
+        <div className={`w-full h-full ${location.pathname.startsWith('/mpGame/') ? 'rounded-none' : 'rounded-xl'} flex justify-start flex-col `}>
             <div className="flex flex-col items-start h-full gap-5 overflow-y-auto " id="style-3" ref={containerRef}>
-
                 {curChat.map((chat, index) => (
                     <div
                         key={index}
@@ -114,15 +60,18 @@ const ChatModel: React.FC = () => {
                             chat.chatter_id !== user_id &&
                             <img
                                 className="w-8 h-8 rounded-full"
-                                src={chat.chatter_image}
-                                alt={`${chat.chatter_name} image`}
+                                src={`${roomDetails.room_participants.find((user : any) => user.room_user_id === chat.chatter_id)?.room_user_profile || 
+                                        `https://api.dicebear.com/6.x/personas/svg?seed=${chat.chatter_name}`}`}
                             />
                         }
 
                         <div className={`flex flex-col w-full max-w-[420px] px-4 py-2 border-gray-200 bg-gray-100 rounded-lg dark:bg-gray-700 break-words`}>
                             <div className="flex items-center justify-between space-x-3 rtl:space-x-reverse">
                                 <span className="text-base font-semibold text-gray-900 dark:text-white">
-                                    {chat.chatter_name}
+                                    {chat.chatter_name.length > 15 ?
+                                        `${chat.chatter_name.slice(0, 15)}...` :
+                                        chat.chatter_name
+                                    }
                                 </span>
                             </div>
                             <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">
@@ -136,7 +85,7 @@ const ChatModel: React.FC = () => {
                             chat.chatter_id === user_id &&
                             <img
                                 className="w-8 h-8 rounded-full"
-                                src={chat.chatter_image}
+                                src={chat.chatter_image ? chat.chatter_image : `https://api.dicebear.com/6.x/personas/svg?seed=${chat.chatter_name}`}
                                 alt={`${chat.chatter_name} image`}
                             />
                         }
@@ -151,11 +100,16 @@ const ChatModel: React.FC = () => {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     style={{ resize: 'none' }}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            SendMessageHandle(newMessage)
+                        }
+                    }}
                 />
                 <button
                     id='fn_button'
                     style={{ fontSize: '1.2rem', padding: '1rem 1rem 1rem 1.5rem' }}
-                    onClick={() => { SendMessage(newMessage) }}
+                    onClick={() => { SendMessageHandle(newMessage) }}
                     ref={enterRef}
                 >
                     Send <IoSend className='ml-3' />

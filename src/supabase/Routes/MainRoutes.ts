@@ -21,7 +21,7 @@ export const updateScore = async (id: any, score: any) => {
 
 //set online status
 export const setOnline = async (id: any, status: string) => {
-    console.log(status, id)
+    // console.log(status, id)
     const { data, error } = await supabase
         .from('users')
         // @ts-ignore

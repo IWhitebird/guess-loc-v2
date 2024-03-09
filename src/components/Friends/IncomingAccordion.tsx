@@ -46,14 +46,14 @@ function IncomingAccordion({ request, index, loadingFetchFriends, setLoading, lo
     }, [dropdownRef])
 
     return (
-        <ul className='flex flex-col' id='style-3' key={index}>
+        <ul className='flex flex-col pr-[rem] pb-2' id='style-3' key={index}>
             <li className='flex items-center justify-between w-full'>
                 {!loading &&
                     <div className='relative flex items-center gap-3'>
                         <img className='rounded-full' src={request?.user_pfp ? request?.user_pfp : `https://api.dicebear.com/6.x/personas/svg?seed=${request.user_name}`} alt='avatar' width='60' height='60' />
                         <div className='absolute bottom-0 w-5 h-5 bg-blue-800 border border-white rounded-full left-10'></div> {/* online change left to left-10 */}
                         <div className='flex flex-col'>
-                            <p>{request.user_name}</p>
+                            <p>{(request?.user_name).length > 15 ? `${(request?.user_name).substring(0, 15)}...` : request?.user_name}</p>
                             <p className='text-sm text-gray-400'>Sent you a friend request</p>
                         </div>
                     </div>
