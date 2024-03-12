@@ -22,7 +22,7 @@ interface Props {
 const SendDashboard = ({ loggedIN, friendModal, audioSettings, setFriendModal, setAudioSettings }: Props) => {
     const navigate = useNavigate()
 
-    const { user_id, user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
+    // const { user_id, user_name, user_profile_pic } = useSelector((state: RootState) => state.user)
     const roomDetails = useSelector((state: RootState) => state.room)
 
     const [handleState, setHandleState] = useState('list')
@@ -60,28 +60,28 @@ const SendDashboard = ({ loggedIN, friendModal, audioSettings, setFriendModal, s
         }
     }, [room_id])
 
-    useEffect(() => {
-        const onlineChannel = supabase.channel(`${roomDetails.room_id}_active`);
+    // useEffect(() => {
+    //     const onlineChannel = supabase.channel(`${roomDetails.room_id}_active`);
 
-        onlineChannel.on('presence', { event: 'sync' }, () => {
-            const newState = onlineChannel.presenceState();
-            for (const key in newState) {
-                const user = newState[key];
-                for (const key in user) {
-                    //@ts-ignore
-                    onlineStatus = user[key].user_id;
-                }
-            }
-        }).subscribe(async (status) => {
-            if (status !== 'SUBSCRIBED') return;
-            await onlineChannel.track({ user_id, user_name, user_profile_pic });
-        });
+    //     onlineChannel.on('presence', { event: 'sync' }, () => {
+    //         const newState = onlineChannel.presenceState();
+    //         for (const key in newState) {
+    //             const user = newState[key];
+    //             for (const key in user) {
+    //                 //@ts-ignore
+    //                 onlineStatus = user[key].user_id;
+    //             }
+    //         }
+    //     }).subscribe(async (status) => {
+    //         if (status !== 'SUBSCRIBED') return;
+    //         await onlineChannel.track({ user_id, user_name, user_profile_pic });
+    //     });
 
-        return () => {
-            onlineChannel.unsubscribe();
-        }
+    //     return () => {
+    //         onlineChannel.unsubscribe();
+    //     }
 
-    }, [user_id]);
+    // }, [user_id]);
 
     // console.log(existingRoom)
     return (

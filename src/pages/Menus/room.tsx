@@ -30,6 +30,7 @@ const Room = () => {
     round_duration: roomDetails?.room_settings?.round_duration
   })
   const [changeSettingsModal, setChangeSettingsModal] = useState(false)
+  const [gameModeModal, setGameModeModal] = useState(false)
 
   async function ChangeRoomSettings() {
 
@@ -175,7 +176,7 @@ const Room = () => {
             <div className="text-lg text-white">Round Duratio : {roomDetails.room_settings?.round_duration}</div>
             <div className="mt-10">
               <div className="pt-4">
-                <button id='fn_button' style={{ fontSize: '1.4rem', padding: '1.4rem 1.4rem 1.4rem 1.9rem' }} onClick={() => setChangeSettingsModal(true)}>
+                <button id='fn_button' style={{ fontSize: '1.4rem', padding: '1.4rem 1.4rem 1.4rem 1.9rem' }} onClick={() => setGameModeModal(true)}>
                   <IoGameController className="mr-2 text-2xl" /> Game Modes
                   <span id='fnButtonSpan'></span>
                 </button>
@@ -193,14 +194,20 @@ const Room = () => {
 
         <div className="flex flex-col items-center justify-start w-full mt-10 p-10">
           <div className="">
-            <button id='fn_button' style={{ fontSize: '1.1rem', padding: '1rem 1rem 1rem 1.5rem' }} onClick={() => setChangeSettingsModal(true)}>
+            <button id='fn_button' 
+              disabled={user_id !== roomDetails.room_owner}
+              className={`${user_id !== roomDetails.room_owner ? 'cursor-not-allowed opacity-70' : 'opacity-100'}`}
+              style={{ fontSize: '1.1rem', padding: '1rem 1rem 1rem 1.5rem' }} onClick={() => setChangeSettingsModal(true)}>
               <IoSettingsSharp className="mr-2" /> CHANGE SETTINGS
               <span id='fnButtonSpan'></span>
             </button>
           </div>
 
           <div className="mt-5">
-            <button onClick={startGameHandle} id='fn_button' style={{ fontSize: '1.5rem', padding: '2rem 2rem 2rem 2.5rem' }}>
+            <button 
+              disabled={user_id !== roomDetails.room_owner}
+              className={`${user_id !== roomDetails.room_owner ? 'cursor-not-allowed opacity-70' : 'opacity-100'}`}
+              onClick={startGameHandle} id='fn_button' style={{ fontSize: '1.5rem', padding: '2rem 2rem 2rem 2.5rem' }}>
               <PiPlayFill className="mr-4" /> START GAME
               <span id='fnButtonSpan'></span>
             </button>
@@ -228,7 +235,8 @@ const Room = () => {
           </div>
         </div>
 
-        <div className={`absolute duration-200 top-0 left-0
+       {
+        changeSettingsModal && <div className={`absolute duration-200 top-0 left-0
           ${changeSettingsModal ? 'opacity-100' : 'opacity-0 invisible'}
           z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-lg '}`}>
           <div className={`relative w-[400px] duration-300 border text-white border-purple-900 rounded-lg flex flex-col p-10 ${changeSettingsModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
@@ -298,6 +306,34 @@ const Room = () => {
             </div>
           </div>
         </div>
+       }         
+
+
+{
+        gameModeModal && <div className={`absolute duration-200 top-0 left-0
+          ${gameModeModal ? 'opacity-100' : 'opacity-0 invisible'}
+          z-50 justify-center items-center flex w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-lg '}`}>
+          <div className={`relative w-[400px] duration-300 border text-white border-purple-900 rounded-lg flex flex-col p-10 ${gameModeModal ? 'scale-100 opacity-100' : 'opacity-0 scale-50 invisible'} `}>
+
+            <div className="flex flex-col items-center justify-center">
+              
+                <p>New Games Modes Coming soon !!</p>
+
+              <div className="flex flex-row-reverse justify-center gap-3 mt-5">
+                <button
+                  onClick={() => setGameModeModal(false)}
+                  id='fn_button'
+                  style={{ fontSize: '1.2rem', padding: '1rem 1.5rem' }}
+                >
+                  Close<span id='fnButtonSpan'></span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+       }  
+
 
       </div>
     </div>

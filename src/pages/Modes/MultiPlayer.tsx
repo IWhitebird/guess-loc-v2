@@ -34,7 +34,6 @@ export interface IUserRoundDetails {
 
 const MultiPlayer = () => {
 
-
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -92,9 +91,9 @@ const MultiPlayer = () => {
       navigate('/dashboard')
     }
 
-    channel1.subscribe((status) => {
+    channel1.subscribe(async (status) => {
       if (status !== 'SUBSCRIBED') return;
-      channel1.track({ userId: user.user_id })
+      await channel1.track({ userId: user.user_id })
     })
 
     localStorage.setItem('custom_game_details', JSON.stringify(data[0]))
@@ -105,7 +104,8 @@ const MultiPlayer = () => {
 
   //FUNCTION TO START EACH ROUND
   async function startRound() {
-    if (user.user_id === room.room_owner && readyUsers.size === room.room_participants.length) {
+    //TODO:if (user.user_id === room.room_owner && readyUsers.size === room.room_participants.length) {
+    if (user.user_id === room.room_owner) {
       const timeToAdd = game.round_duration + 5
 
       if (game.total_rounds === game.cur_round) {
@@ -114,7 +114,7 @@ const MultiPlayer = () => {
 
         channel3.send({
           type: 'broadcast',
-          event: 'round_end',
+          event: 'game_end',
           payload: {
             round: game.cur_round
           }
@@ -124,7 +124,7 @@ const MultiPlayer = () => {
 
       const new_round = game.cur_round ? game.cur_round === game.total_rounds ? game.cur_round : game.cur_round + 1 : 1
 
-      const { data, error }: any = await supabase
+      const { data, error } : any = await supabase
         .from('game')
         .update({
           cur_round: new_round,
@@ -262,6 +262,10 @@ const MultiPlayer = () => {
   }
 
   useEffect(() => {
+    getGame();
+  }, []);
+
+  useEffect(() => {
     const loadGoogleMapScript = () => {
       try {
         const script = document.createElement("script");
@@ -372,11 +376,6 @@ const MultiPlayer = () => {
 
   }, [game.cur_round, waitingPlayers]);
 
-  useEffect(() => {
-    getGame();
-  }, []);
-
-
   channel1.on('presence', { event: 'sync' }, () => {
     const newState: any = channel1.presenceState()
 
@@ -398,7 +397,7 @@ const MultiPlayer = () => {
     payload => {
       console.log("PG CHANGE : ", payload)
       dispatch(setGame(payload.new as any))
-    }).subscribe()
+  }).subscribe()
 
   channel3.on('broadcast',
     { event: 'round_start' },
@@ -407,14 +406,20 @@ const MultiPlayer = () => {
         setWaitingPlayers(false)
       }
       setRoundEnded(false)
-    })
+  })
+
+  channel3.on('broadcast',
+    { event: 'game_end' },
+    async () => {
+      setGameEndResult(true)
+      await fetchResults()
+  })
 
   channel3.on('broadcast',
     { event: 'round_details' },
     ({ payload }) => {
       setUserRoundDetails([...userRoundDetails, payload])
-    })
-
+  })
 
   console.log("======================================")
   console.log( userRoundDetails)
@@ -493,7 +498,7 @@ const MultiPlayer = () => {
             {
               (user.user_id === room.room_owner && readyUsers.has(user.user_id)) &&
               <button
-                disabled={user.user_id === room.room_owner && readyUsers.size !== room.room_participants.length}
+                disabled={user.user_id !== room.room_owner}
                 onClick={
                   () => {
                     startRound()
