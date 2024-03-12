@@ -506,7 +506,7 @@ const MultiPlayer = () => {
 
       {
         gameEndResult &&
-        <div className="absolute top-0 w-full h-full flex justify-center z-40 items-center bg-[rgba(0,0,0,0.2)]">
+        <div className="absolute top-0 w-full h-full flex justify-center z-[5000] items-center bg-[rgba(0,0,0,0.2)]">
           <div className="text-2xl p-5 flex flex-col gap-2 items-center rounded-xl w-[800px] h-[600px] bg-[rgba(255,255,255,10)]">
             <p className="text-4xl">Game Ended</p>
 
